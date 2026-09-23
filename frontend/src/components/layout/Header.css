@@ -1,0 +1,215 @@
+.app-header {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.institutional-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 2rem;
+  background-color: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.inst-left, .inst-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 25%;
+}
+
+.inst-right {
+  justify-content: flex-end;
+}
+
+.inst-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  width: 50%;
+}
+
+.emblem-placeholder {
+  width: 40px;
+  height: 50px;
+  background-color: var(--bg-secondary);
+  border-radius: 4px;
+}
+
+.logo-placeholder {
+  width: 60px;
+  height: 60px;
+  background-color: var(--bg-secondary);
+  border-radius: 50%;
+}
+
+.badge-placeholder {
+  padding: 0.5rem 1rem;
+  background-color: var(--bg-primary);
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+}
+
+.inst-text {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.875rem;
+}
+
+.center-text {
+  align-items: center;
+}
+
+.bold {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.inst-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.inst-subtitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.inst-tagline {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* Nav Header */
+.nav-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+  background-color: var(--header-bg);
+  color: white;
+  height: 60px;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 25%;
+}
+
+.ctms-logo {
+  width: 32px;
+  height: 32px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.ctms-title {
+  font-weight: 700;
+  font-size: 1.125rem;
+  letter-spacing: 0.5px;
+}
+
+.top-nav {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex: 1;
+}
+
+.top-nav a {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 1.25rem 0;
+  position: relative;
+  transition: color 0.2s;
+}
+
+.top-nav a:hover, .top-nav a.active {
+  color: white;
+  text-decoration: none;
+}
+
+.top-nav a.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: var(--accent-color);
+  border-radius: 3px 3px 0 0;
+}
+
+.nav-user {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1.5rem;
+  width: 25%;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background-color: var(--danger);
+  border-radius: 50%;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+}
+
+.avatar-placeholder {
+  width: 36px;
+  height: 36px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.user-role {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+}

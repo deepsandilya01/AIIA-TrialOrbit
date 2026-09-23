@@ -1,0 +1,143 @@
+.login-container {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.login-left {
+  flex: 1;
+  background: linear-gradient(135deg, var(--text-primary) 0%, #063870 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+}
+
+.login-branding {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-emblem {
+  width: 100px;
+  height: 120px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.login-branding h1 {
+  font-size: 2.5rem;
+  color: white;
+  margin: 0 0 0.5rem 0;
+}
+
+.login-subtitle {
+  font-size: 1.5rem;
+  color: var(--accent-color);
+  margin: 0 0 1rem 0;
+  font-weight: 500;
+}
+
+.login-tagline {
+  font-size: 1rem;
+  opacity: 0.8;
+}
+
+.login-right {
+  flex: 1;
+  background-color: var(--bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 450px;
+  padding: 2.5rem 2rem;
+}
+
+.login-header {
+  margin-bottom: 2rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.form-group input, .form-group select {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-family: inherit;
+  font-size: 0.875rem;
+  width: 100%;
+}
+
+.form-group input:focus, .form-group select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(11, 74, 142, 0.1);
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.25rem;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.login-btn {
+  margin-top: 0.5rem;
+  padding: 0.875rem;
+  font-size: 1rem;
+}
+
+.login-footer {
+  margin-top: 2rem;
+  text-align: center;
+  border-top: 1px solid var(--border-color);
+  padding-top: 1rem;
+}
+
+@media (max-width: 768px) {
+  .login-container {
+    flex-direction: column;
+  }
+  
+  .login-left {
+    padding: 2rem;
+    min-height: 30vh;
+  }
+}

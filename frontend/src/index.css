@@ -1,0 +1,7 @@
+@import './styles/global.css';
+
+/* Remove default vite index.css stuff to have a clean slate */
+#root {
+  width: 100%;
+  height: 100vh;
+}
