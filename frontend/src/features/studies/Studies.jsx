@@ -34,7 +34,7 @@ const Studies = () => {
           <h1 className="page-title">Clinical Studies</h1>
           <p className="page-subtitle">Manage and monitor all institutional clinical trials</p>
         </div>
-        <Button onClick={() => console.log('Open create modal')}>
+        <Button onClick={() => { /* Open create modal */ }}>
           <Plus size={18} />{t('dashboard.createNewStudy')}</Button>
       </div>
 
@@ -77,7 +77,7 @@ const Studies = () => {
               </tr>
             </thead>
             <tbody>
-              {studies.map(study => (
+              {studies.filter(s => s.id.toLowerCase().includes(searchTerm.toLowerCase()) || s.title.toLowerCase().includes(searchTerm.toLowerCase())).map(study => (
                 <tr key={study.id} className="clickable-row" onClick={() => handleStudyClick(study.id)}>
                   <td className="font-semibold text-primary">{study.id}</td>
                   <td className="font-medium max-w-xs truncate" title={study.title}>{study.title}</td>

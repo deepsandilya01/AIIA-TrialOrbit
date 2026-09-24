@@ -1,9 +1,10 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './StatCard.css';
 
-const StatCard = ({ title, value, subtitle, icon, status }) => {
-  return (
-    <div className="card stat-card">
+const StatCard = ({ title, value, subtitle, icon, status, linkTo }) => {
+  const cardContent = (
+    <>
       <div className="stat-header">
         <div className="stat-title-group">
           <span className="stat-title">{title}</span>
@@ -22,6 +23,16 @@ const StatCard = ({ title, value, subtitle, icon, status }) => {
           </p>
         )}
       </div>
+    </>
+  );
+
+  return linkTo ? (
+    <Link to={linkTo} className="card stat-card" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
+      {cardContent}
+    </Link>
+  ) : (
+    <div className="card stat-card">
+      {cardContent}
     </div>
   );
 };

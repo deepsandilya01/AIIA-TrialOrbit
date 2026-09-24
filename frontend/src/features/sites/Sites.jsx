@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search, Plus, MapPin } from 'lucide-react';
 import { sites } from '../../data/dummyData';
 import Button from '../../components/common/Button';
@@ -7,6 +8,8 @@ import Badge from '../../components/common/Badge';
 
 const Sites = () => {
   const { t } = useTranslation();
+
+  const navigate = useNavigate();
 
   return (
     <div className="page-container">
@@ -42,7 +45,7 @@ const Sites = () => {
             </thead>
             <tbody>
               {sites.map(site => (
-                <tr key={site.id} className="clickable-row">
+                <tr key={site.id} className="clickable-row" onClick={() => navigate(`/sites/${site.id}`)}>
                   <td className="font-semibold text-primary">{site.id}</td>
                   <td className="font-medium">{site.name}</td>
                   <td>

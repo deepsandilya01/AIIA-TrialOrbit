@@ -1,16 +1,25 @@
-import { Bell, ChevronDown, Sun, Moon, Globe } from 'lucide-react';
+import { Bell, ChevronDown, Sun, Moon, Globe, LogOut } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import './Header.css';
 
 const Header = () => {
   const { theme, toggleTheme } = useTheme();
   const { t, i18n } = useTranslation();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const changeLanguage = (e) => {
     const lang = e.target.value;
     i18n.changeLanguage(lang);
     localStorage.setItem('ctms-language', lang);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
   };
 
   return (
@@ -48,13 +57,13 @@ const Header = () => {
         </div>
         
         <nav className="top-nav">
-          <a href="/" className="active">{t('general.home')}</a>
+          <a href="/dashboard" className="active">{t('general.home')}</a>
           <a href="/studies">{t('general.studies')}</a>
           <a href="/sites">{t('general.sites')}</a>
           <a href="/recruitment">{t('general.participants')}</a>
           <a href="/recruitment">{t('general.recruitment')}</a>
           <a href="/compliance">{t('general.compliance')}</a>
-          <a href="/safety">{t('general.aeSae')}</a>
+          <a href="/safety">AE/SAE</a>
           <a href="/alerts">{t('general.reports')}</a>
           <a href="/audit">{t('general.auditTrail')}</a>
         </nav>
@@ -86,12 +95,19 @@ const Header = () => {
           </button>
           
           <div className="user-profile">
-            <div className="avatar-placeholder">AS</div>
+            <div className="avatar-placeholder">{user?.name ? user.name.charAt(0) : 'U'}</div>
             <div className="user-info">
-              <span className="user-name">Dr. Anurag Sharma</span>
-              <span className="user-role">Principal Investigator</span>
+              <span className="user-name">{user?.name || 'User'}</span>
+              <span className="user-role">{user?.role || 'Guest'}</span>
             </div>
-            <ChevronDown size={16} />
+            <button 
+              onClick={handleLogout} 
+              className="icon-btn" 
+              style={{ marginLeft: '10px' }}
+              title="Logout"
+            >
+              <LogOut size={16} />
+            </button>
           </div>
         </div>
       </div>

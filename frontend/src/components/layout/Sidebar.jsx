@@ -12,13 +12,13 @@ const Sidebar = () => {
   const { t } = useTranslation();
   
   const menuItems = [
-    { path: '/', icon: <LayoutDashboard size={20} />, label: t('general.dashboard') },
+    { path: '/dashboard', icon: <LayoutDashboard size={20} />, label: t('general.dashboard') },
     { path: '/studies', icon: <FlaskConical size={20} />, label: t('general.studies') },
     { path: '/sites', icon: <Building2 size={20} />, label: t('general.sites') },
     { path: '/participants', icon: <Users size={20} />, label: t('general.participants') },
     { path: '/recruitment', icon: <UserPlus size={20} />, label: t('general.recruitment') },
     { path: '/compliance', icon: <ShieldCheck size={20} />, label: t('general.compliance') },
-    { path: '/safety', icon: <AlertTriangle size={20} />, label: t('general.aeSae') },
+    { path: '/safety', icon: <AlertTriangle size={20} />, label: "AE/SAE" },
     { path: '/alerts', icon: <Bell size={20} />, label: t('general.alerts'), badge: 3 },
     { path: '/reports', icon: <FileText size={20} />, label: t('general.reports') },
     { path: '/audit', icon: <History size={20} />, label: t('general.auditTrail') },

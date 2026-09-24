@@ -43,30 +43,35 @@ const Dashboard = () => {
           value="12" 
           subtitle="of 18 total studies"
           icon={<FlaskConical size={24} />}
+          linkTo="/studies"
         />
         <StatCard 
           title={t('dashboard.activeSites')} 
           value="34" 
           subtitle="of 42 total sites"
           icon={<Building2 size={24} />}
+          linkTo="/sites"
         />
         <StatCard 
           title={t('dashboard.totalParticipants')} 
           value="1,240" 
           subtitle={t('dashboard.enrolledAcrossStudies')}
           icon={<Users size={24} />}
+          linkTo="/participants"
         />
         <StatCard 
           title={t('dashboard.complianceRate')} 
           value="92%" 
           status={t('dashboard.onTrack')}
           icon={<ShieldCheck size={24} />}
+          linkTo="/compliance"
         />
         <StatCard 
           title={t('dashboard.pendingSaeReview')} 
           value="6" 
           status={t('dashboard.requiresAttention')}
           icon={<AlertTriangle size={24} />}
+          linkTo="/safety"
         />
       </div>
 

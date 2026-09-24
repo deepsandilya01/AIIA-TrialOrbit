@@ -1,20 +1,27 @@
 import { useTranslation } from 'react-i18next';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Button from '../../components/common/Button';
+import { useAuth } from '../../context/AuthContext';
 import './Login.css';
 
 const Login = () => {
   const { t } = useTranslation();
+  const { login } = useAuth();
 
   const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('Principal Investigator');
 
   const handleLogin = (e) => {
     e.preventDefault();
-    navigate('/');
+    login({ email, role, name: 'Dr. Anurag Sharma' });
+    
+    // Redirect to where they were trying to go, or dashboard
+    const from = location.state?.from?.pathname || '/dashboard';
+    navigate(from, { replace: true });
   };
 
   return (
