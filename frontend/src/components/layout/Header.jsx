@@ -1,8 +1,8 @@
-import { Bell, ChevronDown, Sun, Moon, Globe, LogOut } from 'lucide-react';
+import { Bell, ChevronDown, Sun, Moon, Globe, LogOut, LayoutDashboard, ChevronRight, Search } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './Header.css';
 
 const Header = () => {
@@ -10,6 +10,25 @@ const Header = () => {
   const { t, i18n } = useTranslation();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const getBreadcrumb = () => {
+    const path = location.pathname;
+    if (path.startsWith('/dashboard')) return { base: t('general.dashboard', 'Dashboard'), title: 'Clinical Research Dashboard' };
+    if (path.startsWith('/studies/')) return { base: t('general.studies', 'Studies'), title: 'Study Details' };
+    if (path.startsWith('/studies')) return { base: t('general.studies', 'Studies'), title: 'Clinical Studies' };
+    if (path.startsWith('/sites')) return { base: t('general.sites', 'Sites'), title: 'Clinical Trial Sites' };
+    if (path.startsWith('/participants')) return { base: t('general.participants', 'Participants'), title: 'Study Participants' };
+    if (path.startsWith('/recruitment')) return { base: t('general.recruitment', 'Recruitment'), title: 'Participant Recruitment' };
+    if (path.startsWith('/compliance')) return { base: t('general.compliance', 'Compliance'), title: 'Compliance Management' };
+    if (path.startsWith('/safety')) return { base: 'AE/SAE', title: 'Safety & Adverse Events' };
+    if (path.startsWith('/alerts')) return { base: t('general.alerts', 'Alerts'), title: 'Clinical Trial Alerts' };
+    if (path.startsWith('/reports')) return { base: t('general.reports', 'Reports'), title: 'Clinical Trial Reports' };
+    if (path.startsWith('/audit')) return { base: t('general.auditTrail', 'Audit Trail'), title: 'System Audit Trail' };
+    return { base: '', title: '' };
+  };
+
+  const breadcrumb = getBreadcrumb();
 
   const changeLanguage = (e) => {
     const lang = e.target.value;
@@ -51,23 +70,35 @@ const Header = () => {
 
       {/* Nav Header */}
       <div className="nav-header">
-        <div className="nav-brand">
-          <div className="ctms-logo"></div>
-          <span className="ctms-title">AIIA CTMS</span>
+        <div className="nav-left">
+          <div className="nav-brand">
+            <div className="ctms-logo"></div>
+            <span className="ctms-title">AIIA CTMS</span>
+          </div>
+          
+          {breadcrumb.base && (
+            <>
+              <div className="header-divider"></div>
+              <div className="header-breadcrumb">
+                <LayoutDashboard size={18} className="breadcrumb-icon" />
+                <span className="breadcrumb-base">{breadcrumb.base}</span>
+                <ChevronRight size={14} className="breadcrumb-chevron" />
+                <span className="breadcrumb-title-text">{breadcrumb.title}</span>
+              </div>
+            </>
+          )}
         </div>
         
-        <nav className="top-nav">
-          <a href="/dashboard" className="active">{t('general.home')}</a>
-          <a href="/studies">{t('general.studies')}</a>
-          <a href="/sites">{t('general.sites')}</a>
-          <a href="/recruitment">{t('general.participants')}</a>
-          <a href="/recruitment">{t('general.recruitment')}</a>
-          <a href="/compliance">{t('general.compliance')}</a>
-          <a href="/safety">AE/SAE</a>
-          <a href="/alerts">{t('general.reports')}</a>
-          <a href="/audit">{t('general.auditTrail')}</a>
-        </nav>
-        
+        <div className="nav-center">
+          <div className="global-search-container">
+            <Search size={16} className="search-icon" />
+            <input 
+              type="text" 
+              className="global-search-input" 
+              placeholder="Search studies, sites, participants..."
+            />
+          </div>
+        </div>
         <div className="nav-user">
           <div className="language-selector" style={{ display: 'flex', alignItems: 'center', gap: '5px', marginRight: '10px' }}>
             <Globe size={16} />
