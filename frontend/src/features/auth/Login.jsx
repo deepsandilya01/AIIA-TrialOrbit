@@ -56,6 +56,23 @@ const Login = () => {
             </Link>
           </div>
 
+          {/* Official Logos */}
+          <div className="login-logo-container">
+            <Link to="/" title="Return to AIIA TrialOrbit Home" style={{ textDecoration: 'none' }}>
+              <img 
+                src="/logo.png" 
+                alt="AIIA TrialOrbit Crest" 
+                className="login-brand-logo" 
+              />
+            </Link>
+            <img 
+              src="/gov.png" 
+              alt="Ministry of Ayush • Govt. of India" 
+              className="login-gov-logo"
+              title="Ministry of Ayush • Government of India"
+            />
+          </div>
+
           <h1>AIIA TrialOrbit</h1>
           <p className="login-subtitle">Centralized Clinical Trial Control Room & Surveillance Engine</p>
           <div className="login-tagline">
@@ -170,6 +187,13 @@ const Login = () => {
             <Button type="submit" variant="primary" className="login-btn w-full justify-center">
               Authenticate & Enter CTMS &rarr;
             </Button>
+
+            <div className="text-center mt-3">
+              <span className="text-xs text-secondary">New Investigator or Research Site? </span>
+              <Link to="/register" className="text-xs text-primary font-semibold hover:underline">
+                Register for CTMS Access &rarr;
+              </Link>
+            </div>
           </form>
 
           <div className="login-footer">

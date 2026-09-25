@@ -41,6 +41,7 @@ const PublicFooter = () => {
             <li><Link to="/public-studies">Public Research Registry</Link></li>
             <li><Link to="/about">About AIIA CTMS</Link></li>
             <li><Link to="/contact">Support & Investigator Helpdesk</Link></li>
+            <li><Link to="/register">Investigator Registration</Link></li>
             <li><Link to="/login">Investigator Portal Sign In</Link></li>
           </ul>
         </div>

@@ -1,46 +1,53 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import './Preloader.css';
 
 const Preloader = ({ onFinish }) => {
-  const [progress, setProgress] = useState(15);
+  const [progress, setProgress] = useState(0);
   const [statusMessage, setStatusMessage] = useState('Connecting to AIIA Central Research Node...');
   const [isFadingOut, setIsFadingOut] = useState(false);
+  const animFrameRef = useRef(null);
 
   useEffect(() => {
-    // Medical-grade initialisation sequence with clear status stages
-    const timer1 = setTimeout(() => {
-      setProgress(38);
-      setStatusMessage('Verifying 21 CFR Part 11 Audit Trail Modules...');
-    }, 450);
+    const totalDuration = 2600; // 2.6 seconds continuous count to 100%
+    const startTime = performance.now();
 
-    const timer2 = setTimeout(() => {
-      setProgress(65);
-      setStatusMessage('Calibrating CTCAE v5.0 & SAE Safety Surveillance...');
-    }, 1050);
+    const updateCounter = (now) => {
+      const elapsed = now - startTime;
+      const pct = Math.min(100, Math.floor((elapsed / totalDuration) * 100));
 
-    const timer3 = setTimeout(() => {
-      setProgress(88);
-      setStatusMessage('Synchronizing Multi-Centre Site Protocols...');
-    }, 1650);
+      setProgress(pct);
 
-    const timer4 = setTimeout(() => {
-      setProgress(100);
-      setStatusMessage('Clinical Trial Workspace Initialized • Ready');
-    }, 2150);
+      if (pct < 25) {
+        setStatusMessage('Connecting to AIIA Central Research Node...');
+      } else if (pct < 50) {
+        setStatusMessage('Verifying 21 CFR Part 11 Audit Trail Modules...');
+      } else if (pct < 75) {
+        setStatusMessage('Calibrating CTCAE v5.0 & SAE Safety Surveillance...');
+      } else if (pct < 98) {
+        setStatusMessage('Synchronizing Multi-Centre Site Protocols...');
+      } else {
+        setStatusMessage('Clinical Trial Workspace Initialized • Ready');
+      }
 
-    const timer5 = setTimeout(() => {
-      setIsFadingOut(true);
-      setTimeout(() => {
-        if (onFinish) onFinish();
-      }, 400);
-    }, 2550);
+      if (pct < 100) {
+        animFrameRef.current = requestAnimationFrame(updateCounter);
+      } else {
+        // Reached 100%! Hold briefly so user sees the 100%, then fade out smoothly
+        setTimeout(() => {
+          setIsFadingOut(true);
+          setTimeout(() => {
+            if (onFinish) onFinish();
+          }, 380);
+        }, 320);
+      }
+    };
+
+    animFrameRef.current = requestAnimationFrame(updateCounter);
 
     return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-      clearTimeout(timer3);
-      clearTimeout(timer4);
-      clearTimeout(timer5);
+      if (animFrameRef.current) {
+        cancelAnimationFrame(animFrameRef.current);
+      }
     };
   }, [onFinish]);
 

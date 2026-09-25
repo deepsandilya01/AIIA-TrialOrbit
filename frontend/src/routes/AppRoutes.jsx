@@ -17,6 +17,7 @@ import Alerts from '../features/alerts/Alerts';
 import Reports from '../features/reports/Reports';
 import AuditTrail from '../features/audit/AuditTrail';
 import Login from '../features/auth/Login';
+import Register from '../features/auth/Register';
 import NotFound from '../pages/NotFound';
 
 import ProtectedRoute from '../components/layout/ProtectedRoute';
@@ -32,6 +33,7 @@ const AppRoutes = () => {
       <Route path="/public-studies" element={<PublicLayout><PublicStudies /></PublicLayout>} />
       <Route path="/contact" element={<PublicLayout><Contact /></PublicLayout>} />
       <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
       
       {/* Protected/App Routes */}
       <Route path="/dashboard" element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} />

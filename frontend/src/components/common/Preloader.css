@@ -97,7 +97,7 @@
   height: 100%;
   background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
   border-radius: 999px;
-  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: width 0.04s linear;
 }
 
 .preloader-status-text {
@@ -109,8 +109,11 @@
 }
 
 .preloader-pct {
-  font-weight: 600;
+  font-weight: 700;
   color: var(--primary-color);
+  font-variant-numeric: tabular-nums;
+  min-width: 44px;
+  text-align: right;
 }
 
 .preloader-institution {

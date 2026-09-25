@@ -334,15 +334,11 @@ const Home = () => {
             <p>Define objective criteria, upload protocol v1.0, and track Institutional Ethics Committee clearance.</p>
           </div>
 
-          <div className="lifecycle-connector" aria-hidden="true">&rarr;</div>
-
           <div className="lifecycle-step card">
             <div className="lifecycle-num">02</div>
             <h4>Site Activation</h4>
             <p>Onboard investigator facilities, complete GCP training, and establish local lab reference ranges.</p>
           </div>
-
-          <div className="lifecycle-connector" aria-hidden="true">&rarr;</div>
 
           <div className="lifecycle-step card">
             <div className="lifecycle-num">03</div>
@@ -350,15 +346,11 @@ const Home = () => {
             <p>Screen participant eligibility, execute bilingual informed consent, and record baseline parameters.</p>
           </div>
 
-          <div className="lifecycle-connector" aria-hidden="true">&rarr;</div>
-
           <div className="lifecycle-step card">
             <div className="lifecycle-num">04</div>
             <h4>Active Surveillance</h4>
             <p>Monitor visit adherence, verify source data, detect deviations, and handle safety events.</p>
           </div>
-
-          <div className="lifecycle-connector" aria-hidden="true">&rarr;</div>
 
           <div className="lifecycle-step card">
             <div className="lifecycle-num">05</div>
