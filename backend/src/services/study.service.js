@@ -1,0 +1,87 @@
+const studyRepository = require('../repositories/study.repository');
+
+class StudyService {
+  async createStudy(data, user) {
+    if (user.role !== 'PI' && user.role !== 'ADMIN') {
+      throw new Error('Only PI or ADMIN can create studies');
+    }
+    
+    // In a real app we'd wrap this in a transaction and log audit trail here
+    const study = await studyRepository.create({
+      ...data,
+      pi_id: user.id
+    });
+
+    // TODO: Create Audit Log
+
+    return study;
+  }
+
+  async getStudies(query) {
+    const page = parseInt(query.page, 10) || 1;
+    const limit = parseInt(query.limit, 10) || 20;
+    const skip = (page - 1) * limit;
+
+    let filters = {};
+    if (query.status) filters.status = query.status;
+    if (query.search) {
+      filters.$or = [
+        { title: { $regex: query.search, $options: 'i' } },
+        { protocolId: { $regex: query.search, $options: 'i' } }
+      ];
+    }
+
+    const sort = query.sort ? query.sort : '-createdAt';
+    let sortObj = {};
+    if (sort.startsWith('-')) {
+      sortObj[sort.substring(1)] = -1;
+    } else {
+      sortObj[sort] = 1;
+    }
+
+    const studies = await studyRepository.findMany(filters, { skip, limit, sort: sortObj });
+    const total = await studyRepository.count(filters);
+
+    return {
+      studies,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit)
+      }
+    };
+  }
+
+  async getStudyById(id) {
+    const study = await studyRepository.findById(id);
+    if (!study) throw new Error('Study not found');
+    return study;
+  }
+
+  async updateStudy(id, data, user) {
+    if (user.role !== 'PI' && user.role !== 'ADMIN') {
+      throw new Error('Only PI or ADMIN can update studies');
+    }
+
+    const study = await studyRepository.updateById(id, data);
+    if (!study) throw new Error('Study not found');
+    
+    // TODO: Create Audit Log
+    return study;
+  }
+
+  async updateLifecycle(id, status, user) {
+    if (user.role !== 'PI' && user.role !== 'ADMIN') {
+      throw new Error('Only PI or ADMIN can update study lifecycle');
+    }
+
+    const study = await studyRepository.updateLifecycle(id, status);
+    if (!study) throw new Error('Study not found');
+
+    // TODO: Create Audit Log
+    return study;
+  }
+}
+
+module.exports = new StudyService();
