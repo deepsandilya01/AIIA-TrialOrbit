@@ -5,7 +5,7 @@
   background-color: var(--bg-primary);
   width: 100%;
   max-width: 100vw;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 .public-main-content {
