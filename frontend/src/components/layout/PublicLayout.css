@@ -15,7 +15,8 @@
 .public-header .top-nav {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1.25rem;
+  flex-shrink: 0;
 }
 
 .public-header .top-nav a {
@@ -26,6 +27,7 @@
   transition: color var(--transition-fast);
   padding: 4px 0;
   position: relative;
+  white-space: nowrap;
 }
 
 .public-header .top-nav a:hover,
@@ -212,13 +214,6 @@
 }
 
 @media (max-width: 1024px) {
-  .footer-content {
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-  }
-}
-
-@media (max-width: 768px) {
   .desktop-only-nav {
     display: none;
   }
@@ -231,6 +226,13 @@
     display: none;
   }
 
+  .footer-content {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
   .footer-content {
     grid-template-columns: 1fr;
     gap: 2rem;

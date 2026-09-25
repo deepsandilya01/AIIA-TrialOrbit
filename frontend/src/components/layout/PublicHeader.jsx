@@ -27,6 +27,21 @@ const PublicHeader = () => {
     { to: '/contact', label: 'Contact' },
   ];
 
+  const handleNavClick = (e, link) => {
+    if (link.to.includes('#')) {
+      const [path, hash] = link.to.split('#');
+      if (location.pathname === path || (path === '/' && (location.pathname === '/' || location.pathname === ''))) {
+        e.preventDefault();
+        const element = document.getElementById(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          window.history.pushState(null, '', link.to);
+        }
+      }
+    }
+    setMobileMenuOpen(false);
+  };
+
   return (
     <header className="app-header public-header">
       {/* Top Institutional Header */}
@@ -60,7 +75,7 @@ const PublicHeader = () => {
             <img src="/logo.png" alt="AIIA TrialOrbit Logo" className="ctms-logo-img" />
             <div className="flex flex-col">
               <span className="ctms-title">AIIA TrialOrbit</span>
-              <span className="ctms-edition">Clinical Trial Management & Monitoring Platform (CTMS)</span>
+              <span className="ctms-edition">Clinical Research CTMS</span>
             </div>
           </Link>
         </div>
@@ -71,6 +86,7 @@ const PublicHeader = () => {
             <Link
               key={idx}
               to={link.to}
+              onClick={(e) => handleNavClick(e, link)}
               className={location.pathname === link.to ? 'active' : ''}
             >
               {link.label}
@@ -123,19 +139,26 @@ const PublicHeader = () => {
               <Link
                 key={idx}
                 to={link.to}
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={(e) => handleNavClick(e, link)}
                 className={`drawer-link ${location.pathname === link.to ? 'active' : ''}`}
               >
                 {link.label}
               </Link>
             ))}
-            <div className="drawer-footer-action">
+            <div className="drawer-footer-action flex flex-col gap-2">
               <Link
                 to="/login"
                 onClick={() => setMobileMenuOpen(false)}
-                className="btn btn-primary w-full"
+                className="btn btn-primary w-full justify-center"
               >
                 Access CTMS Control Room &rarr;
+              </Link>
+              <Link
+                to="/register"
+                onClick={() => setMobileMenuOpen(false)}
+                className="btn btn-outline w-full justify-center"
+              >
+                Register as Investigator
               </Link>
             </div>
           </div>

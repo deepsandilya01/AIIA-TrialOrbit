@@ -15,10 +15,7 @@ import './PublicPages.css';
 gsap.registerPlugin(ScrollTrigger);
 
 const Home = () => {
-  const [showPreloader, setShowPreloader] = useState(() => {
-    // Show preloader only on initial visit per session
-    return !sessionStorage.getItem('trialorbit_preloader_seen');
-  });
+  const [showPreloader, setShowPreloader] = useState(true);
 
   const heroRef = useRef(null);
   const statsRef = useRef(null);
@@ -28,7 +25,6 @@ const Home = () => {
 
   const handlePreloaderFinish = () => {
     setShowPreloader(false);
-    sessionStorage.setItem('trialorbit_preloader_seen', 'true');
   };
 
   useEffect(() => {
@@ -76,13 +72,14 @@ const Home = () => {
       gsap.from('.lifecycle-step', {
         scrollTrigger: {
           trigger: lifecycleRef.current,
-          start: 'top 80%',
+          start: 'top 88%',
         },
         opacity: 0,
         y: 20,
-        stagger: 0.12,
+        stagger: 0.1,
         duration: 0.5,
-        ease: 'power2.out'
+        ease: 'power2.out',
+        clearProps: 'all'
       });
     });
 
@@ -321,7 +318,7 @@ const Home = () => {
       </section>
 
       {/* 4. CLINICAL TRIAL LIFECYCLE */}
-      <section className="lifecycle-section" id="how-it-works" ref={lifecycleRef}>
+      <section className="lifecycle-section" id="lifecycle" ref={lifecycleRef}>
         <div className="section-header-centered">
           <span className="section-pill">Clinical Workflow</span>
           <h2 className="section-title">The Clinical Trial Lifecycle in TrialOrbit</h2>
