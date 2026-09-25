@@ -100,7 +100,7 @@ const CreateStudy = ({ isOpen, onClose, onStudyCreated }) => {
           {errors.title && <span className="text-xs text-danger mt-1 block">{errors.title}</span>}
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+        <div className="form-grid-2">
           <div>
             <label className="text-xs font-semibold text-secondary uppercase block mb-1">
               Institutional Protocol ID <span className="text-danger">*</span>
@@ -130,7 +130,7 @@ const CreateStudy = ({ isOpen, onClose, onStudyCreated }) => {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+        <div className="form-grid-2">
           <div>
             <label className="text-xs font-semibold text-secondary uppercase block mb-1">
               Principal Investigator (PI) <span className="text-danger">*</span>
@@ -161,7 +161,7 @@ const CreateStudy = ({ isOpen, onClose, onStudyCreated }) => {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+        <div className="form-grid-2">
           <div>
             <label className="text-xs font-semibold text-secondary uppercase block mb-1">
               Target Enrollment Cohort <span className="text-danger">*</span>
@@ -190,7 +190,7 @@ const CreateStudy = ({ isOpen, onClose, onStudyCreated }) => {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+        <div className="form-grid-2">
           <div>
             <label className="text-xs font-semibold text-secondary uppercase block mb-1">
               Planned Start Date <span className="text-danger">*</span>
@@ -216,7 +216,7 @@ const CreateStudy = ({ isOpen, onClose, onStudyCreated }) => {
           </div>
         </div>
 
-        <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '1rem', display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
+        <div className="flex flex-wrap justify-end gap-2 mt-2 pt-3" style={{ borderTop: '1px solid var(--border-color)' }}>
           <Button variant="ghost" onClick={onClose} disabled={isSubmitting}>
             Cancel
           </Button>

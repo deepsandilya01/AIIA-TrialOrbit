@@ -82,8 +82,8 @@ const AuditTrail = () => {
       </div>
 
       <div className="card">
-        <div className="table-controls p-3" style={{ borderBottom: '1px solid var(--border-color)', display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div className="search-bar" style={{ flex: 1, maxWidth: '380px' }}>
+        <div className="table-controls p-3 flex flex-wrap justify-between items-center gap-3" style={{ borderBottom: '1px solid var(--border-color)' }}>
+          <div className="search-bar" style={{ flex: '1 1 240px', maxWidth: '400px' }}>
             <input
               type="text"
               placeholder="Search by User, Modified Entity, or Value..."
@@ -93,12 +93,12 @@ const AuditTrail = () => {
             />
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2" style={{ flex: '0 0 auto' }}>
             <Filter size={15} className="text-muted" />
             <select
               value={actionFilter}
               onChange={(e) => setActionFilter(e.target.value)}
-              style={{ width: '160px' }}
+              style={{ minWidth: '140px', flex: '0 1 auto' }}
             >
               <option value="ALL">All Actions</option>
               <option value="CREATE">CREATE</option>

@@ -66,7 +66,7 @@ const Studies = () => {
           </div>
           <p className="page-subtitle">Centralized oversight of all institutional Ayurvedic and integrative clinical research protocols</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button variant="outline" size="sm" icon={<Download size={14} />} onClick={handleExportList}>
             Export Roster
           </Button>

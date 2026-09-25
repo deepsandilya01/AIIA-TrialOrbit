@@ -13,7 +13,7 @@ const Sidebar = ({ isOpen, onClose }) => {
 
   const navigationSections = [
     {
-      group: 'CORE',
+      group: t('sidebar.core', 'CORE'),
       items: [
         { path: '/dashboard', icon: <LayoutDashboard size={18} />, label: t('general.dashboard', 'Control Room') },
         { path: '/studies', icon: <FlaskConical size={18} />, label: t('general.studies', 'Studies') },
@@ -22,23 +22,23 @@ const Sidebar = ({ isOpen, onClose }) => {
       ]
     },
     {
-      group: 'MONITORING',
+      group: t('sidebar.monitoring', 'MONITORING'),
       items: [
         { path: '/compliance', icon: <ShieldCheck size={18} />, label: t('general.compliance', 'Compliance') },
         { path: '/alerts', icon: <Bell size={18} />, label: t('general.alerts', 'Surveillance Alerts'), badge: 4, badgeVariant: 'warning' },
       ]
     },
     {
-      group: 'SAFETY & COMPLIANCE',
+      group: t('sidebar.safetyCompliance', 'SAFETY & COMPLIANCE'),
       items: [
-        { path: '/safety', icon: <AlertTriangle size={18} />, label: 'AE / SAE Safety', badge: 2, badgeVariant: 'danger' },
+        { path: '/safety', icon: <AlertTriangle size={18} />, label: t('general.safety', 'AE / SAE Safety'), badge: 2, badgeVariant: 'danger' },
         { path: '/audit', icon: <History size={18} />, label: t('general.auditTrail', 'CFR 21 Audit Trail') },
       ]
     },
     {
-      group: 'REPORTING',
+      group: t('sidebar.reporting', 'REPORTING'),
       items: [
-        { path: '/reports', icon: <FileText size={18} />, label: 'Reports & Quality' },
+        { path: '/reports', icon: <FileText size={18} />, label: t('general.reports', 'Reports & Quality') },
       ]
     }
   ];

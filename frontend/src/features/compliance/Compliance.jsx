@@ -38,7 +38,7 @@ const Compliance = () => {
     <div className="page-container">
       <div className="page-header">
         <div>
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
             <h1 className="page-title">Regulatory & Compliance Milestones</h1>
             <DemoBadge />
           </div>
@@ -134,7 +134,7 @@ const Compliance = () => {
             />
           </div>
 
-          <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '1rem', display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+          <div className="flex flex-wrap justify-end gap-2 mt-2 pt-3" style={{ borderTop: '1px solid var(--border-color)' }}>
             <Button variant="ghost" onClick={() => setIsUploadOpen(false)}>
               Cancel
             </Button>

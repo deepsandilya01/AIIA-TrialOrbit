@@ -51,19 +51,19 @@ const Alerts = () => {
     <div className="page-container">
       <div className="page-header">
         <div>
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
             <h1 className="page-title">Automated Monitoring Alerts</h1>
             <DemoBadge />
           </div>
           <p className="page-subtitle">Real-time surveillance triggers across protocol compliance, recruitment velocity, and safety deadlines</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <label className="text-xs font-semibold flex items-center gap-2 cursor-pointer">
             <input 
               type="checkbox" 
               checked={showResolved} 
               onChange={(e) => setShowResolved(e.target.checked)} 
-              style={{ width: '16px', height: '16px' }}
+              style={{ width: '16px', height: '16px', flexShrink: 0 }}
             />
             Show Acknowledged Signals
           </label>

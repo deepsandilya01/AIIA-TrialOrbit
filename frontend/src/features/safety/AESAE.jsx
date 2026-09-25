@@ -65,13 +65,13 @@ const AESAE = () => {
     <div className="page-container">
       <div className="page-header">
         <div>
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
             <h1 className="page-title">Safety & Pharmacovigilance</h1>
             <DemoBadge />
           </div>
           <p className="page-subtitle">Real-time Adverse Event (AE) and Serious Adverse Event (SAE) surveillance under CDSCO & GCP guidelines</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button variant="outline" size="sm" icon={<Download size={14} />} onClick={handleExportCIOMS}>
             CIOMS Line Listing
           </Button>

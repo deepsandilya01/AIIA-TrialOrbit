@@ -4,14 +4,16 @@
   height: 100%;
 }
 
-.compliance-table th, .compliance-table td {
-  padding: 0.875rem 1rem;
+.compliance-table {
+  width: 100%;
+  min-width: 460px; /* triggers scroll before layout breaks */
 }
 
-.font-medium {
+.compliance-table th,
+.compliance-table td {
+  padding: 0.75rem 0.9rem;
+}
+
+.compliance-table td:first-child {
   font-weight: 500;
-}
-
-.text-muted {
-  color: var(--text-secondary);
 }

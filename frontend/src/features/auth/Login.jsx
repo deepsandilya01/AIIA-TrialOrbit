@@ -59,18 +59,12 @@ const Login = () => {
           {/* Official Logos */}
           <div className="login-logo-container">
             <Link to="/" title="Return to AIIA TrialOrbit Home" style={{ textDecoration: 'none' }}>
-              <img 
-                src="/logo.png" 
-                alt="AIIA TrialOrbit Crest" 
-                className="login-brand-logo" 
+              <img
+                src="/logo.png"
+                alt="AIIA TrialOrbit Crest"
+                className="login-brand-logo"
               />
             </Link>
-            <img 
-              src="/gov.png" 
-              alt="Ministry of Ayush • Govt. of India" 
-              className="login-gov-logo"
-              title="Ministry of Ayush • Government of India"
-            />
           </div>
 
           <h1>AIIA TrialOrbit</h1>

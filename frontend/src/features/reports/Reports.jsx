@@ -21,18 +21,18 @@ const Reports = () => {
     <div className="page-container">
       <div className="page-header">
         <div>
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
             <h1 className="page-title">Clinical Trial Reports & Quality Analytics</h1>
             <DemoBadge />
           </div>
           <p className="page-subtitle">Standardized regulatory exports, GCP compliance scorecards, protocol deviations, and query aging analytics</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <span className="text-xs text-muted font-semibold">Format:</span>
           <select 
             value={selectedFormat} 
             onChange={(e) => setSelectedFormat(e.target.value)}
-            style={{ width: '100px', padding: '6px 10px', fontSize: '0.8rem' }}
+            style={{ minWidth: '90px', padding: '6px 10px', fontSize: '0.8rem' }}
           >
             <option value="PDF">PDF</option>
             <option value="CSV">CSV</option>
@@ -43,7 +43,7 @@ const Reports = () => {
 
       {/* Reports Catalog Grid */}
       <h2 style={{ fontSize: '1.1rem', marginBottom: '0.85rem' }}>Standardized Regulatory Report Dossiers</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: '1rem', marginBottom: '2rem' }}>
         {reportsCatalog.map(report => (
           <div key={report.id} className="card p-4 flex flex-col justify-between" style={{ minHeight: '160px' }}>
             <div>
@@ -112,7 +112,7 @@ const Reports = () => {
       </div>
 
       {/* Data Quality & Query Aging */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.25rem' }}>
+      <div className="charts-grid-2">
         <div className="card p-4">
           <h3 className="card-title mb-3"><ShieldCheck size={18} className="text-success" /> Trial Data Quality Index</h3>
           <p className="text-xs text-secondary mb-4">Automated electronic CRF (eCRF) edit checks, range verifications, and cross-form consistency scoring.</p>
@@ -134,7 +134,7 @@ const Reports = () => {
         <div className="card p-4">
           <h3 className="card-title mb-3"><Clock size={18} className="text-primary" /> Clinical Query Resolution Metrics</h3>
           <p className="text-xs text-secondary mb-4">Average turnaround time from CRA query generation to site investigator resolution.</p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', textAlign: 'center' }}>
+          <div className="form-grid-2" style={{ textAlign: 'center' }}>
             <div className="p-3 border rounded bg-secondary">
               <span className="text-xs text-muted uppercase font-semibold">Active Queries</span>
               <div className="text-xl font-bold text-primary mt-1">16</div>

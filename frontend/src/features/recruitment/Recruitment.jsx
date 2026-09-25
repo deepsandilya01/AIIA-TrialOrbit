@@ -27,7 +27,7 @@ const Recruitment = () => {
     <div className="page-container">
       <div className="page-header">
         <div>
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
             <h1 className="page-title">Participant Recruitment & Screening Velocity</h1>
             <DemoBadge />
           </div>
@@ -38,7 +38,7 @@ const Recruitment = () => {
         </Button>
       </div>
 
-      <div className="kpi-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+      <div className="kpi-grid">
         <StatCard 
           title="Total Screened" 
           value="1,850" 
@@ -69,7 +69,7 @@ const Recruitment = () => {
         />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: '1.25rem', marginBottom: '1.5rem' }}>
+      <div className="charts-grid-2 mb-4">
         <div className="card">
           <div className="card-header">
             <h3 className="card-title">Enrollment vs Protocol Target (Cumulative)</h3>
@@ -121,7 +121,7 @@ const Recruitment = () => {
           <span className="badge badge-gold">Analytical Forecast</span>
         </div>
         <div className="card-body">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
+          <div className="form-grid-2">
             <div>
               <p className="font-semibold text-danger mb-1 flex items-center gap-1">
                 <AlertTriangle size={15} /> Site S-05 (AIIA Goa) Latency Warning

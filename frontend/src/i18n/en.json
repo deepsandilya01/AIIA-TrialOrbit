@@ -286,5 +286,20 @@
     "targetParticipants": "Target Participants",
     "enterNumber": "Enter number",
     "createStudyDescription": "Fill in the details to register a new clinical trial"
+  },
+  "sidebar": {
+    "core": "CORE MODULES",
+    "monitoring": "MONITORING & SURVEILLANCE",
+    "safetyCompliance": "SAFETY & REGULATORY",
+    "reporting": "REPORTS & ANALYTICS"
+  },
+  "header": {
+    "platform": "Platform",
+    "lifecycle": "Lifecycle",
+    "about": "About",
+    "contact": "Contact",
+    "login": "Login to CTMS",
+    "register": "Register as Investigator",
+    "accessControlRoom": "Access CTMS Control Room"
   }
 }

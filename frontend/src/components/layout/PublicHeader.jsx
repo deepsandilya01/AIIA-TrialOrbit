@@ -12,19 +12,19 @@ const PublicHeader = () => {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const changeLanguage = (e) => {
-    const lang = e.target.value;
-    i18n.changeLanguage(lang);
-    localStorage.setItem('ctms-language', lang);
+  const toggleLanguage = () => {
+    const nextLang = (i18n.language === 'hi' || i18n.language?.startsWith('hi')) ? 'en' : 'hi';
+    i18n.changeLanguage(nextLang);
+    localStorage.setItem('ctms-language', nextLang);
   };
 
   const navLinks = [
-    { to: '/', label: 'Home' },
-    { to: '/#capabilities', label: 'Platform' },
-    { to: '/#lifecycle', label: 'Lifecycle' },
-    { to: '/public-studies', label: 'Studies' },
-    { to: '/about', label: 'About' },
-    { to: '/contact', label: 'Contact' },
+    { to: '/', label: t('general.home', 'Home') },
+    { to: '/#capabilities', label: t('header.platform', 'Platform') },
+    { to: '/#lifecycle', label: t('header.lifecycle', 'Lifecycle') },
+    { to: '/public-studies', label: t('general.studies', 'Studies') },
+    { to: '/about', label: t('header.about', 'About') },
+    { to: '/contact', label: t('header.contact', 'Contact') },
   ];
 
   const handleNavClick = (e, link) => {
@@ -95,17 +95,15 @@ const PublicHeader = () => {
         </nav>
 
         <div className="nav-user">
-          <div className="language-selector">
-            <Globe size={15} className="text-muted" />
-            <select
-              value={i18n.language || 'en'}
-              onChange={changeLanguage}
-              aria-label="Language selection"
-            >
-              <option value="en">EN</option>
-              <option value="hi">हिन्दी</option>
-            </select>
-          </div>
+          <button
+            className="language-selector-btn"
+            onClick={toggleLanguage}
+            title={i18n.language?.startsWith('hi') ? 'Switch to English' : 'हिन्दी में बदलें'}
+            aria-label="Language switch"
+          >
+            <Globe size={14} className="text-muted" />
+            <span className="lang-label">{i18n.language?.startsWith('hi') ? 'HI' : 'EN'}</span>
+          </button>
 
           <button
             className="icon-btn theme-toggle"
@@ -117,7 +115,7 @@ const PublicHeader = () => {
           </button>
 
           <Link to="/login" className="login-button">
-            Login to CTMS
+            {t('header.login', 'Login to CTMS')}
           </Link>
 
           {/* Mobile Menu Trigger */}
@@ -151,14 +149,14 @@ const PublicHeader = () => {
                 onClick={() => setMobileMenuOpen(false)}
                 className="btn btn-primary w-full justify-center"
               >
-                Access CTMS Control Room &rarr;
+                {t('header.accessControlRoom', 'Access CTMS Control Room')} &rarr;
               </Link>
               <Link
                 to="/register"
                 onClick={() => setMobileMenuOpen(false)}
                 className="btn btn-outline w-full justify-center"
               >
-                Register as Investigator
+                {t('header.register', 'Register as Investigator')}
               </Link>
             </div>
           </div>

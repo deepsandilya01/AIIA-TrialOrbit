@@ -55,13 +55,13 @@ const Sites = () => {
     <div className="page-container">
       <div className="page-header">
         <div>
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
             <h1 className="page-title">Participating Clinical Trial Sites</h1>
             <DemoBadge />
           </div>
           <p className="page-subtitle">Governance, activation readiness, and recruitment progress across multi-centre research sites</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button variant="outline" size="sm" icon={<Download size={14} />} onClick={() => success('Exported site network directory.')}>
             Export Directory
           </Button>
@@ -73,7 +73,7 @@ const Sites = () => {
 
       <div className="card">
         <div className="table-controls p-3" style={{ borderBottom: '1px solid var(--border-color)' }}>
-          <div className="search-bar" style={{ maxWidth: '400px' }}>
+          <div className="search-bar" style={{ maxWidth: '400px', width: '100%' }}>
             <Search size={18} className="search-icon" />
             <input
               type="text"
@@ -152,7 +152,7 @@ const Sites = () => {
             />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <div className="form-grid-2">
             <div>
               <label className="text-xs font-semibold text-secondary uppercase block mb-1">
                 City / State
@@ -191,7 +191,7 @@ const Sites = () => {
             />
           </div>
 
-          <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '1rem', display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+          <div className="flex flex-wrap justify-end gap-2 mt-2 pt-3" style={{ borderTop: '1px solid var(--border-color)' }}>
             <Button variant="ghost" onClick={() => setIsAddOpen(false)}>
               Cancel
             </Button>

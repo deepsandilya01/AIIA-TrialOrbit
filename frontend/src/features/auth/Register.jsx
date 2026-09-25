@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { 
-  ShieldCheck, 
-  Lock, 
-  ArrowRight, 
-  ArrowLeft, 
-  Building2, 
-  Award, 
-  CheckCircle2, 
-  Stethoscope, 
-  UserPlus, 
-  FileCheck 
+import {
+  ShieldCheck,
+  Lock,
+  ArrowRight,
+  ArrowLeft,
+  Building2,
+  Award,
+  CheckCircle2,
+  Stethoscope,
+  UserPlus,
+  FileCheck
 } from 'lucide-react';
 import Button from '../../components/common/Button';
 import DemoBadge from '../../components/common/DemoBadge';
@@ -104,7 +104,7 @@ const Register = () => {
 
     setTimeout(() => {
       const displayName = `${formData.title} ${formData.fullName.trim()}`;
-      
+
       // Auto login in demo mode
       login({
         email: formData.email,
@@ -132,18 +132,12 @@ const Register = () => {
           {/* Official Logos */}
           <div className="login-logo-container">
             <Link to="/" title="Return to AIIA TrialOrbit Home" style={{ textDecoration: 'none' }}>
-              <img 
-                src="/logo.png" 
-                alt="AIIA TrialOrbit Crest" 
-                className="login-brand-logo" 
+              <img
+                src="/logo.png"
+                alt="AIIA TrialOrbit Crest"
+                className="login-brand-logo"
               />
             </Link>
-            <img 
-              src="/gov.png" 
-              alt="Ministry of Ayush • Govt. of India" 
-              className="login-gov-logo"
-              title="Ministry of Ayush • Government of India"
-            />
           </div>
 
           <h1>AIIA TrialOrbit</h1>
@@ -352,9 +346,9 @@ const Register = () => {
               </label>
             </div>
 
-            <Button 
-              type="submit" 
-              variant="primary" 
+            <Button
+              type="submit"
+              variant="primary"
               className="login-btn w-full justify-center"
               disabled={isSubmitting}
             >

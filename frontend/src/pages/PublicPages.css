@@ -799,17 +799,14 @@
 }
 
 /* Responsive Media Queries */
+/* Responsive Media Queries */
 @media (max-width: 1024px) {
   .hero-title {
-    font-size: 2.6rem;
+    font-size: 2.5rem;
   }
 
   .lifecycle-grid {
-    flex-wrap: wrap;
-  }
-
-  .lifecycle-connector {
-    display: none;
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .engine-steps-grid {
@@ -819,35 +816,292 @@
   .standards-grid {
     grid-template-columns: 1fr;
   }
+
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
   .hero-section {
-    padding: 3rem 1rem;
+    padding: 2.25rem 1rem 2rem;
+  }
+
+  .hero-eyebrow {
+    padding: 4px 10px;
+    margin-bottom: 1.25rem;
+  }
+
+  .eyebrow-inst {
+    display: none;
   }
 
   .hero-title {
-    font-size: 2.1rem;
+    font-size: 1.75rem !important;
+    line-height: 1.22 !important;
+    margin-bottom: 1rem !important;
   }
 
   .hero-subtitle {
-    font-size: 0.95rem;
+    font-size: 0.92rem !important;
+    line-height: 1.55 !important;
+    margin-bottom: 1.5rem !important;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto 2rem;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.92rem;
+  }
+
+  /* Mockup Frame */
+  .hero-mockup-wrapper {
+    margin-top: 0.5rem;
+    perspective: none;
+  }
+
+  .mockup-frame {
+    border-radius: var(--border-radius-md);
+    max-width: 100%;
+  }
+
+  .mockup-topbar {
+    padding: 6px 10px;
+  }
+
+  .mockup-address {
+    display: none !important;
+  }
+
+  .mockup-body {
+    padding: 0.85rem;
+    gap: 0.85rem;
   }
 
   .mockup-kpis {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.6rem !important;
+  }
+
+  .mini-kpi {
+    padding: 0.6rem 0.65rem !important;
+  }
+
+  .mini-kpi .label {
+    font-size: 0.6rem !important;
+  }
+
+  .mini-kpi .val {
+    font-size: 1.05rem !important;
+  }
+
+  .mini-kpi .trend {
+    font-size: 0.62rem !important;
   }
 
   .mockup-preview-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+  }
+
+  .mockup-chart-box, .mockup-alerts-box {
+    padding: 0.75rem !important;
+  }
+
+  .fake-alert-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  /* Stats Section */
+  .stats-section {
+    padding: 2.5rem 1rem;
+  }
+
+  .stats-container {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1.5rem 1rem !important;
+  }
+
+  .stat-card-item .stat-number {
+    font-size: 2.25rem !important;
+  }
+
+  .stat-card-item .stat-label {
+    font-size: 0.88rem !important;
+  }
+
+  /* Features */
+  .features-section {
+    padding: 3rem 1rem;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .capability-card {
+    padding: 1.25rem !important;
+  }
+
+  .section-header-centered {
+    margin-bottom: 2rem;
   }
 
   .section-title {
-    font-size: 1.7rem;
+    font-size: 1.55rem !important;
+  }
+
+  .section-subtitle {
+    font-size: 0.9rem !important;
+  }
+
+  /* Lifecycle */
+  .lifecycle-section {
+    padding: 3rem 1rem;
+  }
+
+  .lifecycle-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.85rem !important;
+  }
+
+  .lifecycle-step {
+    flex-direction: row;
+    text-align: left;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem !important;
+  }
+
+  .lifecycle-num {
+    width: 36px;
+    height: 36px;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    margin-bottom: 0;
+  }
+
+  .lifecycle-step h4 {
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .lifecycle-step p {
+    font-size: 0.8rem;
+  }
+
+  /* Monitoring Engine */
+  .monitoring-engine-section {
+    padding: 3rem 1rem;
+  }
+
+  .engine-container {
+    padding: 1.25rem !important;
+  }
+
+  .engine-header {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 1.25rem;
+  }
+
+  .engine-steps-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  /* Standards */
+  .standards-section {
+    padding: 3rem 1rem;
+  }
+
+  .standards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .standard-item {
+    padding: 1.25rem !important;
+  }
+
+  /* RBAC */
+  .rbac-section {
+    padding: 3rem 1rem;
+  }
+
+  .rbac-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  /* Studies Preview */
+  .studies-preview-section {
+    padding: 3rem 1rem;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .studies-preview-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  /* CTA Banner */
+  .cta-banner-section {
+    padding: 3rem 1rem;
+  }
+
+  .cta-banner {
+    padding: 2rem 1.25rem !important;
   }
 
   .cta-content h2 {
-    font-size: 1.7rem;
+    font-size: 1.55rem !important;
+  }
+
+  .cta-content p {
+    font-size: 0.92rem !important;
+  }
+
+  .cta-buttons {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .cta-buttons .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 1.5rem !important;
+  }
+
+  .mockup-kpis {
+    grid-template-columns: 1fr !important;
+  }
+
+  .stats-container {
+    grid-template-columns: 1fr !important;
+    gap: 1.25rem !important;
   }
 }
 
@@ -1083,6 +1337,40 @@
 
   .public-page .page-title {
     font-size: 1.85rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .contact-info,
+  .contact-form-container {
+    padding: 1.25rem !important;
+  }
+
+  .studies-controls {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .status-filter {
+    width: 100% !important;
+  }
+
+  .study-list-card {
+    padding: 1.25rem !important;
+  }
+
+  .study-list-details {
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+  }
+
+  .public-page .page-title {
+    font-size: 1.55rem;
+  }
+
+  .public-page .page-subtitle {
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
   }
 }
 

@@ -9,10 +9,13 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in (mock)
-    const storedUser = sessionStorage.getItem('ctms_user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    try {
+      const storedUser = sessionStorage.getItem('ctms_user');
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+    } catch (e) {
+      sessionStorage.removeItem('ctms_user');
     }
     setLoading(false);
   }, []);

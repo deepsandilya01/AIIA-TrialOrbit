@@ -49,9 +49,9 @@ const Dashboard = () => {
       {/* Dashboard Top Header */}
       <div className="dashboard-header">
         <div>
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
             <h1 className="page-title">{t('dashboard.clinicalResearchDashboard', 'Clinical Trial Control Room')}</h1>
-            <DemoBadge />
+            <DemoBadge text="Synthetic Demo Mode" />
           </div>
           <p className="page-subtitle">
             <strong className="text-primary font-semibold">MONITOR → IDENTIFY → ACT:</strong> Real-time clinical trial surveillance across multi-centre Ayurvedic & integrative research protocols
@@ -61,10 +61,10 @@ const Dashboard = () => {
         <div className="dashboard-meta">
           <div className="meta-item">
             <Calendar size={15} />
-            <span>23 September 2026</span>
+            <span>{new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
           </div>
           <div className="meta-time flex items-center gap-1">
-            <Clock size={12} /> Live Sync: 14:32 IST
+            <Clock size={12} /> Live Sync: {new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })} IST
           </div>
         </div>
       </div>
@@ -72,7 +72,7 @@ const Dashboard = () => {
       {/* Primary KPI Grid */}
       <div className="kpi-grid">
         <StatCard 
-          title="Active Protocols" 
+          title={t('dashboard.activeStudies', 'Active Protocols')}
           value="12" 
           subtitle="of 18 institutional studies"
           trend={{ value: '+2 new', isPositive: true }}
@@ -80,7 +80,7 @@ const Dashboard = () => {
           linkTo="/studies"
         />
         <StatCard 
-          title="Participating Sites" 
+          title={t('dashboard.activeSites', 'Participating Sites')}
           value="34" 
           subtitle="of 42 total accredited facilities"
           status="5 Pending Verification"
@@ -88,7 +88,7 @@ const Dashboard = () => {
           linkTo="/sites"
         />
         <StatCard 
-          title="Enrolled Subjects" 
+          title={t('dashboard.totalParticipants', 'Enrolled Subjects')}
           value="1,240" 
           subtitle="67% screening conversion rate"
           trend={{ value: '+12.4%', isPositive: true }}
@@ -96,14 +96,14 @@ const Dashboard = () => {
           linkTo="/recruitment"
         />
         <StatCard 
-          title="Protocol Compliance" 
+          title={t('dashboard.complianceRate', 'Protocol Compliance')}
           value="92.4%" 
           status="Threshold Met (ICH-GCP)"
           icon={<ShieldCheck size={20} />}
           linkTo="/compliance"
         />
         <StatCard 
-          title="Pending SAE Reviews" 
+          title={t('dashboard.pendingSaeReview', 'Pending SAE Reviews')}
           value="2" 
           status="Requires PV Action <24h"
           icon={<AlertTriangle size={20} />}

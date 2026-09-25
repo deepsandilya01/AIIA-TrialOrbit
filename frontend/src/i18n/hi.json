@@ -286,5 +286,20 @@
     "targetParticipants": "लक्षित प्रतिभागी",
     "enterNumber": "संख्या दर्ज करें",
     "createStudyDescription": "नए क्लीनिकल ट्रायल को पंजीकृत करने के लिए विवरण भरें"
+  },
+  "sidebar": {
+    "core": "मुख्य मॉड्यूल",
+    "monitoring": "निगरानी एवं अलर्ट",
+    "safetyCompliance": "सुरक्षा एवं अनुपालन",
+    "reporting": "रिपोर्ट्स एवं एनालिटिक्स"
+  },
+  "header": {
+    "platform": "प्लेटफ़ॉर्म",
+    "lifecycle": "लाइफ़साइकिल",
+    "about": "परिचय",
+    "contact": "संपर्क",
+    "login": "CTMS लॉगिन",
+    "register": "अन्वेषक पंजीकरण",
+    "accessControlRoom": "CTMS कंट्रोल रूम एक्सेस करें"
   }
 }

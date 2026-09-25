@@ -299,7 +299,7 @@ const StudyDetails = () => {
             <h3 className="card-title"><Users size={18} /> Cohort Progression & Screening Ratio</h3>
           </div>
           <div className="card-body">
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
+            <div className="recruitment-stats-grid">
               <div className="p-3 border rounded">
                 <span className="text-xs text-muted">Total Screened</span>
                 <div className="text-xl font-bold">{Math.round(study.participants * 1.45)}</div>

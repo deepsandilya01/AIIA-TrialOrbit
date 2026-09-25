@@ -38,7 +38,7 @@ const SiteDetails = () => {
                 <MapPin size={15} /> {site.location} • Activated: {site.activationDate || '2025-01-10'}
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <StatusBadge status={site.status} pulse />
               <Button variant="outline" size="sm" icon={<Download size={14} />} onClick={() => success(`Exported audit dossier for ${site.name}.`)}>
                 Site Dossier
@@ -46,7 +46,7 @@ const SiteDetails = () => {
             </div>
           </div>
           
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginTop: '1.5rem' }}>
+          <div className="kpi-grid" style={{ marginTop: '1.5rem', marginBottom: 0 }}>
             <div className="p-3 border rounded bg-secondary">
               <div className="text-muted text-xs mb-1 font-semibold uppercase">Principal Investigator</div>
               <div className="font-semibold text-primary">{site.pi}</div>

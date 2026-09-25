@@ -1,0 +1,290 @@
+import React, { useState } from 'react';
+import {
+  User, Mail, Phone, Building2, Shield, Edit3, Save, X,
+  Camera, Star, Clock, CheckCircle, Activity, Lock, Eye, EyeOff, Key
+} from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
+import Button from '../../components/common/Button';
+import DemoBadge from '../../components/common/DemoBadge';
+import './Profile.css';
+
+const ROLE_META = {
+  admin:         { label: 'System Administrator', color: '#7c3aed', bg: 'rgba(124,58,237,0.1)' },
+  investigator:  { label: 'Principal Investigator', color: '#0d9488', bg: 'rgba(13,148,136,0.1)' },
+  monitor:       { label: 'CRA / Monitor', color: '#2563eb', bg: 'rgba(37,99,235,0.1)' },
+  coordinator:   { label: 'Trial Coordinator', color: '#d97706', bg: 'rgba(217,119,6,0.1)' },
+};
+
+const DEMO_PROFILE = {
+  fullName:     'Dr. Arjun Sharma',
+  email:        'arjun.sharma@aiia-ctms.in',
+  phone:        '+91 98765 43210',
+  institution:  'AIIMS New Delhi – Department of Oncology',
+  department:   'Clinical Oncology',
+  designation:  'Principal Investigator',
+  gcp:          'GCP-2024-IND-77821',
+  joined:       '12 Mar 2024',
+  lastLogin:    'Today, 09:42 AM',
+  studies:      7,
+  completedProcedures: 142,
+  avgCompliance: 96.4,
+};
+
+const ACTIVITY_FEED = [
+  { id: 1, action: 'Updated recruitment status',   entity: 'ONCO-2024-B Phase II', time: '2h ago',    color: '#2563eb' },
+  { id: 2, action: 'Uploaded SAE document',        entity: 'Patient #PT-0045',     time: '5h ago',    color: '#d97706' },
+  { id: 3, action: 'Approved protocol deviation',  entity: 'CARDIO-MULTI-01',      time: 'Yesterday', color: '#059669' },
+  { id: 4, action: 'Generated CTRI report',        entity: 'NEURO-PHASE3-2024',    time: '2 days ago',color: '#7c3aed' },
+  { id: 5, action: 'Verified site activation',     entity: 'Site – Apollo Chennai', time: '3 days ago',color: '#0d9488' },
+];
+
+const Profile = () => {
+  const { user } = useAuth();
+  const { success, error: showError } = useToast();
+  const roleMeta = ROLE_META[user?.role] || ROLE_META.investigator;
+
+  const [editMode, setEditMode] = useState(false);
+  const [formData, setFormData] = useState({ ...DEMO_PROFILE });
+  const [pwMode, setPwMode] = useState(false);
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [pw, setPw] = useState({ current: '', newPw: '', confirm: '' });
+
+  const handleSave = () => {
+    setEditMode(false);
+    success('Profile updated successfully. Changes saved to CTMS records.');
+  };
+
+  const handleCancel = () => {
+    setFormData({ ...DEMO_PROFILE });
+    setEditMode(false);
+  };
+
+  const handlePwSave = () => {
+    if (!pw.current) { showError('Please enter your current password.'); return; }
+    if (pw.newPw.length < 8) { showError('New password must be at least 8 characters.'); return; }
+    if (pw.newPw !== pw.confirm) { showError('Passwords do not match.'); return; }
+    setPw({ current: '', newPw: '', confirm: '' });
+    setPwMode(false);
+    success('Password changed successfully. You will be asked to login again on next session.');
+  };
+
+  return (
+    <div className="page-container">
+      {/* Header */}
+      <div className="page-header">
+        <div>
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
+            <h1 className="page-title">My Profile</h1>
+            <DemoBadge />
+          </div>
+          <p className="page-subtitle">Manage your account information, credentials, and activity history</p>
+        </div>
+        {!editMode ? (
+          <Button variant="outline" size="sm" icon={<Edit3 size={14} />} onClick={() => setEditMode(true)}>
+            Edit Profile
+          </Button>
+        ) : (
+          <div className="flex gap-2">
+            <Button variant="primary" size="sm" icon={<Save size={14} />} onClick={handleSave}>Save</Button>
+            <Button variant="ghost" size="sm" icon={<X size={14} />} onClick={handleCancel}>Cancel</Button>
+          </div>
+        )}
+      </div>
+
+      <div className="profile-grid">
+        {/* ─── LEFT COLUMN ─── */}
+        <div className="profile-left">
+          {/* Avatar Card */}
+          <div className="card profile-avatar-card">
+            <div className="profile-avatar-wrap">
+              <div className="profile-avatar-ring" style={{ borderColor: roleMeta.color }}>
+                <div className="profile-avatar" style={{ background: `linear-gradient(135deg, ${roleMeta.color}, ${roleMeta.color}cc)` }}>
+                  <span>{formData.fullName.split(' ').map(w => w[0]).join('').slice(0, 2)}</span>
+                </div>
+              </div>
+              <button className="profile-avatar-edit" title="Change photo">
+                <Camera size={14} />
+              </button>
+            </div>
+            <h2 className="profile-name">{formData.fullName}</h2>
+            <div className="profile-role-badge" style={{ color: roleMeta.color, background: roleMeta.bg }}>
+              <Shield size={12} />
+              <span>{roleMeta.label}</span>
+            </div>
+            <p className="profile-institution">{formData.institution}</p>
+            <div className="profile-gcp">
+              <Star size={12} />
+              <span>GCP ID: {formData.gcp}</span>
+            </div>
+            <div className="profile-meta-row">
+              <Clock size={12} />
+              <span>Member since {formData.joined}</span>
+            </div>
+            <div className="profile-meta-row">
+              <Activity size={12} />
+              <span>Last login: {formData.lastLogin}</span>
+            </div>
+          </div>
+
+          {/* Stats Card */}
+          <div className="card p-4">
+            <h3 className="card-title mb-3" style={{ fontSize: '0.9rem' }}>
+              <CheckCircle size={16} style={{ color: '#059669' }} />
+              Performance Summary
+            </h3>
+            <div className="profile-stats-grid">
+              <div className="profile-stat">
+                <span className="profile-stat-value" style={{ color: '#2563eb' }}>{formData.studies}</span>
+                <span className="profile-stat-label">Active Studies</span>
+              </div>
+              <div className="profile-stat">
+                <span className="profile-stat-value" style={{ color: '#059669' }}>{formData.completedProcedures}</span>
+                <span className="profile-stat-label">Procedures</span>
+              </div>
+              <div className="profile-stat">
+                <span className="profile-stat-value" style={{ color: '#d97706' }}>{formData.avgCompliance}%</span>
+                <span className="profile-stat-label">Compliance</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ─── RIGHT COLUMN ─── */}
+        <div className="profile-right">
+          {/* Personal Info Card */}
+          <div className="card">
+            <div className="card-header">
+              <h3 className="card-title"><User size={16} /> Personal Information</h3>
+              {editMode && <span className="profile-editing-badge">Editing</span>}
+            </div>
+            <div className="card-body">
+              <div className="profile-form-grid">
+                <div className="profile-field">
+                  <label className="profile-label">Full Name</label>
+                  {editMode ? (
+                    <input value={formData.fullName} onChange={e => setFormData(p => ({ ...p, fullName: e.target.value }))} />
+                  ) : (
+                    <div className="profile-value"><User size={14} />{formData.fullName}</div>
+                  )}
+                </div>
+                <div className="profile-field">
+                  <label className="profile-label">Email Address</label>
+                  {editMode ? (
+                    <input type="email" value={formData.email} onChange={e => setFormData(p => ({ ...p, email: e.target.value }))} />
+                  ) : (
+                    <div className="profile-value"><Mail size={14} />{formData.email}</div>
+                  )}
+                </div>
+                <div className="profile-field">
+                  <label className="profile-label">Phone Number</label>
+                  {editMode ? (
+                    <input type="tel" value={formData.phone} onChange={e => setFormData(p => ({ ...p, phone: e.target.value }))} />
+                  ) : (
+                    <div className="profile-value"><Phone size={14} />{formData.phone}</div>
+                  )}
+                </div>
+                <div className="profile-field">
+                  <label className="profile-label">Institution / Hospital</label>
+                  {editMode ? (
+                    <input value={formData.institution} onChange={e => setFormData(p => ({ ...p, institution: e.target.value }))} />
+                  ) : (
+                    <div className="profile-value"><Building2 size={14} />{formData.institution}</div>
+                  )}
+                </div>
+                <div className="profile-field">
+                  <label className="profile-label">Department</label>
+                  {editMode ? (
+                    <input value={formData.department} onChange={e => setFormData(p => ({ ...p, department: e.target.value }))} />
+                  ) : (
+                    <div className="profile-value">{formData.department}</div>
+                  )}
+                </div>
+                <div className="profile-field">
+                  <label className="profile-label">Designation</label>
+                  {editMode ? (
+                    <input value={formData.designation} onChange={e => setFormData(p => ({ ...p, designation: e.target.value }))} />
+                  ) : (
+                    <div className="profile-value">{formData.designation}</div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Password Change Card */}
+          <div className="card">
+            <div className="card-header">
+              <h3 className="card-title"><Lock size={16} /> Security &amp; Password</h3>
+              {!pwMode && (
+                <Button variant="outline" size="sm" icon={<Key size={13} />} onClick={() => setPwMode(true)}>
+                  Change Password
+                </Button>
+              )}
+            </div>
+            {pwMode ? (
+              <div className="card-body">
+                <div className="profile-form-grid">
+                  <div className="profile-field">
+                    <label className="profile-label">Current Password</label>
+                    <div className="profile-pw-wrap">
+                      <input type={showCurrent ? 'text' : 'password'} value={pw.current} onChange={e => setPw(p => ({ ...p, current: e.target.value }))} placeholder="Enter current password" />
+                      <button className="profile-pw-eye" onClick={() => setShowCurrent(v => !v)}>{showCurrent ? <EyeOff size={15} /> : <Eye size={15} />}</button>
+                    </div>
+                  </div>
+                  <div className="profile-field">
+                    <label className="profile-label">New Password</label>
+                    <div className="profile-pw-wrap">
+                      <input type={showNew ? 'text' : 'password'} value={pw.newPw} onChange={e => setPw(p => ({ ...p, newPw: e.target.value }))} placeholder="Min. 8 characters" />
+                      <button className="profile-pw-eye" onClick={() => setShowNew(v => !v)}>{showNew ? <EyeOff size={15} /> : <Eye size={15} />}</button>
+                    </div>
+                  </div>
+                  <div className="profile-field">
+                    <label className="profile-label">Confirm New Password</label>
+                    <div className="profile-pw-wrap">
+                      <input type={showConfirm ? 'text' : 'password'} value={pw.confirm} onChange={e => setPw(p => ({ ...p, confirm: e.target.value }))} placeholder="Re-enter new password" />
+                      <button className="profile-pw-eye" onClick={() => setShowConfirm(v => !v)}>{showConfirm ? <EyeOff size={15} /> : <Eye size={15} />}</button>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-2 mt-4">
+                  <Button variant="primary" size="sm" onClick={handlePwSave}>Update Password</Button>
+                  <Button variant="ghost" size="sm" onClick={() => { setPwMode(false); setPw({ current: '', newPw: '', confirm: '' }); }}>Cancel</Button>
+                </div>
+              </div>
+            ) : (
+              <div className="card-body">
+                <p className="text-sm text-muted">Your password was last changed on <strong>15 Sep 2024</strong>. Passwords expire every 90 days per ICH E6(R3) policy.</p>
+              </div>
+            )}
+          </div>
+
+          {/* Recent Activity */}
+          <div className="card">
+            <div className="card-header">
+              <h3 className="card-title"><Activity size={16} /> Recent Activity</h3>
+            </div>
+            <div className="card-body p-0">
+              <ul className="profile-activity-list">
+                {ACTIVITY_FEED.map(item => (
+                  <li key={item.id} className="profile-activity-item">
+                    <div className="profile-activity-dot" style={{ background: item.color }} />
+                    <div className="profile-activity-content">
+                      <span className="profile-activity-action">{item.action}</span>
+                      <span className="profile-activity-entity">{item.entity}</span>
+                    </div>
+                    <span className="profile-activity-time">{item.time}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Profile;

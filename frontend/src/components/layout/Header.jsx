@@ -59,10 +59,10 @@ const Header = ({ onToggleSidebar }) => {
 
   const breadcrumb = getBreadcrumb();
 
-  const changeLanguage = (e) => {
-    const lang = e.target.value;
-    i18n.changeLanguage(lang);
-    localStorage.setItem('ctms-language', lang);
+  const toggleLanguage = () => {
+    const nextLang = (i18n.language === 'hi' || i18n.language?.startsWith('hi')) ? 'en' : 'hi';
+    i18n.changeLanguage(nextLang);
+    localStorage.setItem('ctms-language', nextLang);
   };
 
   const handleLogout = () => {
@@ -131,7 +131,7 @@ const Header = ({ onToggleSidebar }) => {
             <img src="/logo.png" alt="AIIA TrialOrbit Logo" className="ctms-logo-img" />
             <div className="flex flex-col">
               <span className="ctms-title">AIIA TrialOrbit</span>
-              <span className="ctms-edition">Clinical Trial Management & Monitoring Platform (CTMS)</span>
+              <span className="ctms-edition">Clinical Research CTMS</span>
             </div>
           </Link>
 
@@ -164,17 +164,15 @@ const Header = ({ onToggleSidebar }) => {
 
         <div className="nav-user">
           {/* Language Selector */}
-          <div className="language-selector">
-            <Globe size={15} className="text-muted" />
-            <select
-              value={i18n.language || 'en'}
-              onChange={changeLanguage}
-              aria-label="Language selection"
-            >
-              <option value="en">EN</option>
-              <option value="hi">हिन्दी</option>
-            </select>
-          </div>
+          <button
+            className="language-selector-btn"
+            onClick={toggleLanguage}
+            title={i18n.language?.startsWith('hi') ? 'Switch to English' : 'हिन्दी में बदलें'}
+            aria-label="Language switch"
+          >
+            <Globe size={14} className="text-muted" />
+            <span className="lang-label">{i18n.language?.startsWith('hi') ? 'HI' : 'EN'}</span>
+          </button>
 
           {/* Theme Toggle */}
           <button
