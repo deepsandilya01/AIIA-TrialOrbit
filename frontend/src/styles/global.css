@@ -386,7 +386,7 @@ select {
 }
 
 /* Responsive Tables Container */
-.table-responsive {
+.table-responsive, .table-container {
   display: block;
   width: 100%;
   max-width: 100%;
@@ -398,12 +398,12 @@ select {
 }
 
 /* .data-table (main feature pages) needs wider min-width for all columns */
-.table-responsive .data-table {
+.table-responsive .data-table, .table-container .data-table {
   min-width: 650px;
 }
 
 /* Generic tables inside responsive wrapper — can be narrower */
-.table-responsive table {
+.table-responsive table, .table-container table {
   min-width: 400px;
 }
 
@@ -471,4 +471,23 @@ select {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Recharts Dark Mode & Contrast Fixes */
+.recharts-text {
+  fill: var(--text-secondary) !important;
+}
+
+.recharts-legend-item-text {
+  color: var(--text-primary) !important;
+}
+
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+  background-color: var(--bg-card) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+.recharts-tooltip-item {
+  color: var(--text-primary) !important;
 }

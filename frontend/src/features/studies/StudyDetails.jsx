@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Edit, FileText, Activity, AlertTriangle, Users, 
   Building2, CheckCircle2, Shield, Calendar, Download, Plus
 } from 'lucide-react';
-import { studies, sites, recruitmentTrend, aesaeData, complianceData, auditLogs } from '../../data/dummyData';
+import api from '../../services/api';
 import Button from '../../components/common/Button';
 import Badge from '../../components/common/Badge';
 import StatusBadge from '../../components/common/StatusBadge';
@@ -20,13 +20,43 @@ const StudyDetails = () => {
   const navigate = useNavigate();
   const { success } = useToast();
   const [activeTab, setActiveTab] = useState('overview');
+  
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const study = studies.find(s => s.id === id) || studies[0];
-  const studySites = sites;
+  useEffect(() => {
+    loadData();
+  }, [id]);
+
+  const loadData = async () => {
+    setLoading(true);
+    const study = await api.getStudyById(id);
+    const sites = await api.getSites();
+    const aesaeData = await api.getSafetyEvents();
+    const auditLogs = await api.getAuditLogs();
+    const recruitmentTrend = await api.getRecruitmentTrend();
+    const complianceData = await api.getComplianceData();
+
+    setData({
+      study,
+      studySites: sites, // We would typically filter by study.id
+      aesaeData: aesaeData.filter(a => a.study === id),
+      auditLogs,
+      recruitmentTrend,
+      complianceData
+    });
+    setLoading(false);
+  };
 
   const handleExportSummary = () => {
-    success(`Study ${study.id} summary dossier exported in PDF format.`);
+    success(`Study ${id} summary dossier exported in PDF format.`);
   };
+
+  if (loading || !data) {
+    return <div className="page-container p-8 text-center">Loading study details...</div>;
+  }
+
+  const { study, studySites, aesaeData, auditLogs, recruitmentTrend, complianceData } = data;
 
   return (
     <div className="page-container study-details">
@@ -142,6 +172,29 @@ const StudyDetails = () => {
       {activeTab === 'overview' && (
         <div className="study-content-grid">
           <div className="main-col">
+            <div className="card mb-4">
+              <div className="card-header">
+                <h3 className="card-title"><Activity size={18} /> Study Lifecycle</h3>
+              </div>
+              <div className="card-body">
+                <div className="flex justify-between items-center relative py-4 overflow-x-auto">
+                  {/* Progress Line */}
+                  <div className="absolute top-1/2 left-0 w-full h-1 bg-gray-200 dark:bg-slate-700 -translate-y-1/2 z-0" style={{ margin: '0 2rem', width: 'calc(100% - 4rem)' }}></div>
+                  <div className="absolute top-1/2 left-0 h-1 bg-primary-600 -translate-y-1/2 z-0" style={{ margin: '0 2rem', width: 'calc(60% - 4rem)', transition: 'width 1s' }}></div>
+                  
+                  {/* Milestones */}
+                  {['Draft', 'IEC Approved', 'CTRI Registered', 'Site Activation', 'Recruiting', 'Close-out'].map((stage, idx) => (
+                    <div key={stage} className="relative z-10 flex flex-col items-center gap-2 min-w-[80px]">
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center border-2 ${idx < 4 ? 'bg-primary-600 border-primary-600 text-white' : idx === 4 ? 'bg-white border-primary-600 text-primary-600' : 'bg-white border-gray-300 text-gray-300'} text-xs font-bold`}>
+                        {idx < 4 ? <CheckCircle2 size={12} /> : idx + 1}
+                      </div>
+                      <span className={`text-xs font-semibold text-center ${idx <= 4 ? 'text-primary-700 dark:text-primary-300' : 'text-gray-400'}`}>{stage}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
             <div className="card">
               <div className="card-header">
                 <h3 className="card-title"><Activity size={18} /> Recruitment Trend & Target Trajectory</h3>
@@ -203,11 +256,11 @@ const StudyDetails = () => {
               <div className="card-body">
                 <div className="flex justify-between items-center mb-3">
                   <span className="text-muted">Total Documented AEs</span>
-                  <span className="font-bold text-lg">14</span>
+                  <span className="font-bold text-lg">{aesaeData.length}</span>
                 </div>
                 <div className="flex justify-between items-center mb-4 pb-4 border-b">
                   <span className="text-muted">Expedited SAEs (CDSCO)</span>
-                  <span className="font-bold text-lg text-danger">2</span>
+                  <span className="font-bold text-lg text-danger">{aesaeData.filter(a => a.serious === 'Yes').length}</span>
                 </div>
                 
                 <h4 className="font-semibold mb-2 text-xs text-muted uppercase tracking-wider">Latest Safety Case Files</h4>
@@ -221,6 +274,7 @@ const StudyDetails = () => {
                       <Badge variant={event.serious === 'Yes' ? 'danger' : 'warning'}>{event.id}</Badge>
                     </div>
                   ))}
+                  {aesaeData.length === 0 && <p className="text-sm text-secondary text-center py-2">No safety events reported.</p>}
                 </div>
               </div>
             </div>
@@ -393,6 +447,9 @@ const StudyDetails = () => {
                     <td><StatusBadge status={item.status} /></td>
                   </tr>
                 ))}
+                {aesaeData.length === 0 && (
+                  <tr><td colSpan="7" className="text-center p-4">No safety events reported.</td></tr>
+                )}
               </tbody>
             </table>
           </div>

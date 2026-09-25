@@ -122,6 +122,14 @@ export const recentActivity = [
   { id: 5, text: 'AE status marked Resolved following 14-day check (P-876)', user: 'Dr. Sneha Verma (PI)', time: '21 Sep 2026, 16:05' }
 ];
 
+export const milestones = [
+  { id: 'RM-101', study: 'AIIA-001', type: 'IEC Approval', refNo: 'IEC/2026/04/112', dueDate: '2026-05-15', status: 'Completed', role: 'Ethics Coordinator', completedDate: '2026-05-10' },
+  { id: 'RM-102', study: 'AIIA-002', type: 'CTRI Registration', refNo: 'CTRI/2026/06/089', dueDate: '2026-07-01', status: 'Completed', role: 'PI', completedDate: '2026-06-25' },
+  { id: 'RM-103', study: 'AIIA-003', type: 'IEC Review', refNo: '', dueDate: '2026-10-15', status: 'Upcoming', role: 'Ethics Coordinator', completedDate: '' },
+  { id: 'RM-104', study: 'AIIA-004', type: 'CTRI Update', refNo: 'CTRI/2026/01/014', dueDate: '2026-09-30', status: 'Due', role: 'PI', completedDate: '' },
+  { id: 'RM-105', study: 'AIIA-005', type: 'IEC Approval', refNo: '', dueDate: '2026-09-10', status: 'Overdue', role: 'Ethics Coordinator', completedDate: '' }
+];
+
 export const alerts = [
   { id: 1, type: 'Critical', text: 'SAE #204 requires Pharmacovigilance review within 24h', study: 'AIIA-003', date: '23 Sep 2026', resolved: false, category: 'Safety' },
   { id: 2, type: 'Warning', text: 'Site S-05 recruitment trajectory 28% below protocol curve', study: 'AIIA-002', date: '22 Sep 2026', resolved: false, category: 'Recruitment' },
@@ -233,4 +241,31 @@ export const userRolesList = [
   { id: 'cra', name: 'R. K. Meena', role: 'Clinical Research Associate (Monitor)', permissions: 'Source Data Verification (SDV), Monitoring Visits, Protocol Deviations' },
   { id: 'admin', name: 'IT Admin AIIA', role: 'System Administrator', permissions: 'User Provisioning, Role Assignments, System Audit Logs, Platform Config' },
   { id: 'regulator', name: 'Ayush Drug Inspector', role: 'Read-only Auditor / Regulator', permissions: 'Read-Only Study Data, Regulatory Binder, Audit Trail Inspection' }
+];
+
+export const participants = [
+  { id: 'P-1024', studyId: 'AIIA-003', siteId: 'S-01', screeningStatus: 'Screened', eligibility: 'Eligible', enrollmentStatus: 'Enrolled', consentStatus: 'Consented v2.1', enrollmentDate: '2026-03-15', visitStatus: 'On Schedule', gender: 'Male', age: 45, status: 'Active' },
+  { id: 'P-211', studyId: 'AIIA-002', siteId: 'S-02', screeningStatus: 'Screened', eligibility: 'Eligible', enrollmentStatus: 'Enrolled', consentStatus: 'Consented v1.0', enrollmentDate: '2026-04-10', visitStatus: 'Overdue (V3)', gender: 'Female', age: 38, status: 'Active' },
+  { id: 'P-876', studyId: 'AIIA-004', siteId: 'S-04', screeningStatus: 'Screened', eligibility: 'Eligible', enrollmentStatus: 'Enrolled', consentStatus: 'Consented v2.0', enrollmentDate: '2026-01-22', visitStatus: 'On Schedule', gender: 'Female', age: 52, status: 'Active' },
+  { id: 'P-045', studyId: 'AIIA-001', siteId: 'S-01', screeningStatus: 'Screened', eligibility: 'Ineligible (Lab criteria)', enrollmentStatus: 'Screen Failure', consentStatus: 'Consented (Screening)', enrollmentDate: '-', visitStatus: '-', gender: 'Male', age: 61, status: 'Screen Failure' },
+  { id: 'P-189', studyId: 'AIIA-002', siteId: 'S-02', screeningStatus: 'Screened', eligibility: 'Eligible', enrollmentStatus: 'Enrolled', consentStatus: 'Consented v1.0', enrollmentDate: '2026-05-05', visitStatus: 'Withdrawn', gender: 'Male', age: 41, status: 'Withdrawn' },
+  { id: 'P-340', studyId: 'AIIA-005', siteId: 'S-03', screeningStatus: 'Screened', eligibility: 'Eligible', enrollmentStatus: 'Enrolled', consentStatus: 'Consented v1.2', enrollmentDate: '2026-06-18', visitStatus: 'On Schedule', gender: 'Female', age: 49, status: 'Active' },
+  { id: 'P-092', studyId: 'AIIA-001', siteId: 'S-01', screeningStatus: 'Screened', eligibility: 'Eligible', enrollmentStatus: 'Enrolled', consentStatus: 'Consented v1.1', enrollmentDate: '2026-02-14', visitStatus: 'Lost to Follow-up', gender: 'Male', age: 33, status: 'Lost to Follow-up' },
+  { id: 'P-1101', studyId: 'AIIA-003', siteId: 'S-03', screeningStatus: 'In Progress', eligibility: 'Pending', enrollmentStatus: 'Not Enrolled', consentStatus: 'Pending', enrollmentDate: '-', visitStatus: '-', gender: 'Female', age: 56, status: 'Screening' }
+];
+
+export const visits = [
+  { id: 'V-1024-01', participantId: 'P-1024', studyId: 'AIIA-003', siteId: 'S-01', type: 'Screening (V1)', scheduledDate: '2026-03-01', completedDate: '2026-03-02', status: 'Completed', compliance: 100 },
+  { id: 'V-1024-02', participantId: 'P-1024', studyId: 'AIIA-003', siteId: 'S-01', type: 'Randomization (V2)', scheduledDate: '2026-03-15', completedDate: '2026-03-15', status: 'Completed', compliance: 100 },
+  { id: 'V-1024-03', participantId: 'P-1024', studyId: 'AIIA-003', siteId: 'S-01', type: 'Follow-up (V3)', scheduledDate: '2026-09-30', completedDate: '-', status: 'Upcoming', compliance: null },
+  { id: 'V-211-03', participantId: 'P-211', studyId: 'AIIA-002', siteId: 'S-02', type: 'Follow-up (V3)', scheduledDate: '2026-09-10', completedDate: '-', status: 'Overdue', compliance: null },
+  { id: 'V-876-05', participantId: 'P-876', studyId: 'AIIA-004', siteId: 'S-04', type: 'End of Study (V5)', scheduledDate: '2026-09-25', completedDate: '-', status: 'Due', compliance: null },
+  { id: 'V-340-02', participantId: 'P-340', studyId: 'AIIA-005', siteId: 'S-03', type: 'Randomization (V2)', scheduledDate: '2026-06-18', completedDate: '2026-06-20', status: 'Completed (Out of Window)', compliance: 80 }
+];
+
+export const dataQueries = [
+  { id: 'Q-001', studyId: 'AIIA-002', siteId: 'S-02', entity: 'Demographics CRF', participantId: 'P-211', priority: 'High', status: 'Open', openedDate: '2026-09-20', resolvedDate: '-', assignedUser: 'Site Coordinator', description: 'Date of birth formatting error in eCRF' },
+  { id: 'Q-002', studyId: 'AIIA-002', siteId: 'S-02', entity: 'V1 Labs CRF', participantId: 'P-189', priority: 'Medium', status: 'In Review', openedDate: '2026-09-15', resolvedDate: '-', assignedUser: 'Data Manager', description: 'HbA1c value out of logical range' },
+  { id: 'Q-003', studyId: 'AIIA-001', siteId: 'S-01', entity: 'SAE Report', participantId: 'P-045', priority: 'Critical', status: 'Resolved', openedDate: '2026-09-10', resolvedDate: '2026-09-12', assignedUser: 'Pharmacovigilance', description: 'Missing causality assessment' },
+  { id: 'Q-004', studyId: 'AIIA-004', siteId: 'S-04', entity: 'ConMed CRF', participantId: 'P-876', priority: 'Low', status: 'Open', openedDate: '2026-09-22', resolvedDate: '-', assignedUser: 'Site Coordinator', description: 'Concomitant medication stop date missing' }
 ];

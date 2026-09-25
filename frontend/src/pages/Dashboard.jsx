@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   FlaskConical, Building2, Users, ShieldCheck, AlertTriangle, 
@@ -26,13 +26,35 @@ const Dashboard = () => {
 
   const [isCreateStudyOpen, setIsCreateStudyOpen] = useState(false);
   const [isReportSAEOpen, setIsReportSAEOpen] = useState(false);
+  const [stats, setStats] = useState({
+    activeStudies: 0, totalStudies: 0,
+    activeSites: 0, totalSites: 0,
+    participants: 0, pendingSae: 0,
+    chartData: []
+  });
 
-  const chartData = [
-    { name: 'Ongoing', value: 12, color: 'var(--primary-color)' },
-    { name: 'Completed', value: 4, color: 'var(--success)' },
-    { name: 'Planned', value: 1, color: 'var(--accent-color)' },
-    { name: 'On Hold', value: 1, color: 'var(--danger)' }
-  ];
+  useEffect(() => {
+    const fetchStats = async () => {
+      const [studies, sites, participants, aes] = await Promise.all([
+        api.getStudies(), api.getSites(), api.getParticipants(), api.getSafetyEvents()
+      ]);
+      setStats({
+        activeStudies: studies.filter(s => s.status === 'Ongoing').length,
+        totalStudies: studies.length,
+        activeSites: sites.filter(s => s.status === 'Active').length,
+        totalSites: sites.length,
+        participants: participants.length,
+        pendingSae: aes.filter(a => a.status === 'Pending Review' || a.status === 'Ongoing').length,
+        chartData: [
+          { name: 'Ongoing', value: studies.filter(s => s.status === 'Ongoing').length, color: 'var(--primary-color)' },
+          { name: 'Completed', value: studies.filter(s => s.status === 'Completed').length, color: 'var(--success)' },
+          { name: 'Planned/Draft', value: studies.filter(s => s.status === 'Planned' || s.status === 'Draft').length, color: 'var(--accent-color)' },
+          { name: 'On Hold', value: studies.filter(s => s.status === 'On Hold').length, color: 'var(--danger)' }
+        ].filter(d => d.value > 0)
+      });
+    };
+    fetchStats();
+  }, []);
 
   const handleStudyCreated = async (newStudy) => {
     await api.createStudy(newStudy);
@@ -73,27 +95,27 @@ const Dashboard = () => {
       <div className="kpi-grid">
         <StatCard 
           title={t('dashboard.activeStudies', 'Active Protocols')}
-          value="12" 
-          subtitle="of 18 institutional studies"
+          value={stats.activeStudies} 
+          subtitle={`of ${stats.totalStudies} institutional studies`}
           trend={{ value: '+2 new', isPositive: true }}
           icon={<FlaskConical size={20} />}
           linkTo="/studies"
         />
         <StatCard 
           title={t('dashboard.activeSites', 'Participating Sites')}
-          value="34" 
-          subtitle="of 42 total accredited facilities"
+          value={stats.activeSites} 
+          subtitle={`of ${stats.totalSites} total accredited facilities`}
           status="5 Pending Verification"
           icon={<Building2 size={20} />}
           linkTo="/sites"
         />
         <StatCard 
           title={t('dashboard.totalParticipants', 'Enrolled Subjects')}
-          value="1,240" 
+          value={stats.participants} 
           subtitle="67% screening conversion rate"
           trend={{ value: '+12.4%', isPositive: true }}
           icon={<Users size={20} />}
-          linkTo="/recruitment"
+          linkTo="/participants"
         />
         <StatCard 
           title={t('dashboard.complianceRate', 'Protocol Compliance')}
@@ -104,10 +126,10 @@ const Dashboard = () => {
         />
         <StatCard 
           title={t('dashboard.pendingSaeReview', 'Pending SAE Reviews')}
-          value="2" 
-          status="Requires PV Action <24h"
+          value={stats.pendingSae} 
+          status={stats.pendingSae > 0 ? "Requires PV Action <24h" : "All clear"}
           icon={<AlertTriangle size={20} />}
-          linkTo="/safety"
+          linkTo="/safety-events"
         />
       </div>
 
@@ -127,7 +149,7 @@ const Dashboard = () => {
                 <ResponsiveContainer width="100%" height={210}>
                   <PieChart>
                     <Pie
-                      data={chartData}
+                      data={stats.chartData}
                       cx="50%"
                       cy="50%"
                       innerRadius={55}
@@ -135,7 +157,7 @@ const Dashboard = () => {
                       paddingAngle={4}
                       dataKey="value"
                     >
-                      {chartData.map((entry, index) => (
+                      {stats.chartData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
@@ -144,7 +166,7 @@ const Dashboard = () => {
                   </PieChart>
                 </ResponsiveContainer>
                 <div className="chart-center-text">
-                  <span className="total">18</span>
+                  <span className="total">{stats.totalStudies}</span>
                   <span className="label">Studies</span>
                 </div>
               </div>

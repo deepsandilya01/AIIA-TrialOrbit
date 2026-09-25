@@ -352,7 +352,8 @@
   transition: all var(--transition-fast);
 }
 
-.icon-btn:hover, .icon-btn.active {
+.icon-btn:hover,
+.icon-btn.active {
   background-color: var(--bg-hover);
   color: var(--primary-color);
   border-color: var(--border-focus);
@@ -385,7 +386,8 @@
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  width: 340px;
+  width: 340px !important;
+  max-width: 340px !important;
   box-shadow: var(--shadow-modal);
   z-index: 1000;
   border-radius: var(--border-radius-md);
@@ -521,7 +523,8 @@
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  width: 320px;
+  width: 320px !important;
+  max-width: 320px !important;
   box-shadow: var(--shadow-modal);
   z-index: 1000;
   border-radius: var(--border-radius-md);
@@ -664,7 +667,7 @@
     top: 56px !important;
     left: 12px !important;
     right: 12px !important;
-    width: auto !important;
+    width: calc(100vw - 24px) !important;
     max-width: calc(100vw - 24px) !important;
     box-shadow: var(--shadow-modal) !important;
     z-index: 2000 !important;

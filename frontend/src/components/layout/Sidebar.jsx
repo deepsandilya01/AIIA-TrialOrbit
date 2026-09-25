@@ -2,9 +2,11 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { 
-  LayoutDashboard, FlaskConical, Building2, Users, 
-  ShieldCheck, AlertTriangle, Bell, 
-  FileText, History, X
+  LayoutDashboard, FlaskConical, Building2, Users, CalendarCheck,
+  MessageSquareWarning, AlertCircle, ShieldCheck, FileSignature, Flag,
+  AlertTriangle, Pill, Activity, Bell, LineChart,
+  History, Network, Database, DownloadCloud,
+  Sparkles, Radar, UserCog, Shield, Lock, X
 } from 'lucide-react';
 import './Sidebar.css';
 
@@ -13,32 +15,77 @@ const Sidebar = ({ isOpen, onClose }) => {
 
   const navigationSections = [
     {
-      group: t('sidebar.core', 'CORE'),
+      group: '', // Top level
       items: [
-        { path: '/dashboard', icon: <LayoutDashboard size={18} />, label: t('general.dashboard', 'Control Room') },
-        { path: '/studies', icon: <FlaskConical size={18} />, label: t('general.studies', 'Studies') },
-        { path: '/sites', icon: <Building2 size={18} />, label: t('general.sites', 'Research Sites') },
-        { path: '/recruitment', icon: <Users size={18} />, label: t('general.recruitment', 'Recruitment') },
+        { path: '/dashboard', icon: <LayoutDashboard size={18} />, label: t('general.dashboard', 'Dashboard') }
       ]
     },
     {
-      group: t('sidebar.monitoring', 'MONITORING'),
+      group: 'CLINICAL TRIALS',
       items: [
-        { path: '/compliance', icon: <ShieldCheck size={18} />, label: t('general.compliance', 'Compliance') },
-        { path: '/alerts', icon: <Bell size={18} />, label: t('general.alerts', 'Surveillance Alerts'), badge: 4, badgeVariant: 'warning' },
+        { path: '/studies', icon: <FlaskConical size={18} />, label: 'Studies' },
+        { path: '/sites', icon: <Building2 size={18} />, label: 'Sites' },
+        { path: '/participants', icon: <Users size={18} />, label: 'Participants' },
+        { path: '/visits', icon: <CalendarCheck size={18} />, label: 'Visits' }
       ]
     },
     {
-      group: t('sidebar.safetyCompliance', 'SAFETY & COMPLIANCE'),
+      group: 'DATA QUALITY',
       items: [
-        { path: '/safety', icon: <AlertTriangle size={18} />, label: t('general.safety', 'AE / SAE Safety'), badge: 2, badgeVariant: 'danger' },
-        { path: '/audit', icon: <History size={18} />, label: t('general.auditTrail', 'CFR 21 Audit Trail') },
+        { path: '/queries', icon: <MessageSquareWarning size={18} />, label: 'Queries', badge: 12, badgeVariant: 'warning' },
+        { path: '/deviations', icon: <AlertCircle size={18} />, label: 'Deviations' }
       ]
     },
     {
-      group: t('sidebar.reporting', 'REPORTING'),
+      group: 'REGULATORY',
       items: [
-        { path: '/reports', icon: <FileText size={18} />, label: t('general.reports', 'Reports & Quality') },
+        { path: '/ethics', icon: <ShieldCheck size={18} />, label: 'Ethics' },
+        { path: '/ctri', icon: <FileSignature size={18} />, label: 'CTRI' },
+        { path: '/milestones', icon: <Flag size={18} />, label: 'Milestones' }
+      ]
+    },
+    {
+      group: 'SAFETY',
+      items: [
+        { path: '/safety-events', icon: <AlertTriangle size={18} />, label: 'AE / SAE', badge: 2, badgeVariant: 'danger' },
+        { path: '/pharmacovigilance', icon: <Pill size={18} />, label: 'Pharmacovigilance' },
+        { path: '/safety-dashboard', icon: <Activity size={18} />, label: 'Safety Dashboard' }
+      ]
+    },
+    {
+      group: 'MONITORING',
+      items: [
+        { path: '/alerts', icon: <Bell size={18} />, label: 'Alerts', badge: 5, badgeVariant: 'warning' },
+        { path: '/kpis', icon: <LineChart size={18} />, label: 'KPIs' }
+      ]
+    },
+    {
+      group: 'AUDIT',
+      items: [
+        { path: '/audit', icon: <History size={18} />, label: 'Audit Trail' }
+      ]
+    },
+    {
+      group: 'INTEGRATION',
+      items: [
+        { path: '/fhir', icon: <Network size={18} />, label: 'FHIR / ABDM' },
+        { path: '/cdisc', icon: <Database size={18} />, label: 'CDISC' },
+        { path: '/exports', icon: <DownloadCloud size={18} />, label: 'Exports' }
+      ]
+    },
+    {
+      group: 'AI INTELLIGENCE',
+      items: [
+        { path: '/ai-assistant', icon: <Sparkles size={18} />, label: 'KPI Assistant' },
+        { path: '/insights', icon: <Radar size={18} />, label: 'Risk Insights' }
+      ]
+    },
+    {
+      group: 'ADMINISTRATION',
+      items: [
+        { path: '/users', icon: <UserCog size={18} />, label: 'Users' },
+        { path: '/roles', icon: <Shield size={18} />, label: 'Roles' },
+        { path: '/permissions', icon: <Lock size={18} />, label: 'Permissions' }
       ]
     }
   ];
@@ -62,7 +109,7 @@ const Sidebar = ({ isOpen, onClose }) => {
       <nav className="sidebar-nav">
         {navigationSections.map((section, sIdx) => (
           <div key={sIdx} className="sidebar-group">
-            <div className="sidebar-group-title">{section.group}</div>
+            {section.group && <div className="sidebar-group-title">{section.group}</div>}
             <div className="sidebar-group-items">
               {section.items.map((item, iIdx) => (
                 <NavLink 

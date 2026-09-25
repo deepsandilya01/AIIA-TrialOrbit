@@ -1,6 +1,8 @@
 @import './styles/global.css';
+@import './styles/utilities.css';
 @import './styles/private-responsive.css';
 @import './components/common/Button.css';
+@import './components/common/Badge.css';
 
 #root {
   width: 100%;

@@ -8,8 +8,9 @@ import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { alerts, userRolesList } from '../../data/dummyData';
+import { userRolesList } from '../../data/dummyData';
 import { useToast } from '../../context/ToastContext';
+import api from '../../services/api';
 import './Header.css';
 
 const Header = ({ onToggleSidebar }) => {
@@ -23,6 +24,7 @@ const Header = ({ onToggleSidebar }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showRoleMenu, setShowRoleMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeAlerts, setActiveAlerts] = useState([]);
 
   const notifRef = useRef(null);
   const roleRef = useRef(null);
@@ -38,7 +40,20 @@ const Header = ({ onToggleSidebar }) => {
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    
+    // Load alerts
+    const loadAlerts = async () => {
+      const data = await api.getAlerts();
+      setActiveAlerts(data.filter(a => !a.resolved));
+    };
+    loadAlerts();
+    // Refresh alerts periodically to simulate live updates
+    const interval = setInterval(loadAlerts, 10000);
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      clearInterval(interval);
+    };
   }, []);
 
   const getBreadcrumb = () => {
@@ -85,8 +100,6 @@ const Header = ({ onToggleSidebar }) => {
       navigate(`/studies?q=${encodeURIComponent(searchQuery)}`);
     }
   };
-
-  const activeAlerts = alerts.filter(a => !a.resolved);
 
   return (
     <header className="app-header">

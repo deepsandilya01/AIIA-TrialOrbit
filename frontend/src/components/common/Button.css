@@ -45,7 +45,7 @@
 /* Primary: Institutional Ayush Deep Forest Green */
 .btn-primary {
   background-color: var(--primary-color);
-  color: #ffffff;
+  color: #ffffff !important;
   border-color: var(--primary-color);
 }
 
@@ -93,7 +93,7 @@
 /* Danger */
 .btn-danger {
   background-color: var(--danger);
-  color: #ffffff;
+  color: #ffffff !important;
   border-color: var(--danger);
 }
 
@@ -105,7 +105,7 @@
 /* Subtle Gold */
 .btn-gold {
   background-color: var(--accent-color);
-  color: #ffffff;
+  color: #ffffff !important;
   border-color: var(--accent-color);
 }
 
