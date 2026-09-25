@@ -1,37 +1,52 @@
 import { useTranslation } from 'react-i18next';
-import React from 'react';
-import { FileCheck, UploadCloud, Download } from 'lucide-react';
+import React, { useState } from 'react';
+import { FileCheck, UploadCloud, Download, Shield, Calendar, Clock, CheckCircle } from 'lucide-react';
 import { complianceData } from '../../data/dummyData';
 import Button from '../../components/common/Button';
-import Badge from '../../components/common/Badge';
+import StatusBadge from '../../components/common/StatusBadge';
+import DemoBadge from '../../components/common/DemoBadge';
+import Modal from '../../components/common/Modal';
+import { useToast } from '../../context/ToastContext';
 
 const Compliance = () => {
   const { t } = useTranslation();
+  const { success, error } = useToast();
 
-  const getStatusVariant = (status) => {
-    switch(status) {
-      case 'Approved':
-      case 'Registered':
-      case 'Completed':
-        return 'success';
-      case 'Due Soon':
-        return 'warning';
-      case 'Pending':
-        return 'danger';
-      default:
-        return 'default';
+  const [data, setData] = useState(complianceData);
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const [uploadForm, setUploadForm] = useState({
+    requirement: 'Annual Safety Report (ASR) to CDSCO',
+    documentName: '',
+    authority: 'CDSCO / Ayush Licensing Division'
+  });
+
+  const handleDownload = (req) => {
+    success(`Downloaded regulatory dossier for ${req}.`);
+  };
+
+  const handleUploadSubmit = (e) => {
+    e.preventDefault();
+    if (!uploadForm.documentName.trim()) {
+      error('Please select or specify a document filename.');
+      return;
     }
+    success(`Document "${uploadForm.documentName}" uploaded and queued for IEC/Regulatory verification.`);
+    setIsUploadOpen(false);
   };
 
   return (
     <div className="page-container">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Compliance Management</h1>
-          <p className="page-subtitle">Track regulatory submissions, approvals, and monitorings</p>
+          <div className="flex items-center gap-2 mb-1">
+            <h1 className="page-title">Regulatory & Compliance Milestones</h1>
+            <DemoBadge />
+          </div>
+          <p className="page-subtitle">Track Institutional Ethics Committee (IEC), CTRI registration, and GCP monitoring checkpoints</p>
         </div>
-        <Button>
-          <UploadCloud size={18} />{t('compliance.uploadDocument')}</Button>
+        <Button icon={<UploadCloud size={16} />} onClick={() => setIsUploadOpen(true)}>
+          Upload Compliance Filing
+        </Button>
       </div>
 
       <div className="card">
@@ -39,15 +54,16 @@ const Compliance = () => {
           <table className="data-table">
             <thead>
               <tr>
-                <th>{t('compliance.requirement')}</th>
-                <th>{t('general.status')}</th>
-                <th>{t('compliance.dueDate')}</th>
-                <th>Days Remaining</th>
-                <th>{t('audit.action')}</th>
+                <th>Regulatory Requirement / Milestone</th>
+                <th>Oversight Authority</th>
+                <th>Status</th>
+                <th>Due / Completed Date</th>
+                <th>Timeline Horizon</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {complianceData.map(item => (
+              {data.map(item => (
                 <tr key={item.id}>
                   <td>
                     <div className="flex items-center gap-2">
@@ -55,22 +71,26 @@ const Compliance = () => {
                       <span className="font-medium">{item.req}</span>
                     </div>
                   </td>
+                  <td className="text-muted text-xs">{item.authority || 'Institutional Authority'}</td>
                   <td>
-                    <Badge variant={getStatusVariant(item.status)}>{item.status}</Badge>
+                    <StatusBadge status={item.status} />
                   </td>
-                  <td>{item.date}</td>
+                  <td className="text-sm">{item.date}</td>
                   <td>
                     {item.days !== null ? (
-                      <span className={item.days < 10 ? 'text-danger font-bold' : ''}>
-                        {item.days} days
+                      <span className={item.days < 10 ? 'text-danger font-bold flex items-center gap-1' : 'text-warning font-medium flex items-center gap-1'}>
+                        <Clock size={13} /> {item.days} days remaining
                       </span>
                     ) : (
-                      <span className="text-muted">-</span>
+                      <span className="text-success text-xs font-semibold flex items-center gap-1">
+                        <CheckCircle size={13} /> Cleared
+                      </span>
                     )}
                   </td>
                   <td>
-                    <Button variant="outline" size="sm">
-                      <Download size={14} />{t('compliance.download')}</Button>
+                    <Button variant="outline" size="sm" icon={<Download size={13} />} onClick={() => handleDownload(item.req)}>
+                      Download
+                    </Button>
                   </td>
                 </tr>
               ))}
@@ -78,6 +98,52 @@ const Compliance = () => {
           </table>
         </div>
       </div>
+
+      {/* Upload Modal */}
+      <Modal
+        isOpen={isUploadOpen}
+        onClose={() => setIsUploadOpen(false)}
+        title="Upload Regulatory Compliance Filing"
+        subtitle="Submit signed approvals, ethics committee letters, or CTRI updates"
+      >
+        <form onSubmit={handleUploadSubmit} className="flex flex-col gap-4">
+          <div>
+            <label className="text-xs font-semibold text-secondary uppercase block mb-1">
+              Regulatory Requirement
+            </label>
+            <select
+              value={uploadForm.requirement}
+              onChange={(e) => setUploadForm({ ...uploadForm, requirement: e.target.value })}
+            >
+              <option value="Institutional Ethics Committee (IEC) Clearance">IEC Clearance Renewal</option>
+              <option value="CTRI Clinical Trial Registry Filing">CTRI Registration Certificate</option>
+              <option value="Annual Safety Report (ASR) to CDSCO">Annual Safety Report (CDSCO)</option>
+              <option value="Investigator Brochure v3.0">Investigator Brochure Revision</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-secondary uppercase block mb-1">
+              Document File / Title <span className="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              placeholder="e.g., AIIA_IEC_Approval_Letter_2026.pdf"
+              value={uploadForm.documentName}
+              onChange={(e) => setUploadForm({ ...uploadForm, documentName: e.target.value })}
+            />
+          </div>
+
+          <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '1rem', display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+            <Button variant="ghost" onClick={() => setIsUploadOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="submit" variant="primary" icon={<UploadCloud size={16} />}>
+              Submit Document
+            </Button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 };

@@ -14,6 +14,7 @@ import Recruitment from '../features/recruitment/Recruitment';
 import Compliance from '../features/compliance/Compliance';
 import AESAE from '../features/safety/AESAE';
 import Alerts from '../features/alerts/Alerts';
+import Reports from '../features/reports/Reports';
 import AuditTrail from '../features/audit/AuditTrail';
 import Login from '../features/auth/Login';
 import NotFound from '../pages/NotFound';
@@ -43,7 +44,7 @@ const AppRoutes = () => {
       <Route path="/compliance" element={<ProtectedRoute><Layout><Compliance /></Layout></ProtectedRoute>} />
       <Route path="/safety" element={<ProtectedRoute><Layout><AESAE /></Layout></ProtectedRoute>} />
       <Route path="/alerts" element={<ProtectedRoute><Layout><Alerts /></Layout></ProtectedRoute>} />
-      <Route path="/reports" element={<ProtectedRoute><Layout><Alerts /></Layout></ProtectedRoute>} />
+      <Route path="/reports" element={<ProtectedRoute><Layout><Reports /></Layout></ProtectedRoute>} />
       <Route path="/audit" element={<ProtectedRoute><Layout><AuditTrail /></Layout></ProtectedRoute>} />
       
       <Route path="*" element={<NotFound />} />

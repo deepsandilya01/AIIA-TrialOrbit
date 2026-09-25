@@ -1,50 +1,109 @@
 import { useTranslation } from 'react-i18next';
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Building2, MapPin, Users, Activity } from 'lucide-react';
-import { sites } from '../../data/dummyData';
+import { ArrowLeft, Building2, MapPin, Users, Activity, ShieldCheck, Calendar, Download, Phone, Mail } from 'lucide-react';
+import { sites, studies } from '../../data/dummyData';
 import Badge from '../../components/common/Badge';
+import StatusBadge from '../../components/common/StatusBadge';
+import DemoBadge from '../../components/common/DemoBadge';
+import Button from '../../components/common/Button';
+import { useToast } from '../../context/ToastContext';
 
 const SiteDetails = () => {
   const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
+  const { success } = useToast();
   
   const site = sites.find(s => s.id === id) || sites[0];
 
   return (
     <div className="page-container">
-      <div className="back-nav mb-4">
-        <button className="icon-btn text-muted flex items-center gap-2" onClick={() => navigate('/sites')} style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}>
+      <div className="back-nav mb-3">
+        <button className="back-btn" onClick={() => navigate('/sites')}>
           <ArrowLeft size={16} /> Back to Sites
         </button>
       </div>
       
       <div className="card mb-4">
-        <div className="flex justify-between items-start mb-4">
-          <div>
-            <Badge variant="primary" className="mb-2">Site ID: {site.id}</Badge>
-            <h1 className="page-title">{site.name}</h1>
-            <div className="flex items-center gap-2 text-muted mt-2">
-              <MapPin size={16} /> {site.location}
+        <div className="card-body">
+          <div className="flex justify-between items-start mb-4 flex-wrap gap-2">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Badge variant="primary">Site ID: {site.id}</Badge>
+                <DemoBadge />
+              </div>
+              <h1 className="page-title">{site.name}</h1>
+              <div className="flex items-center gap-2 text-muted mt-1 text-sm">
+                <MapPin size={15} /> {site.location} • Activated: {site.activationDate || '2025-01-10'}
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <StatusBadge status={site.status} pulse />
+              <Button variant="outline" size="sm" icon={<Download size={14} />} onClick={() => success(`Exported audit dossier for ${site.name}.`)}>
+                Site Dossier
+              </Button>
             </div>
           </div>
-          <Badge variant={site.status === 'Active' ? 'success' : 'warning'}>{site.status}</Badge>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginTop: '1.5rem' }}>
+            <div className="p-3 border rounded bg-secondary">
+              <div className="text-muted text-xs mb-1 font-semibold uppercase">Principal Investigator</div>
+              <div className="font-semibold text-primary">{site.pi}</div>
+              <div className="text-xs text-muted mt-1">Lead Medical Oversight</div>
+            </div>
+            <div className="p-3 border rounded bg-secondary">
+              <div className="text-muted text-xs mb-1 font-semibold uppercase flex items-center gap-1">
+                <Users size={13} /> Cohort Enrollment
+              </div>
+              <div className="font-semibold text-primary">{site.enrolled} / {site.target} Subjects</div>
+              <div className="text-xs text-success mt-1">{Math.round((site.enrolled / site.target) * 100)}% of Allocation</div>
+            </div>
+            <div className="p-3 border rounded bg-secondary">
+              <div className="text-muted text-xs mb-1 font-semibold uppercase flex items-center gap-1">
+                <ShieldCheck size={13} /> GCP Inspection Index
+              </div>
+              <div className="font-semibold text-success">{site.complianceRate || 94}% Compliance</div>
+              <div className="text-xs text-muted mt-1">Last audit: 12 days ago</div>
+            </div>
+            <div className="p-3 border rounded bg-secondary">
+              <div className="text-muted text-xs mb-1 font-semibold uppercase flex items-center gap-1">
+                <Activity size={13} /> Monitoring Status
+              </div>
+              <div className="font-semibold text-primary">Interim SDV Cleared</div>
+              <div className="text-xs text-muted mt-1">Next CRA Visit: 15 Oct 2026</div>
+            </div>
+          </div>
         </div>
-        
-        <div className="grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginTop: '2rem' }}>
-          <div className="p-4 border rounded">
-            <div className="text-muted text-sm mb-1">Principal Investigator</div>
-            <div className="font-medium">{site.pi}</div>
-          </div>
-          <div className="p-4 border rounded">
-            <div className="text-muted text-sm mb-1 flex items-center gap-1"><Users size={14} /> Enrollment</div>
-            <div className="font-medium">{site.enrolled} / {site.target} Target</div>
-          </div>
-          <div className="p-4 border rounded">
-            <div className="text-muted text-sm mb-1 flex items-center gap-1"><Activity size={14} /> Recent Activity</div>
-            <div className="font-medium text-success">Monitoring passed</div>
-          </div>
+      </div>
+
+      <div className="card">
+        <div className="card-header">
+          <h3 className="card-title"><Building2 size={18} /> Active Protocol Allocations at this Facility</h3>
+        </div>
+        <div className="table-responsive">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Protocol ID</th>
+                <th>Title</th>
+                <th>Phase</th>
+                <th>Site Enrollment</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {studies.slice(0, 2).map(study => (
+                <tr key={study.id} className="clickable-row" onClick={() => navigate(`/studies/${study.id}`)}>
+                  <td className="font-semibold text-primary">{study.id}</td>
+                  <td className="font-medium">{study.title}</td>
+                  <td><span className="badge badge-default">{study.phase || 'Phase II'}</span></td>
+                  <td>{Math.round(site.enrolled * 0.6)} / {Math.round(site.target * 0.6)}</td>
+                  <td><StatusBadge status={study.status} /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

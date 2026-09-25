@@ -1,61 +1,138 @@
 :root {
-  /* Colors */
+  /* Institutional Palette: AIIA / Ministry of Ayush & Clinical Research SaaS */
+  --color-forest-900: #0a2d26;
+  --color-forest-800: #0d3d34;
+  --color-forest-700: #0f4c3a;
+  --color-forest-600: #156658;
+  --color-teal-600: #1b7a6b;
+  --color-teal-500: #238f7e;
+  --color-teal-100: #e3f2ef;
+  --color-teal-50: #f0f7f5;
+
+  /* Subtle Ayush Gold Accent */
+  --color-gold-700: #9e7520;
+  --color-gold-600: #b58830;
+  --color-gold-500: #c59b3f;
+  --color-gold-400: #d6ad55;
+  --color-gold-100: #fcf6e8;
+
+  /* Surfaces & Backgrounds */
   --bg-primary: #ffffff;
-  --bg-secondary: #f5f7fa;
+  --bg-secondary: #f6f8f7;
+  --bg-tertiary: #edf2ef;
   --bg-card: #ffffff;
-  --bg-hover: #f3f4f6;
+  --bg-hover: #f1f5f3;
 
-  --text-primary: #172033;
-  --text-secondary: #5f6b7a;
-  --text-muted: #6B7280;
+  /* Typography Colors */
+  --text-primary: #121922;
+  --text-secondary: #4b5768;
+  --text-muted: #6b7888;
+  --text-inverse: #ffffff;
 
-  --border-color: #dfe4ea;
+  /* Borders & Dividers */
+  --border-color: #dbe3df;
+  --border-subtle: #e9eeea;
+  --border-focus: #156658;
 
-  --primary-color: #123b68;
-  --primary-hover: #0B4A8E;
+  /* Brand Primary & Hover */
+  --primary-color: #0d3d34;
+  --primary-hover: #0a2d26;
+  --primary-light: #e6f1ed;
+  --accent-color: #c59b3f;
+  --accent-hover: #b58830;
 
-  --accent-color: #d6a84f;
+  /* Clinical Status Tokens */
+  --success: #0d8253;
+  --success-bg: #eaf7f1;
+  --success-border: #b8e6d2;
 
-  --success: #10B981;
-  --warning: #F59E0B;
-  --danger: #EF4444;
-  --info: #3B82F6;
+  --warning: #b46b0a;
+  --warning-bg: #fef7ed;
+  --warning-border: #fbd89a;
 
-  --sidebar-bg: #123b68;
-  --header-bg: #123b68;
+  --danger: #c53030;
+  --danger-bg: #fdf2f2;
+  --danger-border: #f8b4b4;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  
-  /* Borders */
+  --info: #1b689e;
+  --info-bg: #eff6fc;
+  --info-border: #bfdbfe;
+
+  /* Structural Headers */
+  --sidebar-bg: #092620;
+  --sidebar-hover: #0e372f;
+  --sidebar-active: #154c41;
+  --header-bg: #0d3d34;
+  --header-text: #ffffff;
+
+  /* Shadows - Precise & Clinical */
+  --shadow-xs: 0 1px 2px rgba(12, 35, 28, 0.04);
+  --shadow-sm: 0 1px 3px rgba(12, 35, 28, 0.08), 0 1px 2px rgba(12, 35, 28, 0.04);
+  --shadow-md: 0 4px 8px -2px rgba(12, 35, 28, 0.08), 0 2px 4px -2px rgba(12, 35, 28, 0.04);
+  --shadow-lg: 0 12px 24px -4px rgba(12, 35, 28, 0.1), 0 4px 8px -2px rgba(12, 35, 28, 0.04);
+  --shadow-modal: 0 20px 35px -5px rgba(10, 30, 24, 0.2), 0 10px 15px -5px rgba(10, 30, 24, 0.1);
+
+  /* Borders & Radius */
+  --border-radius-sm: 4px;
   --border-radius: 6px;
-  --border-radius-lg: 8px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+  --border-radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 [data-theme="dark"] {
-  --bg-primary: #111827;
-  --bg-secondary: #182131;
-  --bg-card: #202938;
-  --bg-hover: #273449;
+  --bg-primary: #0e1518;
+  --bg-secondary: #131c21;
+  --bg-tertiary: #18242b;
+  --bg-card: #152026;
+  --bg-hover: #1c2b33;
 
-  --text-primary: #F1F5F9;
-  --text-secondary: #AEB9C8;
-  --text-muted: #7F8DA1;
+  --text-primary: #f2f6f8;
+  --text-secondary: #9cb1bf;
+  --text-muted: #728493;
+  --text-inverse: #0e1518;
 
-  --border-color: #344054;
+  --border-color: #263640;
+  --border-subtle: #1c2b33;
+  --border-focus: #2da18e;
 
-  --primary-color: #4F8DCC;
-  --primary-hover: #6AA3DF;
+  --primary-color: #2da18e;
+  --primary-hover: #3ab7a2;
+  --primary-light: #163632;
+  --accent-color: #d6ad55;
+  --accent-hover: #e4bc64;
 
-  --accent-color: #D6A84F;
+  --success: #34d399;
+  --success-bg: #092e21;
+  --success-border: #145941;
 
-  --success: #3FAE72;
-  --warning: #D6A84F;
-  --danger: #D95C5C;
-  --info: #4F8DCC;
+  --warning: #fbbf24;
+  --warning-bg: #352605;
+  --warning-border: #68490a;
 
-  --sidebar-bg: #0B1220;
-  --header-bg: #171F2E;
+  --danger: #f87171;
+  --danger-bg: #371414;
+  --danger-border: #6d2323;
+
+  --info: #60a5fa;
+  --info-bg: #0e2947;
+  --info-border: #1d4d7a;
+
+  --sidebar-bg: #0a0f12;
+  --sidebar-hover: #121c21;
+  --sidebar-active: #19272f;
+  --header-bg: #0e1518;
+  --header-text: #f2f6f8;
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.6);
+  --shadow-modal: 0 20px 40px rgba(0, 0, 0, 0.7);
 }
