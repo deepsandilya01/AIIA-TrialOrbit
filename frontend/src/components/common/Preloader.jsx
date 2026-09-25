@@ -3,25 +3,44 @@ import './Preloader.css';
 
 const Preloader = ({ onFinish }) => {
   const [progress, setProgress] = useState(15);
+  const [statusMessage, setStatusMessage] = useState('Connecting to AIIA Central Research Node...');
   const [isFadingOut, setIsFadingOut] = useState(false);
 
   useEffect(() => {
-    // Smooth, professional loading sequence (quick and respectful of user's time)
-    const timer1 = setTimeout(() => setProgress(45), 150);
-    const timer2 = setTimeout(() => setProgress(82), 350);
-    const timer3 = setTimeout(() => setProgress(100), 550);
+    // Medical-grade initialisation sequence with clear status stages
+    const timer1 = setTimeout(() => {
+      setProgress(38);
+      setStatusMessage('Verifying 21 CFR Part 11 Audit Trail Modules...');
+    }, 450);
+
+    const timer2 = setTimeout(() => {
+      setProgress(65);
+      setStatusMessage('Calibrating CTCAE v5.0 & SAE Safety Surveillance...');
+    }, 1050);
+
+    const timer3 = setTimeout(() => {
+      setProgress(88);
+      setStatusMessage('Synchronizing Multi-Centre Site Protocols...');
+    }, 1650);
+
     const timer4 = setTimeout(() => {
+      setProgress(100);
+      setStatusMessage('Clinical Trial Workspace Initialized • Ready');
+    }, 2150);
+
+    const timer5 = setTimeout(() => {
       setIsFadingOut(true);
       setTimeout(() => {
         if (onFinish) onFinish();
-      }, 350);
-    }, 750);
+      }, 400);
+    }, 2550);
 
     return () => {
       clearTimeout(timer1);
       clearTimeout(timer2);
       clearTimeout(timer3);
       clearTimeout(timer4);
+      clearTimeout(timer5);
     };
   }, [onFinish]);
 
@@ -58,7 +77,7 @@ const Preloader = ({ onFinish }) => {
             />
           </div>
           <div className="preloader-status-text">
-            <span>Initializing Clinical Trial Workspace...</span>
+            <span>{statusMessage}</span>
             <span className="preloader-pct">{progress}%</span>
           </div>
         </div>
