@@ -66,6 +66,7 @@ import alertRoutes from './routes/alert.routes.js';
 import dashboardRoutes from './routes/dashboard.routes.js';
 import exportRoutes from './routes/export.routes.js';
 import aiRoutes from './routes/ai.routes.js';
+import userRoutes from './routes/user.routes.js';
 
 import { validateObjectId } from './middleware/validate.middleware.js';
 
@@ -85,6 +86,7 @@ app.use('/api/v1/dashboard', dashboardRoutes);
 app.use('/api/v1/export', exportRoutes);
 app.use('/api/v1/integration', exportRoutes);
 app.use('/api/v1/ai', aiRoutes);
+app.use('/api/v1/users', userRoutes);
 
 
 // Error Handling

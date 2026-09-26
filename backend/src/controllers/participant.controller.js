@@ -51,3 +51,13 @@ export const updateStatus = async (req, res, next) => {
     next(error);
   }
 };
+
+export const updateParticipantConsent = async (req, res, next) => {
+  try {
+    const consent = await participantService.updateParticipantConsent(req.params.id, req.body, req.user);
+    res.status(200).json({ success: true, data: consent });
+  } catch (error) {
+    if (error.message === 'Participant not found') res.status(404);
+    next(error);
+  }
+};

@@ -1,11 +1,15 @@
 import dataQueryRepository from '../repositories/dataQuery.repository.js';
 import deviationRepository from '../repositories/deviation.repository.js';
+import { serializeQuery } from '../utils/serializers.js';
 
 class DataQualityService {
   // Queries
   async createQuery(data, user) {
     if (user.role === 'REGULATOR') throw new Error('Unauthorized');
-    return await dataQueryRepository.create(data);
+    const queryDoc = await dataQueryRepository.create(data);
+    const { emitEvent } = await import('../sockets/index.js');
+    emitEvent(`study:${queryDoc.studyId}`, 'query:created', serializeQuery(queryDoc));
+    return queryDoc;
   }
 
   async getQueries(query) {
@@ -29,6 +33,8 @@ class DataQualityService {
     }
     const result = await dataQueryRepository.resolve(id);
     if (!result) throw new Error('Query not found');
+    const { emitEvent } = await import('../sockets/index.js');
+    emitEvent(`study:${result.studyId}`, 'query:resolved', serializeQuery(result));
     return result;
   }
 

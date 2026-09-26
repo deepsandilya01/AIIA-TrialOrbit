@@ -8,7 +8,14 @@ cron.schedule('0 0 * * *', async () => {
     const overdueCount = await alertService.checkOverdueMilestones();
     console.log(`Created ${overdueCount} alerts for overdue milestones.`);
     
-    // Add other cron checks here (SAEs, Monitoring, Queries)
+    // Add SAEs Overdue check
+    const safetyService = (await import('../services/safety.service.js')).default;
+    
+    const dueCount = await safetyService.checkDueSAEs();
+    console.log(`Emitted ${dueCount} safety:sae_due events.`);
+
+    const saeCount = await safetyService.checkOverdueSAEs();
+    console.log(`Emitted ${saeCount} safety:sae_overdue events.`);
   } catch (error) {
     console.error('Error in alert cron job:', error);
   }

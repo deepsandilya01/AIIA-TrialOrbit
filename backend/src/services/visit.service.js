@@ -1,4 +1,5 @@
 import visitRepository from '../repositories/visit.repository.js';
+import { serializeVisit } from '../utils/serializers.js';
 
 class VisitService {
   async createVisit(data, user) {
@@ -7,6 +8,8 @@ class VisitService {
     }
     
     const visit = await visitRepository.create(data);
+    const { emitEvent } = await import('../sockets/index.js');
+    emitEvent(`study:${visit.studyId}`, 'visit:created', serializeVisit(visit));
     return visit;
   }
 
@@ -49,6 +52,12 @@ class VisitService {
     const visit = await visitRepository.updateById(id, data);
     if (!visit) throw new Error('Visit not found');
     
+    const { emitEvent } = await import('../sockets/index.js');
+    emitEvent(`study:${visit.studyId}`, 'visit:updated', serializeVisit(visit));
+    if (visit.status === 'Missed') {
+      emitEvent(`study:${visit.studyId}`, 'visit:missed', serializeVisit(visit));
+    }
+    
     return visit;
   }
 
@@ -59,6 +68,9 @@ class VisitService {
 
     const visit = await visitRepository.completeVisit(id, completedDate);
     if (!visit) throw new Error('Visit not found');
+
+    const { emitEvent } = await import('../sockets/index.js');
+    emitEvent(`study:${visit.studyId}`, 'visit:completed', serializeVisit(visit));
 
     return visit;
   }

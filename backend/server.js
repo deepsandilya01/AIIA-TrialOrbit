@@ -11,9 +11,14 @@ connectDB();
 
 const PORT = env.port;
 
+import { initSocket } from './src/sockets/index.js';
+
 const server = app.listen(PORT, () => {
   console.log(`Server running in ${env.nodeEnv} mode on port ${PORT}`);
 });
+
+// Initialize real-time updates layer
+initSocket(server);
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err, promise) => {

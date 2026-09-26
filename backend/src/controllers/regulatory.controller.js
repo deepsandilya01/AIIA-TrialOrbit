@@ -14,6 +14,13 @@ export const getMilestones = async (req, res, next) => {
   } catch (error) { next(error); }
 };
 
+export const getMilestoneById = async (req, res, next) => {
+  try {
+    const result = await regulatoryService.getMilestoneById(req.params.id);
+    res.status(200).json({ success: true, data: result });
+  } catch (error) { next(error); }
+};
+
 export const updateMilestone = async (req, res, next) => {
   try {
     const result = await regulatoryService.updateMilestone(req.params.id, req.body, req.user);

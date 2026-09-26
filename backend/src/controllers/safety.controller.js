@@ -14,6 +14,13 @@ export const getEvents = async (req, res, next) => {
   } catch (error) { next(error); }
 };
 
+export const getEventById = async (req, res, next) => {
+  try {
+    const result = await safetyService.getEventById(req.params.id);
+    res.status(200).json({ success: true, data: result });
+  } catch (error) { next(error); }
+};
+
 export const updateEvent = async (req, res, next) => {
   try {
     const result = await safetyService.updateEvent(req.params.id, req.body, req.user);

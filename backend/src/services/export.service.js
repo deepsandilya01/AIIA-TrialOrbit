@@ -142,15 +142,38 @@ class ExportService {
 
     const result = {
       studyId: study.protocolId,
-      datasets: {
-        DM: dmDataset,
-        DS: dsDataset,
-        AE: aeDataset,
-        SV: svDataset
+      cdiscStandards: {
+        CDASH: {
+          note: "Representative CDASH form mappings",
+          forms: ["AE_FORM", "DM_FORM", "VS_FORM"]
+        },
+        SDTM: {
+          datasets: {
+            DM: dmDataset,
+            DS: dsDataset,
+            AE: aeDataset,
+            SV: svDataset
+          }
+        },
+        ADaM: {
+          note: "Representative ADaM analysis datasets derived from SDTM",
+          datasets: {
+            ADSL: dmDataset.map(dm => ({ ...dm, TRT01A: "PLACEBO" })),
+            ADAE: aeDataset
+          }
+        },
+        DefineXML: {
+          metadata: {
+            studyName: study.title,
+            creationDate: new Date(),
+            standardName: "SDTM-IG",
+            standardVersion: "3.3"
+          }
+        }
       },
       metadata: {
         generatedAt: new Date(),
-        standards: "CDISC SDTM (Representative)",
+        standards: "CDISC Representative Export",
         notice: "This is a representative export and not official CDISC certification."
       }
     };
@@ -162,7 +185,7 @@ class ExportService {
       action: 'EXPORT',
       entityType: 'Study',
       entityId: studyId,
-      reason: 'Generated CDISC SDTM Export'
+      reason: 'Generated CDISC SDTM/ADaM/CDASH Export'
     });
 
     return result;

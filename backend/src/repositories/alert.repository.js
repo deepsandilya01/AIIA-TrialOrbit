@@ -7,12 +7,12 @@ class AlertRepository {
   }
 
   async findExistingAlert(entityId, type) {
-    return await Alert.findOne({ entityId, type, resolved: false });
+    return await Alert.findOne({ entityId, type, status: { $nin: ['ACKNOWLEDGED', 'RESOLVED', 'DISMISSED'] } });
   }
 
   async findActiveForUser(userId, role) {
     return await Alert.find({
-      resolved: false,
+      status: 'OPEN',
       $or: [
         { userId: userId },
         { role: role }
@@ -27,14 +27,18 @@ class AlertRepository {
       .sort(options.sort);
   }
 
-  async countActive() {
-    return await Alert.countDocuments({ resolved: false });
+  async count(filters = {}) {
+    return await Alert.countDocuments(filters);
   }
 
-  async acknowledge(id) {
+  async countActive() {
+    return await Alert.countDocuments({ status: 'OPEN' });
+  }
+
+  async acknowledge(id, userId) {
     return await Alert.findByIdAndUpdate(
       id,
-      { resolved: true, acknowledgedAt: new Date() },
+      { status: 'ACKNOWLEDGED', acknowledgedAt: new Date(), acknowledgedBy: userId },
       { new: true, runValidators: true }
     );
   }

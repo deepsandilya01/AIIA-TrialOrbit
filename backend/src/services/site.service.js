@@ -1,4 +1,5 @@
 import siteRepository from '../repositories/site.repository.js';
+import { serializeSite } from '../utils/serializers.js';
 
 class SiteService {
   async createSite(data, user) {
@@ -8,6 +9,8 @@ class SiteService {
     }
     
     const site = await siteRepository.create(data);
+    const { emitEvent } = await import('../sockets/index.js');
+    emitEvent(`study:${site.studyId}`, 'site:created', serializeSite(site));
     return site;
   }
 
@@ -47,7 +50,8 @@ class SiteService {
 
     const site = await siteRepository.updateById(id, data);
     if (!site) throw new Error('Site not found');
-    
+    const { emitEvent } = await import('../sockets/index.js');
+    emitEvent(`study:${site.studyId}`, 'site:updated', serializeSite(site));
     return site;
   }
 
@@ -58,7 +62,8 @@ class SiteService {
 
     const site = await siteRepository.updateStatus(id, status);
     if (!site) throw new Error('Site not found');
-
+    const { emitEvent } = await import('../sockets/index.js');
+    emitEvent(`study:${site.studyId}`, 'site:status_changed', serializeSite(site));
     return site;
   }
 }

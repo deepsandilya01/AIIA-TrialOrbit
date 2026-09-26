@@ -1,4 +1,5 @@
 import studyRepository from '../repositories/study.repository.js';
+import { serializeStudy } from '../utils/serializers.js';
 
 class StudyService {
   async createStudy(data, user) {
@@ -12,7 +13,20 @@ class StudyService {
       pi_id: user.id
     });
 
-    // TODO: Create Audit Log
+    // Audit Log for study creation
+    const AuditLog = (await import('../models/AuditLog.js')).default;
+    await AuditLog.create({
+      actorId: user.id,
+      action: 'CREATE',
+      entityType: 'Study',
+      entityId: study._id,
+      newValue: study.protocolId,
+      reason: 'Study created'
+    });
+
+    const { emitEvent } = await import('../sockets/index.js');
+    emitEvent('dashboard', 'study:created', serializeStudy(study));
+    emitEvent('dashboard', 'dashboard:kpi_updated', { trigger: 'study:created' });
 
     return study;
   }
@@ -64,10 +78,29 @@ class StudyService {
       throw new Error('Only PI or ADMIN can update studies');
     }
 
+    // Prevent arbitrary status changes
+    if (data.status) {
+      delete data.status;
+    }
+
     const study = await studyRepository.updateById(id, data);
     if (!study) throw new Error('Study not found');
     
-    // TODO: Create Audit Log
+    // Audit Log
+    const AuditLog = (await import('../models/AuditLog.js')).default;
+    await AuditLog.create({
+      actorId: user.id,
+      action: 'UPDATE',
+      entityType: 'Study',
+      entityId: id,
+      oldValue: 'Various',
+      newValue: 'Various',
+      reason: 'General Update'
+    });
+    
+    const { emitEvent } = await import('../sockets/index.js');
+    emitEvent(`study:${study._id}`, 'study:updated', serializeStudy(study));
+
     return study;
   }
 
@@ -110,6 +143,9 @@ class StudyService {
       newValue: status,
       reason: 'Lifecycle transition'
     });
+
+    const { emitEvent } = await import('../sockets/index.js');
+    emitEvent(`study:${updatedStudy._id}`, 'study:lifecycle_changed', serializeStudy(updatedStudy));
 
     return updatedStudy;
   }

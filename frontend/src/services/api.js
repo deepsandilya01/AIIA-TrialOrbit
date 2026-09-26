@@ -1,292 +1,169 @@
-import {
-  studies as defaultStudies,
-  sites as defaultSites,
-  alerts as defaultAlerts,
-  aesaeData as defaultAesae,
-  auditLogs as defaultAuditLogs,
-  complianceData as defaultCompliance,
-  recruitmentTrend,
-  protocolDeviations as defaultDeviations,
-  reportsCatalog,
-  participants as defaultParticipants,
-  visits as defaultVisits,
-  dataQueries as defaultQueries,
-  milestones as defaultMilestones
-} from '../data/dummyData';
+import axios from 'axios';
 
-const STORAGE_KEYS = {
-  STUDIES: 'trialorbit_studies',
-  ALERTS: 'trialorbit_alerts',
-  AESAE: 'trialorbit_aesae',
-  AUDIT: 'trialorbit_audit',
-  PARTICIPANTS: 'trialorbit_participants',
-  VISITS: 'trialorbit_visits',
-  QUERIES: 'trialorbit_queries',
-  DEVIATIONS: 'trialorbit_deviations',
-  MILESTONES: 'trialorbit_milestones',
-  SITES: 'trialorbit_sites'
-};
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
 
-const getStored = (key, fallback) => {
-  try {
-    const item = localStorage.getItem(key);
-    return item ? JSON.parse(item) : fallback;
-  } catch (err) {
-    console.error(`Error reading ${key} from localStorage`, err);
-    return fallback;
+const apiClient = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Interceptor for attaching token
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem('ctms_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
-};
+  return config;
+}, (error) => {
+  return Promise.reject(error);
+});
 
-const setStored = (key, data) => {
-  try {
-    localStorage.setItem(key, JSON.stringify(data));
-  } catch (err) {
-    console.error(`Error writing ${key} to localStorage`, err);
+// Interceptor for handling 401s
+apiClient.interceptors.response.use((response) => response, (error) => {
+  if (error.response && error.response.status === 401) {
+    localStorage.removeItem('ctms_token');
+    localStorage.removeItem('ctms_user');
+    window.location.href = '/login'; // Redirect to login
   }
-};
+  return Promise.reject(error);
+});
 
 export const api = {
-  // --- Studies ---
-  getStudies: async () => getStored(STORAGE_KEYS.STUDIES, defaultStudies),
-  getStudyById: async (id) => {
-    const studies = getStored(STORAGE_KEYS.STUDIES, defaultStudies);
-    return studies.find((s) => s.id === id) || studies[0];
+  // --- Auth ---
+  login: async (credentials) => {
+    const response = await apiClient.post('/auth/login', credentials);
+    return response.data;
   },
-  createStudy: async (newStudy) => {
-    const current = getStored(STORAGE_KEYS.STUDIES, defaultStudies);
-    const studyWithDefaults = {
-      id: `AIIA-00${current.length + 1}`,
-      protocolId: `AIIA/CT/2026/0${20 + current.length}`,
-      ctriNumber: `CTRI/2026/0${current.length}/089100`,
-      status: 'Draft',
-      progress: 0,
-      participants: 0,
-      sites: 1,
-      dataQualityScore: 100,
-      unresolvedQueries: 0,
-      openDeviations: 0,
-      startDate: new Date().toISOString().split('T')[0],
-      ...newStudy
-    };
-    const updated = [studyWithDefaults, ...current];
-    setStored(STORAGE_KEYS.STUDIES, updated);
-    await api.recordAuditLog({
-      action: 'CREATE',
-      entity: `Study ${studyWithDefaults.id}`,
-      oldVal: '-',
-      newVal: studyWithDefaults.title,
-      user: 'Current User'
-    });
-    return studyWithDefaults;
+
+  // --- Studies ---
+  getStudies: async () => {
+    const res = await apiClient.get('/studies');
+    return res.data.data;
+  },
+  getStudyById: async (id) => {
+    const res = await apiClient.get(`/studies/${id}`);
+    return res.data.data;
+  },
+  createStudy: async (data) => {
+    const res = await apiClient.post('/studies', data);
+    return res.data.data;
   },
   updateStudyStatus: async (id, status) => {
-    const current = getStored(STORAGE_KEYS.STUDIES, defaultStudies);
-    let oldStatus = '';
-    const updated = current.map(s => {
-      if (s.id === id) {
-        oldStatus = s.status;
-        return { ...s, status };
-      }
-      return s;
-    });
-    setStored(STORAGE_KEYS.STUDIES, updated);
-    await api.recordAuditLog({
-      action: 'UPDATE',
-      entity: `Study ${id} Status`,
-      oldVal: oldStatus,
-      newVal: status,
-      user: 'Current User'
-    });
-    return updated.find(s => s.id === id);
+    const res = await apiClient.patch(`/studies/${id}`, { status });
+    return res.data.data;
   },
 
   // --- Sites ---
-  getSites: async () => getStored(STORAGE_KEYS.SITES, defaultSites),
+  getSites: async () => {
+    const res = await apiClient.get('/sites');
+    return res.data.data;
+  },
   getSiteById: async (id) => {
-    const sites = getStored(STORAGE_KEYS.SITES, defaultSites);
-    return sites.find((s) => s.id === id) || sites[0];
+    const res = await apiClient.get(`/sites/${id}`);
+    return res.data.data;
   },
 
   // --- Participants ---
-  getParticipants: async () => getStored(STORAGE_KEYS.PARTICIPANTS, defaultParticipants),
+  getParticipants: async () => {
+    const res = await apiClient.get('/participants');
+    return res.data.data;
+  },
   getParticipantById: async (id) => {
-    const parts = getStored(STORAGE_KEYS.PARTICIPANTS, defaultParticipants);
-    return parts.find((p) => p.id === id) || parts[0];
+    const res = await apiClient.get(`/participants/${id}`);
+    return res.data.data;
+  },
+  updateParticipantStatus: async (id, status) => {
+    const res = await apiClient.patch(`/participants/${id}/status`, { status });
+    return res.data.data;
   },
 
   // --- Visits ---
-  getVisits: async () => getStored(STORAGE_KEYS.VISITS, defaultVisits),
+  getVisits: async () => {
+    const res = await apiClient.get('/visits');
+    return res.data.data;
+  },
   markVisitCompleted: async (id) => {
-    const current = getStored(STORAGE_KEYS.VISITS, defaultVisits);
-    const updated = current.map(v => {
-      if (v.id === id) {
-        return { ...v, status: 'Completed', completedDate: new Date().toISOString().split('T')[0], compliance: 100 };
-      }
-      return v;
-    });
-    setStored(STORAGE_KEYS.VISITS, updated);
-    await api.recordAuditLog({
-      action: 'UPDATE',
-      entity: `Visit ${id}`,
-      oldVal: 'Pending',
-      newVal: 'Completed',
-      user: 'Current User'
-    });
-    return updated;
+    const res = await apiClient.patch(`/visits/${id}/complete`, { status: 'Completed', completedDate: new Date().toISOString() });
+    return [res.data.data]; // UI typically expects array update pattern in dummy, but adapt if needed
   },
 
   // --- Data Queries ---
-  getDataQueries: async () => getStored(STORAGE_KEYS.QUERIES, defaultQueries),
+  getDataQueries: async () => {
+    const res = await apiClient.get('/data-quality/queries');
+    return res.data.data;
+  },
   resolveQuery: async (id) => {
-    const current = getStored(STORAGE_KEYS.QUERIES, defaultQueries);
-    const updated = current.map(q => {
-      if (q.id === id) {
-        return { ...q, status: 'Resolved', resolvedDate: new Date().toISOString().split('T')[0] };
-      }
-      return q;
-    });
-    setStored(STORAGE_KEYS.QUERIES, updated);
-    await api.recordAuditLog({
-      action: 'RESOLVE',
-      entity: `Query ${id}`,
-      oldVal: 'Open',
-      newVal: 'Resolved',
-      user: 'Current User'
-    });
-    return updated;
+    const res = await apiClient.patch(`/data-quality/queries/${id}/resolve`, { resolutionData: 'Resolved from UI' });
+    return [res.data.data];
   },
 
   // --- Protocol Deviations ---
-  getProtocolDeviations: async () => getStored(STORAGE_KEYS.DEVIATIONS, defaultDeviations),
+  getProtocolDeviations: async () => {
+    const res = await apiClient.get('/data-quality/deviations');
+    return res.data.data;
+  },
   updateDeviationStatus: async (id, status) => {
-    const current = getStored(STORAGE_KEYS.DEVIATIONS, defaultDeviations);
-    let oldStatus = '';
-    const updated = current.map(d => {
-      if (d.id === id) {
-        oldStatus = d.status;
-        return { ...d, status };
-      }
-      return d;
-    });
-    setStored(STORAGE_KEYS.DEVIATIONS, updated);
-    await api.recordAuditLog({
-      action: 'UPDATE',
-      entity: `Deviation ${id}`,
-      oldVal: oldStatus,
-      newVal: status,
-      user: 'Current User'
-    });
-    return updated;
+    const res = await apiClient.patch(`/data-quality/deviations/${id}`, { status });
+    return [res.data.data];
   },
 
   // --- Regulatory Milestones ---
-  getMilestones: async () => getStored(STORAGE_KEYS.MILESTONES, defaultMilestones),
+  getMilestones: async () => {
+    const res = await apiClient.get('/regulatory/milestones');
+    return res.data.data;
+  },
   completeMilestone: async (id) => {
-    const current = getStored(STORAGE_KEYS.MILESTONES, defaultMilestones);
-    const updated = current.map(m => {
-      if (m.id === id) {
-        return { ...m, status: 'Completed', completedDate: new Date().toISOString().split('T')[0] };
-      }
-      return m;
-    });
-    setStored(STORAGE_KEYS.MILESTONES, updated);
-    await api.recordAuditLog({
-      action: 'UPDATE',
-      entity: `Milestone ${id}`,
-      oldVal: 'Pending',
-      newVal: 'Completed',
-      user: 'Current User'
-    });
-    return updated;
+    const res = await apiClient.patch(`/regulatory/milestones/${id}`, { status: 'Completed', actualDate: new Date().toISOString() });
+    return [res.data.data];
   },
 
   // --- Safety / SAE ---
-  getSafetyEvents: async () => getStored(STORAGE_KEYS.AESAE, defaultAesae),
-  reportSAE: async (saePayload) => {
-    const current = getStored(STORAGE_KEYS.AESAE, defaultAesae);
-    const newEntry = {
-      id: `SAE-${300 + current.length}`,
-      date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
-      status: 'Pending Review',
-      serious: 'Yes',
-      ...saePayload
-    };
-    const updated = [newEntry, ...current];
-    setStored(STORAGE_KEYS.AESAE, updated);
-    await api.recordAuditLog({
-      action: 'CREATE',
-      entity: `Expedited SAE ${newEntry.id}`,
-      oldVal: '-',
-      newVal: `${newEntry.event} (${newEntry.participant})`,
-      user: 'Pharmacovigilance Reporter'
-    });
-    return newEntry;
+  getSafetyEvents: async () => {
+    const res = await apiClient.get('/safety/events');
+    return res.data.data; // Note pagination wrapper is typically present, we may need res.data.data.events
+  },
+  reportSAE: async (data) => {
+    const res = await apiClient.post('/safety/events', data);
+    return res.data.data;
   },
   updateSAEStatus: async (id, status) => {
-    const current = getStored(STORAGE_KEYS.AESAE, defaultAesae);
-    let oldStatus = '';
-    const updated = current.map(s => {
-      if (s.id === id) {
-        oldStatus = s.status;
-        return { ...s, status };
-      }
-      return s;
-    });
-    setStored(STORAGE_KEYS.AESAE, updated);
-    await api.recordAuditLog({
-      action: 'UPDATE',
-      entity: `SAE ${id}`,
-      oldVal: oldStatus,
-      newVal: status,
-      user: 'Current User'
-    });
-    return updated;
+    const res = await apiClient.patch(`/safety/events/${id}`, { status });
+    return [res.data.data];
   },
 
   // --- Alerts ---
-  getAlerts: async () => getStored(STORAGE_KEYS.ALERTS, defaultAlerts),
+  getAlerts: async () => {
+    const res = await apiClient.get('/alerts');
+    return res.data.data;
+  },
   acknowledgeAlert: async (id) => {
-    const current = getStored(STORAGE_KEYS.ALERTS, defaultAlerts);
-    const updated = current.map((a) => (a.id === id ? { ...a, resolved: true } : a));
-    setStored(STORAGE_KEYS.ALERTS, updated);
-    await api.recordAuditLog({
-      action: 'UPDATE',
-      entity: `Alert ${id}`,
-      oldVal: 'Unread',
-      newVal: 'Acknowledged',
-      user: 'Current User'
-    });
-    return updated;
+    const res = await apiClient.patch(`/alerts/${id}/acknowledge`);
+    return [res.data.data];
   },
 
   // --- Audit Logs ---
-  getAuditLogs: async () => getStored(STORAGE_KEYS.AUDIT, defaultAuditLogs),
-  recordAuditLog: async ({ action, entity, oldVal, newVal, user = 'System User' }) => {
-    const current = getStored(STORAGE_KEYS.AUDIT, defaultAuditLogs);
-    const currentUserRole = localStorage.getItem('trialorbit_role') || user;
-    const newLog = {
-      id: current.length + 1,
-      time: new Date().toLocaleString('en-GB') + ' IST',
-      user: currentUserRole,
-      action,
-      entity,
-      oldVal,
-      newVal,
-      ip: 'Demo Mode'
-    };
-    const updated = [newLog, ...current];
-    setStored(STORAGE_KEYS.AUDIT, updated);
-    return newLog;
+  getAuditLogs: async () => {
+    const res = await apiClient.get('/audit-logs');
+    return res.data.data;
   },
 
-  // --- Static/Other Data ---
-  getComplianceData: async () => defaultCompliance,
-  getRecruitmentTrend: async () => recruitmentTrend,
-  getReportsCatalog: async () => reportsCatalog,
+  // --- Others (Mock if no backend exact match) ---
+  getComplianceData: async () => {
+    // Return dummy since backend might not have complex analytics aggregated yet
+    return (await import('../data/dummyData')).complianceData;
+  },
+  getRecruitmentTrend: async () => {
+    return (await import('../data/dummyData')).recruitmentTrend;
+  },
+  getReportsCatalog: async () => {
+    return (await import('../data/dummyData')).reportsCatalog;
+  },
 
-  // Demo utilities
   resetData: () => {
     localStorage.clear();
+    sessionStorage.clear();
     window.location.reload();
   }
 };

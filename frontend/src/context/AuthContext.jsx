@@ -20,13 +20,26 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  const login = (userData) => {
-    setUser(userData);
-    sessionStorage.setItem('ctms_user', JSON.stringify(userData));
+  const login = async (credentials) => {
+    try {
+      // credentials might be simple dummy object in old UI, or real object now
+      const res = await (await import('../services/api.js')).api.login(credentials);
+      const token = res.data.token;
+      const userData = res.data.user;
+      
+      localStorage.setItem('ctms_token', token);
+      sessionStorage.setItem('ctms_user', JSON.stringify(userData));
+      setUser(userData);
+      return userData;
+    } catch (err) {
+      console.error('Login failed', err);
+      throw err;
+    }
   };
 
   const logout = () => {
     setUser(null);
+    localStorage.removeItem('ctms_token');
     sessionStorage.removeItem('ctms_user');
   };
 

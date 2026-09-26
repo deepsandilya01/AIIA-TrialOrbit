@@ -33,7 +33,7 @@ export const getFHIREncounter = async (req, res, next) => {
 export const getCDISCExport = async (req, res, next) => {
   try {
     const { studyId } = req.params;
-    const cdiscExport = await ExportService.exportCDISC(studyId, req.user._id, req.user.role);
+    const cdiscExport = await ExportService.exportCDISC(studyId, req.user.id, req.user.role);
     res.status(200).json({
       success: true,
       data: cdiscExport

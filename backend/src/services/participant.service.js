@@ -1,4 +1,5 @@
 import participantRepository from '../repositories/participant.repository.js';
+import { serializeParticipant } from '../utils/serializers.js';
 
 class ParticipantService {
   async createParticipant(data, user) {
@@ -13,6 +14,12 @@ class ParticipantService {
     }
 
     const participant = await participantRepository.create(data);
+
+    // Emit real-time updates
+    const { emitEvent } = await import('../sockets/index.js');
+    emitEvent('dashboard', 'dashboard:kpi_updated', { metric: 'participant_created', value: 1, studyId: participant.studyId });
+    emitEvent(`study:${participant.studyId}`, 'participant:created', serializeParticipant(participant));
+
     return participant;
   }
 
@@ -57,6 +64,9 @@ class ParticipantService {
     const participant = await participantRepository.updateById(id, data);
     if (!participant) throw new Error('Participant not found');
     
+    const { emitEvent } = await import('../sockets/index.js');
+    emitEvent(`study:${participant.studyId}`, 'participant:updated', serializeParticipant(participant));
+
     return participant;
   }
 
@@ -68,7 +78,67 @@ class ParticipantService {
     const participant = await participantRepository.updateStatus(id, status);
     if (!participant) throw new Error('Participant not found');
 
+    const { emitEvent } = await import('../sockets/index.js');
+    emitEvent(`study:${participant.studyId}`, 'participant:status_changed', serializeParticipant(participant));
+
     return participant;
+  }
+
+  async updateParticipantConsent(id, data, user) {
+    if (user.role === 'MONITOR' || user.role === 'REGULATOR') {
+      throw new Error('Unauthorized to update participant consent');
+    }
+
+    const participant = await participantRepository.findById(id);
+    if (!participant) throw new Error('Participant not found');
+
+    const Consent = (await import('../models/Consent.js')).default;
+    const AuditLog = (await import('../models/AuditLog.js')).default;
+
+    // Handle withdrawal
+    if (data.status === 'Withdrawn') {
+      await Consent.updateMany(
+        { participantId: id, status: 'Active' },
+        { status: 'Withdrawn', withdrawnAt: new Date() }
+      );
+    }
+
+    const consent = await Consent.create({
+      participantId: id,
+      studyId: participant.studyId,
+      consentVersion: data.consentVersion,
+      method: data.method,
+      status: data.status || 'Active',
+      electronicSignature: {
+        actorId: user.id,
+        intent: 'Consent update via prototype',
+        hash: 'PROTOTYPE-HASH-' + Date.now(),
+        signedAt: new Date()
+      }
+    });
+
+    // Update participant master record
+    await participantRepository.updateById(id, { consentVersion: data.consentVersion });
+
+    await AuditLog.create({
+      actorId: user.id,
+      action: 'UPDATE_CONSENT',
+      entityType: 'Consent',
+      entityId: consent._id,
+      oldValue: 'N/A',
+      newValue: data.consentVersion,
+      reason: 'Consent updated'
+    });
+
+    const { emitEvent } = await import('../sockets/index.js');
+    emitEvent(`study:${participant.studyId}`, 'participant:consent_updated', {
+      participantId: participant._id,
+      consentId: consent._id,
+      status: consent.status,
+      version: consent.consentVersion
+    });
+
+    return consent;
   }
 }
 

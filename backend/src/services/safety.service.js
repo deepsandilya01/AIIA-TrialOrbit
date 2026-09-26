@@ -1,4 +1,5 @@
 import safetyRepository from '../repositories/adverseEvent.repository.js';
+import { serializeSafetyEvent } from '../utils/serializers.js';
 
 class SafetyService {
   async createEvent(data, user) {
@@ -11,7 +12,16 @@ class SafetyService {
       data.reportingDueAt = due;
     }
     
-    return await safetyRepository.create(data);
+    const event = await safetyRepository.create(data);
+    const { emitEvent } = await import('../sockets/index.js');
+    emitEvent(`study:${event.studyId}`, 'safety:event_created', serializeSafetyEvent(event));
+    return event;
+  }
+
+  async getEventById(id) {
+    const event = await safetyRepository.findById(id);
+    if (!event) throw new Error('Event not found');
+    return event;
   }
 
   async getEvents(query) {
@@ -34,6 +44,8 @@ class SafetyService {
     if (user.role === 'REGULATOR') throw new Error('Unauthorized');
     const event = await safetyRepository.update(id, data);
     if (!event) throw new Error('Event not found');
+    const { emitEvent } = await import('../sockets/index.js');
+    emitEvent(`study:${event.studyId}`, 'safety:event_updated', serializeSafetyEvent(event));
     return event;
   }
 
@@ -51,7 +63,44 @@ class SafetyService {
     
     const event = await safetyRepository.update(id, update);
     if (!event) throw new Error('Event not found');
+    const { emitEvent } = await import('../sockets/index.js');
+    emitEvent(`study:${event.studyId}`, 'safety:pv_review_updated', serializeSafetyEvent(event));
     return event;
+  }
+
+  async checkDueSAEs() {
+    const now = new Date();
+    const nearDue = new Date(now.getTime() + 12 * 60 * 60 * 1000); // due within next 12 hours
+    const dueEvents = await safetyRepository.findMany({ 
+      serious: 'Yes', 
+      status: { $ne: 'Closed' },
+      reportingDueAt: { $lt: nearDue, $gte: now } 
+    }, { limit: 1000 });
+    
+    let count = 0;
+    const { emitEvent } = await import('../sockets/index.js');
+    for (const ae of dueEvents) {
+      emitEvent(`study:${ae.studyId}`, 'safety:sae_due', { eventId: ae._id, eventType: ae.eventType });
+      count++;
+    }
+    return count;
+  }
+
+  async checkOverdueSAEs() {
+    // Note: requires access to raw repo or mongoose model. Assuming findMany works.
+    const overdue = await safetyRepository.findMany({ 
+      serious: 'Yes', 
+      status: { $ne: 'Closed' },
+      reportingDueAt: { $lt: new Date() } 
+    }, { limit: 1000 });
+    
+    let count = 0;
+    const { emitEvent } = await import('../sockets/index.js');
+    for (const ae of overdue) {
+      emitEvent(`study:${ae.studyId}`, 'safety:sae_overdue', { eventId: ae._id, eventType: ae.eventType });
+      count++;
+    }
+    return count;
   }
 }
 

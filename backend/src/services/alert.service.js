@@ -1,5 +1,6 @@
 import alertRepository from '../repositories/alert.repository.js';
 import regulatoryRepository from '../repositories/regulatory.repository.js';
+import { serializeAlert } from '../utils/serializers.js';
 
 class AlertService {
   async createAlert(data) {
@@ -7,7 +8,10 @@ class AlertService {
     const existing = await alertRepository.findExistingAlert(data.entityId, data.type);
     if (existing) return existing;
 
-    return await alertRepository.create(data);
+    const alert = await alertRepository.create(data);
+    const { emitEvent } = await import('../sockets/index.js');
+    emitEvent(`role:${alert.role}`, 'alert:created', serializeAlert(alert));
+    return alert;
   }
 
   async getActiveAlerts(user) {
@@ -26,8 +30,10 @@ class AlertService {
   }
 
   async acknowledge(id, user) {
-    const alert = await alertRepository.acknowledge(id);
+    const alert = await alertRepository.acknowledge(id, user.id);
     if (!alert) throw new Error('Alert not found');
+    const { emitEvent } = await import('../sockets/index.js');
+    emitEvent(`role:${alert.role}`, 'alert:acknowledged', serializeAlert(alert));
     return alert;
   }
 
@@ -35,6 +41,7 @@ class AlertService {
   async checkOverdueMilestones() {
     const overdue = await regulatoryRepository.findOverdue();
     let count = 0;
+    const { emitEvent } = await import('../sockets/index.js');
     for (const ms of overdue) {
       await this.createAlert({
         role: 'ETHICS',
@@ -42,9 +49,10 @@ class AlertService {
         entityType: 'RegulatoryMilestone',
         entityId: ms._id,
         text: `Milestone "${ms.title}" is overdue`,
-        type: 'Ethics Due',
+        type: 'ETHICS_DUE',
         severity: 'Critical'
       });
+      emitEvent(`study:${ms.studyId}`, 'regulatory:overdue', { milestoneId: ms._id, title: ms.title });
       count++;
     }
     return count;

@@ -3,23 +3,27 @@ import { createParticipant,
   getParticipants, 
   getParticipantById, 
   updateParticipant, 
-  updateStatus 
+  updateStatus,
+  updateParticipantConsent
  } from '../controllers/participant.controller.js';
 import { protect  } from '../middleware/auth.middleware.js';
+import { validate } from '../middleware/validate.middleware.js';
+import { participantValidator } from '../validators/index.js';
 
 const router = express.Router();
 
 router.use(protect);
 
 router.route('/')
-  .post(createParticipant)
+  .post(validate(participantValidator.create), createParticipant)
   .get(getParticipants);
 
 router.route('/:id')
   .get(getParticipantById)
-  .patch(updateParticipant);
+  .patch(validate(participantValidator.update), updateParticipant);
 
-router.patch('/:id/status', updateStatus);
+router.patch('/:id/status', validate(participantValidator.updateStatus), updateStatus);
+router.post('/:id/consent', validate(participantValidator.consent), updateParticipantConsent);
 
 
 export default router;
