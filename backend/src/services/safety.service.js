@@ -6,10 +6,10 @@ class SafetyService {
     if (user.role === 'REGULATOR') throw new Error('Unauthorized');
     
     // Set 24h timeline if serious SAE
-    if (data.serious === 'Yes') {
+    if (data.seriousness === 'SERIOUS') {
       const due = new Date();
       due.setHours(due.getHours() + 24);
-      data.reportingDueAt = due;
+      data.reportingDueDate = due;
     }
     
     const event = await safetyRepository.create(data);
@@ -31,8 +31,8 @@ class SafetyService {
 
     let filters = {};
     if (query.studyId) filters.studyId = query.studyId;
-    if (query.serious) filters.serious = query.serious;
-    if (query.status) filters.status = query.status;
+    if (query.seriousness) filters.seriousness = query.seriousness;
+    if (query.status) filters.pvReviewStatus = query.status; // Using pvReviewStatus for generic status query
 
     const events = await safetyRepository.findMany(filters, { skip, limit });
     const total = await safetyRepository.count(filters);
@@ -58,7 +58,7 @@ class SafetyService {
       ...reviewData,
       pvReviewedBy: user.id,
       pvReviewedAt: new Date(),
-      status: reviewData.status || 'Ongoing'
+      pvReviewStatus: reviewData.status || 'UNDER_REVIEW'
     };
     
     const event = await safetyRepository.update(id, update);
@@ -72,9 +72,9 @@ class SafetyService {
     const now = new Date();
     const nearDue = new Date(now.getTime() + 12 * 60 * 60 * 1000); // due within next 12 hours
     const dueEvents = await safetyRepository.findMany({ 
-      serious: 'Yes', 
-      status: { $ne: 'Closed' },
-      reportingDueAt: { $lt: nearDue, $gte: now } 
+      seriousness: 'SERIOUS', 
+      reportingStatus: { $ne: 'CLOSED' },
+      reportingDueDate: { $lt: nearDue, $gte: now } 
     }, { limit: 1000 });
     
     let count = 0;
@@ -89,9 +89,9 @@ class SafetyService {
   async checkOverdueSAEs() {
     // Note: requires access to raw repo or mongoose model. Assuming findMany works.
     const overdue = await safetyRepository.findMany({ 
-      serious: 'Yes', 
-      status: { $ne: 'Closed' },
-      reportingDueAt: { $lt: new Date() } 
+      seriousness: 'SERIOUS', 
+      reportingStatus: { $ne: 'CLOSED' },
+      reportingDueDate: { $lt: new Date() } 
     }, { limit: 1000 });
     
     let count = 0;

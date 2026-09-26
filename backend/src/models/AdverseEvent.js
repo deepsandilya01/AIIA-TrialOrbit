@@ -22,7 +22,8 @@ const adverseEventSchema = new mongoose.Schema({
   codedTerm: { type: String, trim: true, default: null },
   dictionary: { type: String, trim: true, default: null },
   version: { type: String, trim: true, default: null },
-  pvReviewedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null }
+  pvReviewedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+  pvReviewedAt: { type: Date, default: null }
 }, { timestamps: true });
 
 export default mongoose.model('AdverseEvent', adverseEventSchema);

@@ -45,6 +45,16 @@ const studySchema = new mongoose.Schema({
     type: Number,
     required: true,
     min: 1
+  },
+  studyDesign: {
+    type: String,
+    trim: true
+  },
+  startDate: {
+    type: Date
+  },
+  endDate: {
+    type: Date
   }
 }, {
   timestamps: true

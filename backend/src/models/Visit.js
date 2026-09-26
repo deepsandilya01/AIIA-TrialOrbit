@@ -21,6 +21,11 @@ const visitSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
+  visitType: {
+    type: String,
+    enum: ['Clinic', 'Phone', 'Remote'],
+    default: 'Clinic'
+  },
   scheduledDate: {
     type: Date,
     required: true
