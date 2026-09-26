@@ -6,8 +6,11 @@ import dns from "dns";
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
 dns.setDefaultResultOrder("ipv4first");
 
-// Connect to MongoDB
+import { initRedis } from './src/config/redis.js';
+
+// Connect to MongoDB and Redis
 connectDB();
+initRedis();
 
 const PORT = env.port;
 

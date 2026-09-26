@@ -1,19 +1,22 @@
 import { Server } from 'socket.io';
 import jwt from 'jsonwebtoken';
 import env from '../config/env.js';
+import { getRedisClient } from '../config/redis.js';
+import userRepository from '../repositories/user.repository.js';
 
 let io;
 
 export const initSocket = (server) => {
   io = new Server(server, {
     cors: {
-      origin: '*',
-      methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE']
+      origin: env.clientUrl || 'http://localhost:5173',
+      methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
+      credentials: true
     }
   });
 
   // Socket Authentication Middleware
-  io.use((socket, next) => {
+  io.use(async (socket, next) => {
     const token = socket.handshake.auth?.token;
     if (!token) {
       return next(new Error('Authentication error: Token missing'));
@@ -21,6 +24,20 @@ export const initSocket = (server) => {
 
     try {
       const decoded = jwt.verify(token, env.jwtSecret || process.env.JWT_SECRET);
+      
+      if (decoded.jti) {
+        const redis = getRedisClient();
+        if (redis) {
+          const isBlacklisted = await redis.get(`auth:blacklist:${decoded.jti}`);
+          if (isBlacklisted) return next(new Error('Authentication error: Token revoked'));
+        }
+      }
+
+      const user = await userRepository.findById(decoded.id);
+      if (!user || !user.isActive) {
+        return next(new Error('Authentication error: User inactive'));
+      }
+
       socket.user = decoded; // Contains id, role, studyId, etc.
       next();
     } catch (err) {

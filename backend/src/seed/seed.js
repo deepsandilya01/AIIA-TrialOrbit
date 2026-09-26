@@ -37,18 +37,30 @@ const seedData = async () => {
     await Alert.deleteMany();
     await AuditLog.deleteMany();
 
-    console.log('Creating users...');
-    const salt = await bcrypt.genSalt(10);
-    const passwordHash = await bcrypt.hash('password123', salt);
-    
-    const users = await User.insertMany([
-      { email: 'admin@aiia.gov.in', passwordHash, name: 'System Administrator', role: 'ADMIN', isActive: true },
-      { email: 'pi1@aiia.gov.in', passwordHash, name: 'Dr. Anurag Sharma', role: 'PI', isActive: true },
-      { email: 'coord@aiia.gov.in', passwordHash, name: 'Priya Patel', role: 'COORDINATOR', isActive: true },
-      { email: 'monitor@aiia.gov.in', passwordHash, name: 'Rahul Singh', role: 'MONITOR', isActive: true },
-      { email: 'pv@aiia.gov.in', passwordHash, name: 'Dr. Sneha Rao', role: 'PHARMACOVIGILANCE', isActive: true },
-      { email: 'ethics@aiia.gov.in', passwordHash, name: 'Ethics Committee', role: 'ETHICS', isActive: true }
-    ]);
+    const usersToCreate = [
+      { email: 'admin@trialorbit.com', passwordRaw: 'Admin@12345', name: 'System Administrator', role: 'ADMIN', isActive: true },
+      { email: 'pi@trialorbit.com', passwordRaw: 'PI@12345', name: 'Dr. Principal Investigator', role: 'PI', isActive: true },
+      { email: 'coordinator@trialorbit.com', passwordRaw: 'Coordinator@12345', name: 'Clinical Coordinator', role: 'COORDINATOR', isActive: true },
+      { email: 'monitor@trialorbit.com', passwordRaw: 'Monitor@12345', name: 'Clinical Monitor', role: 'MONITOR', isActive: true },
+      { email: 'pv@trialorbit.com', passwordRaw: 'PV@12345', name: 'PV Specialist', role: 'PHARMACOVIGILANCE', isActive: true },
+      { email: 'ethics@trialorbit.com', passwordRaw: 'Ethics@12345', name: 'Ethics Committee', role: 'ETHICS', isActive: true },
+      { email: 'regulator@trialorbit.com', passwordRaw: 'Regulator@12345', name: 'Regulatory Authority', role: 'REGULATOR', isActive: true }
+    ];
+
+    const usersData = [];
+    for (const u of usersToCreate) {
+      const salt = await bcrypt.genSalt(10);
+      const passwordHash = await bcrypt.hash(u.passwordRaw, salt);
+      usersData.push({
+        email: u.email,
+        passwordHash,
+        name: u.name,
+        role: u.role,
+        isActive: u.isActive
+      });
+    }
+
+    const users = await User.insertMany(usersData);
 
     const pi = users.find(u => u.role === 'PI');
 

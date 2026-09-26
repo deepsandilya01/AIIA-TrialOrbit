@@ -10,16 +10,18 @@ import { authorize  } from '../middleware/rbac.middleware.js';
 import { validate } from '../middleware/validate.middleware.js';
 import { studyValidator } from '../validators/index.js';
 
+import { cache } from '../middleware/cache.middleware.js';
+
 const router = express.Router();
 
 router.use(protect); // All study routes are protected
 
 router.route('/')
   .post(authorize('PI', 'ADMIN'), validate(studyValidator.create), createStudy)
-  .get(getStudies);
+  .get(cache(60), getStudies);
 
 router.route('/:id')
-  .get(getStudyById)
+  .get(cache(60), getStudyById)
   .patch(authorize('PI', 'ADMIN'), validate(studyValidator.update), updateStudy);
 
 router.post('/:id/lifecycle', authorize('PI', 'ADMIN'), validate(studyValidator.lifecycle), updateLifecycle);

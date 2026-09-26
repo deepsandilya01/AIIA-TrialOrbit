@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, MessageSquareWarning, Filter, Download, Plus, Clock, AlertTriangle, CheckCircle, Check } from 'lucide-react';
 import { api } from '../../services/api';
+import { useSocketEvent } from '../../hooks/useSocket';
 import Button from '../../components/common/Button';
 import { useToast } from '../../context/ToastContext';
 
@@ -14,6 +15,10 @@ const DataQueries = () => {
   useEffect(() => {
     loadQueries();
   }, []);
+
+  useSocketEvent('query:created', loadQueries);
+  useSocketEvent('query:updated', loadQueries);
+  useSocketEvent('query:resolved', loadQueries);
 
   const loadQueries = async () => {
     setLoading(true);

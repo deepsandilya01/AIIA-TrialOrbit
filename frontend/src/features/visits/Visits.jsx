@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, CalendarCheck, Clock, CheckCircle, AlertCircle, Download, Check } from 'lucide-react';
 import { api } from '../../services/api';
+import { useSocketEvent } from '../../hooks/useSocket';
 import Button from '../../components/common/Button';
 import { useToast } from '../../context/ToastContext';
 
@@ -14,6 +15,11 @@ const Visits = () => {
   useEffect(() => {
     loadVisits();
   }, []);
+
+  useSocketEvent('visit:created', loadVisits);
+  useSocketEvent('visit:updated', loadVisits);
+  useSocketEvent('visit:completed', loadVisits);
+  useSocketEvent('visit:missed', loadVisits);
 
   const loadVisits = async () => {
     setLoading(true);

@@ -22,7 +22,7 @@ apiClient.interceptors.request.use((config) => {
 
 // Interceptor for handling 401s
 apiClient.interceptors.response.use((response) => response, (error) => {
-  if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+  if (error.response && error.response.status === 401) {
     localStorage.removeItem('ctms_token');
     sessionStorage.removeItem('ctms_user');
     window.location.href = '/login'; // Redirect to login
@@ -86,6 +86,10 @@ export const api = {
   // --- Auth ---
   login: async (credentials) => {
     const response = await apiClient.post('/auth/login', credentials);
+    return response.data;
+  },
+  logout: async () => {
+    const response = await apiClient.post('/auth/logout');
     return response.data;
   },
 
@@ -241,6 +245,13 @@ export const api = {
       { id: 'RPT-004', name: 'Monitoring Visit Summary', category: 'Compliance', format: 'PDF', lastRun: '3 days ago' },
       { id: 'RPT-005', name: 'Enrollment Cohort Trajectory', category: 'Recruitment', format: 'Excel, PPT', lastRun: '1 week ago' }
     ];
+  },
+
+  // --- CDISC Export ---
+  generateCDISCExport: async (studyId, options) => {
+    // Expected endpoint: POST /export/cdisc/studies/:studyId/export
+    const res = await apiClient.post(`/export/cdisc/studies/${studyId}/export`, options);
+    return res.data;
   },
 
   resetData: () => {

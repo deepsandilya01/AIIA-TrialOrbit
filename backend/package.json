@@ -25,6 +25,8 @@
     "mongoose": "^9.10.2",
     "morgan": "^1.12.1",
     "node-cron": "^4.6.0",
+    "rate-limit-redis": "^6.0.1",
+    "redis": "^6.2.1",
     "socket.io": "^4.8.4",
     "swagger-ui-express": "^5.0.1",
     "yamljs": "^0.3.0"

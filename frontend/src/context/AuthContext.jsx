@@ -44,11 +44,18 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('ctms_token');
-    sessionStorage.removeItem('ctms_user');
-    disconnectSocket();
+  const logout = async () => {
+    try {
+      const { api } = await import('../services/api.js');
+      await api.logout();
+    } catch (e) {
+      console.warn('Backend logout failed or token already revoked', e);
+    } finally {
+      setUser(null);
+      localStorage.removeItem('ctms_token');
+      sessionStorage.removeItem('ctms_user');
+      disconnectSocket();
+    }
   };
 
   return (

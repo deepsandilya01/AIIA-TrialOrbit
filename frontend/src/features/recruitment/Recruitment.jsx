@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Users, UserCheck, UserMinus, Download, AlertTriangle, ArrowRight, Sparkles } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import api from '../../services/api';
+import { useSocketEvent } from '../../hooks/useSocket';
 import StatCard from '../../components/dashboard/StatCard';
 import Button from '../../components/common/Button';
 import DemoBadge from '../../components/common/DemoBadge';
@@ -15,10 +16,20 @@ const Recruitment = () => {
   const [recruitmentTrend, setRecruitmentTrend] = useState([]);
   const [sites, setSites] = useState([]);
 
-  useEffect(() => {
+  const loadData = () => {
     api.getRecruitmentTrend().then(setRecruitmentTrend).catch(console.error);
     api.getSites().then(setSites).catch(console.error);
+  };
+
+  useEffect(() => {
+    loadData();
   }, []);
+
+  useSocketEvent('participant:created', loadData);
+  useSocketEvent('participant:updated', loadData);
+  useSocketEvent('participant:status_changed', loadData);
+  useSocketEvent('participant:consent_updated', loadData);
+  useSocketEvent('site:updated', loadData);
 
   const recruitmentBySite = sites.map(s => ({
     name: s.id || s._id,

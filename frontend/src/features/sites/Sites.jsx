@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Plus, MapPin, Building2, Download, UserCheck } from 'lucide-react';
 import api from '../../services/api';
+import { useSocketEvent } from '../../hooks/useSocket';
 import Button from '../../components/common/Button';
 import StatusBadge from '../../components/common/StatusBadge';
 import DemoBadge from '../../components/common/DemoBadge';
@@ -18,12 +19,21 @@ const Sites = () => {
   const [sitesList, setSitesList] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const loadSites = () => {
     api.getSites().then(data => {
       setSitesList(data);
       setLoading(false);
     }).catch(console.error);
+  };
+
+  useEffect(() => {
+    loadSites();
   }, []);
+
+  useSocketEvent('site:created', loadSites);
+  useSocketEvent('site:updated', loadSites);
+  useSocketEvent('site:status_changed', loadSites);
+  
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [newSite, setNewSite] = useState({

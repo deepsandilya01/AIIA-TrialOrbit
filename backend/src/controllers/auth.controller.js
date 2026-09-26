@@ -47,8 +47,11 @@ export const getMe = async (req, res, next) => {
 
 export const logout = async (req, res, next) => {
   try {
-    // With JWT, logout is mostly handled client-side by deleting the token.
-    // If using cookies, we would clear the cookie here.
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.split(' ')[1];
+      await authService.logout(token);
+    }
     res.status(200).json({
       success: true,
       data: {},

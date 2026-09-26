@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Plus, Filter, FlaskConical, Download } from 'lucide-react';
 import api from '../../services/api';
+import { useSocketEvent } from '../../hooks/useSocket';
 import Button from '../../components/common/Button';
 import StatusBadge from '../../components/common/StatusBadge';
 import DemoBadge from '../../components/common/DemoBadge';
@@ -26,6 +27,10 @@ const Studies = () => {
   useEffect(() => {
     loadStudies();
   }, []);
+
+  useSocketEvent('study:created', loadStudies);
+  useSocketEvent('study:updated', loadStudies);
+  useSocketEvent('study:lifecycle_changed', loadStudies);
 
   const loadStudies = async () => {
     setLoading(true);

@@ -1,7 +1,10 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import userRepository from '../repositories/user.repository.js';
 import env from '../config/env.js';
+
+import { getRedisClient } from '../config/redis.js';
 
 class AuthService {
   async register(userData) {
@@ -55,11 +58,29 @@ class AuthService {
     return this.sanitizeUser(user);
   }
 
+  async logout(token) {
+    const redis = getRedisClient();
+    if (!redis) return; // if redis is down, just rely on client clearing token
+
+    try {
+      const decoded = jwt.decode(token);
+      if (decoded && decoded.jti && decoded.exp) {
+        const now = Math.floor(Date.now() / 1000);
+        const ttl = decoded.exp - now;
+        if (ttl > 0) {
+          await redis.set(`auth:blacklist:${decoded.jti}`, 'revoked', { EX: ttl });
+        }
+      }
+    } catch (err) {
+      console.error('Logout revocation failed:', err.message);
+    }
+  }
+
   generateToken(user) {
     return jwt.sign(
-      { id: user._id, role: user.role, siteId: user.siteId },
+      { sub: user._id, id: user._id, role: user.role, siteId: user.siteId },
       env.jwtSecret,
-      { expiresIn: env.jwtExpiresIn }
+      { expiresIn: env.jwtExpiresIn, jwtid: crypto.randomUUID() }
     );
   }
 

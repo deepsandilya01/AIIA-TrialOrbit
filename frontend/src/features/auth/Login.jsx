@@ -9,43 +9,53 @@ import { useToast } from '../../context/ToastContext';
 import './Login.css';
 
 const DEMO_PRESETS = [
-  { role: 'PI', name: 'Dr. Anurag Sharma', email: 'pi1@aiia.gov.in' },
-  { role: 'COORDINATOR', name: 'Priya Patel', email: 'coord@aiia.gov.in' },
-  { role: 'PHARMACOVIGILANCE', name: 'Dr. Sneha Rao', email: 'pv@aiia.gov.in' },
-  { role: 'MONITOR', name: 'Rahul Singh', email: 'monitor@aiia.gov.in' },
-  { role: 'ADMIN', name: 'System Administrator', email: 'admin@aiia.gov.in' }
+  { role: 'PI', name: 'Dr. Principal Investigator', email: 'pi@trialorbit.com', pass: 'PI@12345' },
+  { role: 'COORDINATOR', name: 'Clinical Coordinator', email: 'coordinator@trialorbit.com', pass: 'Coordinator@12345' },
+  { role: 'PHARMACOVIGILANCE', name: 'PV Specialist', email: 'pv@trialorbit.com', pass: 'PV@12345' },
+  { role: 'MONITOR', name: 'Clinical Monitor', email: 'monitor@trialorbit.com', pass: 'Monitor@12345' },
+  { role: 'ETHICS', name: 'Ethics Committee', email: 'ethics@trialorbit.com', pass: 'Ethics@12345' },
+  { role: 'REGULATOR', name: 'Regulatory Authority', email: 'regulator@trialorbit.com', pass: 'Regulator@12345' },
+  { role: 'ADMIN', name: 'System Administrator', email: 'admin@trialorbit.com', pass: 'Admin@12345' }
 ];
 
 const Login = () => {
   const { t } = useTranslation();
   const { login } = useAuth();
-  const { success } = useToast();
+  const { success, error } = useToast();
 
   const navigate = useNavigate();
   const location = useLocation();
-  const [email, setEmail] = useState('pi1@aiia.gov.in');
-  const [password, setPassword] = useState('password123');
+  const [email, setEmail] = useState('pi@trialorbit.com');
+  const [password, setPassword] = useState('PI@12345');
   const [role, setRole] = useState('PI');
-  const [name, setName] = useState('Dr. Anurag Sharma');
+  const [name, setName] = useState('Dr. Principal Investigator');
+
+  const [loading, setLoading] = useState(false);
 
   const handleSelectPreset = (preset) => {
     setRole(preset.role);
     setName(preset.name);
     setEmail(preset.email);
-    setPassword('password123');
+    setPassword(preset.pass);
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    if (!email || !password) {
+      return error('Please enter both email and password.');
+    }
+    setLoading(true);
     try {
-      await login({ email, password, role, name });
-      success(`Signed in as ${name} (${role}). Control Room activated.`);
+      const userData = await login({ email, password });
+      success(`Signed in as ${userData.name || name} (${userData.role || role}). Control Room activated.`);
 
       const from = location.state?.from?.pathname || '/dashboard';
       navigate(from, { replace: true });
     } catch (err) {
       console.error(err);
-      // Let it fail silently or show an error
+      error(err.response?.data?.message || err.response?.data?.error?.message || 'Invalid credentials or inactive account.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -183,8 +193,8 @@ const Login = () => {
               <span className="text-muted">Simulated Auth</span>
             </div>
 
-            <Button type="submit" variant="primary" className="login-btn w-full justify-center">
-              Authenticate & Enter CTMS &rarr;
+            <Button type="submit" variant="primary" className="login-btn w-full justify-center" disabled={loading}>
+              {loading ? 'Authenticating...' : 'Authenticate & Enter CTMS \u2192'}
             </Button>
 
             <div className="text-center mt-3">
