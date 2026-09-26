@@ -1,236 +1,191 @@
 # AIIA TrialOrbit
+
 **Real-Time Clinical Trial Management & Monitoring Platform**
 
-![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen)
-![Tests](https://img.shields.io/badge/Tests-123%2F123%20Backend%20%7C%2044%2F44%20E2E-success)
-![Version](https://img.shields.io/badge/Version-1.0.0-blue)
-![License](https://img.shields.io/badge/License-MIT-green)
-
-AIIA TrialOrbit is a role-based, real-time Clinical Trial Management System (CTMS) designed around the All India Institute of Ayurveda (AIIA) clinical research environment. This project addresses the **Smart India Hackathon 2026 Problem Statement 26046 (Ministry of Ayush / AIIA)**.
-
----
-
-## 📖 Table of Contents
-1. [Problem Statement & Objectives](#problem-statement--objectives)
-2. [What is AIIA TrialOrbit?](#what-is-aiia-trialorbit)
-3. [User Roles (RBAC)](#user-roles-rbac)
-4. [Key Features & Modules](#key-features--modules)
-5. [Dashboard Overviews](#dashboard-overviews)
-6. [System Architecture & Tech Stack](#system-architecture--tech-stack)
-7. [Data Model](#data-model)
-8. [Security & Compliance](#security--compliance)
-9. [Clinical & Regulatory Standards](#clinical--regulatory-standards)
-10. [Local Setup & Deployment](#local-setup--deployment)
-11. [Testing](#testing)
-12. [Known Limitations](#known-limitations)
-13. [Roadmap](#roadmap)
-
----
-
-## 🎯 Problem Statement & Objectives
-
-**Problem:** Clinical research activities often become fragmented across spreadsheets, documents, and disconnected legacy systems. This leads to delayed status visibility, manual tracking of milestones, disconnected safety workflows, and difficulty maintaining real-time compliance oversight.
-
-**Solution:** TrialOrbit provides a unified, real-time CTMS that seamlessly integrates study management, multi-site tracking, participant recruitment, data quality checks, pharmacovigilance (SAE/ADR), and ethics oversight into a single role-based dashboard.
+1. [Overview](#1-overview)
+2. [Smart India Hackathon Problem Statement](#2-smart-india-hackathon-problem-statement)
+3. [Problem](#3-problem)
+4. [Solution](#4-solution)
+5. [Current Implementation Scope](#5-current-implementation-scope)
+6. [User Roles](#6-user-roles)
+7. [Implemented Modules](#7-implemented-modules)
+8. [Dashboard & KPI](#8-dashboard--kpi)
+9. [Clinical Safety & Regulatory Workflow](#9-clinical-safety--regulatory-workflow)
+10. [Real-Time Architecture](#10-real-time-architecture)
+11. [System Architecture](#11-system-architecture)
+12. [Tech Stack](#12-tech-stack)
+13. [Data Model](#13-data-model)
+14. [Security](#14-security)
+15. [Clinical/Regulatory Alignment](#15-clinicalregulatory-alignment)
+16. [CDISC Status](#16-cdisc-status)
+17. [FHIR Status](#17-fhir-status)
+18. [AI/Intelligence Status](#18-aiintelligence-status)
+19. [Testing](#19-testing)
+20. [Current Database / Demo Data](#20-current-database--demo-data)
+21. [Local Setup](#21-local-setup)
+22. [Deployment](#22-deployment)
+23. [Known Limitations](#23-known-limitations)
+24. [Future Roadmap](#24-future-roadmap)
+25. [Project Status](#25-project-status)
 
 ---
 
-## 🚀 What is AIIA TrialOrbit?
+## 1. Overview
+AIIA TrialOrbit is a centralized, role-based, real-time Clinical Trial Management System (CTMS) designed specifically for the clinical research environment of the All India Institute of Ayurveda (AIIA). It serves as a unified digital platform for tracking multi-site trials, participant recruitment, data quality, ethics compliance, and pharmacovigilance.
 
-TrialOrbit is an institutional software platform designed to manage the entire lifecycle of Ayurvedic and integrative clinical research. Instead of treating clinical tracking as a set of flat files, it leverages real-time WebSocket connectivity (`Socket.IO`), high-performance caching (`Redis`), and strict Role-Based Access Control (`RBAC`) to ensure every stakeholder sees exactly the data they need, instantly.
+## 2. Smart India Hackathon Problem Statement
+**Problem Statement ID:** 26046 (Ministry of Ayush / All India Institute of Ayurveda)
+**Theme:** MedTech / BioTech / HealthTech
 
----
+## 3. Problem
+Clinical research tracking typically relies on disconnected legacy systems, flat files, or manual spreadsheets. This fragmentation leads to delayed regulatory reporting, missed safety deadlines, opaque multi-site recruitment progress, and difficulty enforcing role-based clinical protocols. 
 
-## 👥 User Roles (RBAC)
+## 4. Solution
+TrialOrbit solves this by providing a unified CTMS workflow with strict 7-role Role-Based Access Control (RBAC), real-time data synchronization via Socket.IO, and built-in regulatory countdown timers for Pharmacovigilance (e.g., automated 24-hour SAE deadlines). It acts as a single pane of glass for clinical oversight.
 
-The application enforces strict vertical authorization across exactly 7 canonical roles.
+## 5. Current Implementation Scope
+The current repository represents the functional prototype and architectural foundation for SIH 2026. The core CTMS workflow, real-time alerts, safety monitoring, and dashboard features are **fully implemented** in the code. Interoperability features (CDISC/FHIR/AI) exist as foundational prototypes/data mapping endpoints.
 
-| Role | Purpose | Features Accessed |
+## 6. User Roles
+The system rigidly enforces 7 hierarchical roles at the Express API layer via JWT/RBAC middleware:
+
+| Role | Purpose | Status |
 |---|---|---|
-| **ADMIN** | Institutional system administration | Full system settings, User Management, Global KPIs |
-| **PI** | Principal Investigator | Study oversight, Recruitment, Protocol management, Data exports |
-| **COORDINATOR** | Site-level operations | Participant logs, Visit scheduling, Consent tracking |
-| **MONITOR** | Clinical monitoring & data quality | SDV, Raise Data Queries, Flag Protocol Deviations |
-| **ETHICS** | Institutional Ethics Committee (IEC) | Protocol review, Ethics compliance, Regulatory timeline tracking |
-| **PHARMACOVIGILANCE** | PV Officer / Safety | Review AEs/ADRs/SAEs, Enforce reporting deadlines |
-| **REGULATOR** | Regulatory Authority / Auditing | **READ-ONLY** access to safety signals, milestones, and audit logs |
+| **ADMIN** | Institutional oversight & User management | ✅ IMPLEMENTED |
+| **PI** | Principal Investigator (Study-level oversight) | ✅ IMPLEMENTED |
+| **COORDINATOR** | Site-level operations & Participant tracking | ✅ IMPLEMENTED |
+| **MONITOR** | Source Data Verification (SDV), Query management | ✅ IMPLEMENTED |
+| **ETHICS** | Institutional Ethics Committee (IEC) review | ✅ IMPLEMENTED |
+| **PHARMACOVIGILANCE** | AE/ADR/SAE tracking & reporting deadlines | ✅ IMPLEMENTED |
+| **REGULATOR** | Read-only compliance & milestone observation | ✅ IMPLEMENTED |
 
----
+*(Note: No arbitrary "User", "Doctor", or "Superadmin" roles exist in the code outside of these 7 strict scopes).*
 
-## ✨ Key Features & Modules
+## 7. Implemented Modules
 
-*Based on current implementation status.*
+| Module | Status | Details |
+|---|---|---|
+| **Authentication** | ✅ IMPLEMENTED | JWT, JTI, Redis token blacklist on logout |
+| **Study & Site Management** | ✅ IMPLEMENTED | Multi-site hierarchical tracking |
+| **Participant Management** | ✅ IMPLEMENTED | Enrollment, Consent tracking, Visit scheduling |
+| **Data Queries & Deviations** | ✅ IMPLEMENTED | Discrepancy management & Protocol Deviation logging |
+| **Pharmacovigilance (PV)** | ✅ IMPLEMENTED | AE/ADR/SAE workflows with severity & seriousness tracking |
+| **Real-Time Alerts** | ✅ IMPLEMENTED | Socket.IO event emission coupled with Redis |
+| **Audit Logging** | ✅ IMPLEMENTED | Tracking user actions and mutations |
 
-| Module / Feature | Status |
-|---|---|
-| **Authentication (JWT, Logout, Blacklisting)** | ✅ Implemented |
-| **Role-Based Access Control (RBAC)** | ✅ Implemented |
-| **Study & Site Management** | ✅ Implemented |
-| **Participant & Recruitment Tracking** | ✅ Implemented |
-| **Visit Scheduling** | ✅ Implemented |
-| **Data Queries & Protocol Deviations** | ✅ Implemented |
-| **Pharmacovigilance (AE/ADR/SAE Workflow)** | ✅ Implemented |
-| **Real-Time Alerts (Socket.IO + Redis)** | ✅ Implemented |
-| **Role-Specific Dashboards** | ✅ Implemented |
-| **Audit Trail** | ✅ Implemented |
-| **CDISC / FHIR Export Interoperability** | ⚠️ Prototype |
+## 8. Dashboard & KPI
+Role-specific React dashboards are implemented and hydrated by the `dashboard.service.js` analytics engine.
+**Implemented KPIs Include:** Active Studies, Total Sites, Enrolled Participants, Open Queries, Open Deviations, Active Alerts, Total SAEs, and Overdue SAE Reports. 
+Widgets dynamically render based on the authenticated user's exact scope (e.g., PI sees their study, Coordinator sees their site).
 
----
+## 9. Clinical Safety & Regulatory Workflow
+**Fully Implemented:**
+- Adverse Event (AE) Logging
+- Serious Adverse Event (SAE) Logging
+- Automated 24-Hour Reporting Due Date generation for SERIOUS events (`safety.service.js`).
+- PV Officer Review workflow.
 
-## 📊 Dashboard Overviews
+## 10. Real-Time Architecture
+**Implemented:** `Socket.IO` is integrated deeply into the Mongoose controller/service layer. When a data query is raised or a safety event is logged, an alert is saved to MongoDB and instantly emitted via WebSockets to authorized client rooms (e.g., `room:studyId` or `room:role:MONITOR`), enabling live dashboard updates without polling.
 
-Each login is dynamically routed to a customized, widget-driven interface tailored to their exact operational scope:
-- **Admin:** System-wide operations, active users, alert tracking.
-- **PI:** Scoped recruitment charts, pending signatures, safety signals.
-- **Coordinator:** Participant visit calendars, open queries.
-- **Monitor:** Site compliance, protocol deviations, SDV status.
-- **Ethics:** Review queues, SAE deadline flags, milestone progress.
-- **Pharmacovigilance (PV):** Safety event aging, 24-hour SAE countdowns.
-- **Regulator:** Global read-only compliance overview.
+## 11. System Architecture
+The application uses a separated client-server model:
+- **Frontend:** React SPA consuming REST APIs and listening to WebSockets.
+- **Backend:** Node.js API acting as the security and business logic gateway.
+- **Database:** MongoDB acts as the absolute source of truth.
+- **Cache/Layer:** Redis operates solely for rate-limiting and immediate JWT blacklisting.
 
----
+## 12. Tech Stack
+*(Derived directly from `package.json`)*
+- **Frontend:** React (v19), Vite (v8), React Router (v7), Axios, GSAP, Recharts, Socket.IO Client.
+- **Backend:** Node.js, Express (v5), Mongoose (v9), Joi, Socket.IO (v4), Redis (v6), JsonWebToken, Node-Cron, Helmet.
+- **Testing:** Playwright (E2E), Jest (Backend).
 
-## 🏗️ System Architecture & Tech Stack
-
-**Frontend:**
-- **React 19** / **Vite 8**
-- **React Router v7**
-- **Axios** (API Client)
-- **Recharts** (Data Visualization)
-- **Socket.IO-Client** (Real-time updates)
-- Custom Vanilla CSS + responsive flexbox/grid layouts
-
-**Backend:**
-- **Node.js** / **Express 5**
-- **MongoDB** / **Mongoose 9** (Primary Data Store)
-- **Redis** (Token blacklisting, Rate-limiting, Cache)
-- **Socket.IO** (Real-time rooms and event emission)
-- **JWT** (Stateless authentication with JTI tracking)
-- **Joi** (Strict payload validation)
-
-**Data Flow:**
-1. Frontend makes authenticated Axios request.
-2. Backend verifies JWT and checks Redis blacklist.
-3. RBAC Middleware checks user role against endpoint permission.
-4. Joi validates the request body.
-5. Controller delegates to Service, interacting with Mongoose Repositories.
-6. Service commits to MongoDB (Source of Truth).
-7. If data triggers an alert/state change, Service emits a real-time event via Socket.IO to authorized rooms.
-
----
-
-## 🗄️ Data Model
+## 13. 🗄️ Data Model
 
 *Simplified Entity Relationship Mapping.*
 
-```mermaid
-graph TD
-    U[User] --> S[Study]
-    S --> SI[Site]
-    S --> RM[Regulatory Milestone]
-    SI --> P[Participant]
-    P --> C[Consent]
-    P --> V[Visit]
-    P --> DQ[Data Query]
-    P --> PD[Protocol Deviation]
-    P --> AE[Adverse Event / SAE]
-```
+![Entity Relationship Mapping](https://mermaid.ink/img/eyJjb2RlIjoiZ3JhcGggVERcbiAgICBVW1VzZXJdIC0tPiBTW1N0dWR5XVxuICAgIFMgLS0+IFNJW1NpdGVdXG4gICAgUyAtLT4gUk1bUmVndWxhdG9yeSBNaWxlc3RvbmVdXG4gICAgU0kgLS0+IFBbUGFydGljaXBhbnRdXG4gICAgUCAtLT4gQ1tDb25zZW50XVxuICAgIFAgLS0+IFZbVmlzaXRdXG4gICAgUCAtLT4gRFFbRGF0YSBRdWVyeV1cbiAgICBQIC0tPiBQRFtQcm90b2NvbCBEZXZpYXRpb25dXG4gICAgUCAtLT4gQUVbQWR2ZXJzZSBFdmVudCAvIFNBRV0iLCJtZXJtYWlkIjp7InRoZW1lIjoiZGFyayJ9fQ==)
 
 **Key Collections:**
 `Users`, `Studies`, `Sites`, `Participants`, `Visits`, `AdverseEvents`, `Alerts`, `DataQueries`, `ProtocolDeviations`, `AuditLogs`, `RegulatoryMilestones`, `Consents`.
 
----
+## 14. Security
+**Implemented Controls:**
+- JWT-based authentication with explicit `jti` invalidation using a Redis Blacklist.
+- 7-Role RBAC enforced globally on API endpoints.
+- IDOR Protection: Database queries in services explicitly scope to `userId`, `siteId`, or `studyId` based on the requester's authority.
+- `helmet` HTTP header protections and CORS.
+- `rate-limit-redis` brute force protection.
 
-## 🛡️ Security & Compliance
+## 15. Clinical/Regulatory Alignment
+The prototype incorporates principles from GCP-ASU and NDCT Rules 2019 natively into its logic (e.g., distinct Ethics and PV roles, SAE countdown timers). 
+*Note: The platform is a hackathon prototype and has not been formally audited or certified by CDSCO or the FDA.*
 
-This platform is designed with foundational security principles required for healthcare data:
-- **Authentication:** JWT tokens with expiration, `jti` tracking, and Redis-backed immediate revocation on logout.
-- **Authorization:** Backend endpoint protection matching UI constraints. Hardened against IDOR (Insecure Direct Object Reference) by scoping database queries to the user's explicit assigned `studyId` or `siteId`.
-- **API Protection:** Global rate-limiting via Redis, Helmet for HTTP headers, CORS configurations.
-- **Audit Logging:** Implemented tracking for sensitive CRUD operations.
+## 16. CDISC Status
+⚠️ **PROTOTYPE / ARCHITECTURAL FOUNDATION**
+The `export.service.js` module provides a foundational prototype mapping MongoDB documents into representative JSON arrays mimicking SDTM (DM, DS, AE, SV) and ADaM (ADSL) structures. It is not currently a fully certified CDISC ODM/Define-XML compliance engine.
 
-*(Note: While designed around ICMR/GCP standards, this prototype is not formally certified for production deployment.)*
+## 17. FHIR Status
+⚠️ **PROTOTYPE / ARCHITECTURAL FOUNDATION**
+The system implements a prototype FHIR R4 export mapping inside `export.service.js` (transforming internal models to `Patient`, `ResearchStudy`, `Encounter`). Live interoperability data transmission to an external EHR is not implemented.
 
----
+## 18. AI/Intelligence Status
+🟡 **ARCHITECTURAL FOUNDATION**
+The `ai.service.js` module currently returns deterministic analytics fallback data (KPI calculations, recruitment risk math, zero-recruitment site anomaly detection). True LLM/Generative inference execution is not implemented in the current codebase.
 
-## ⚕️ Clinical & Regulatory Standards
+## 19. Testing
+Testing verified against current source code execution:
+- **Backend (Jest):** `123 / 123` Tests Passed (100% Core Suite Success).
+- **Frontend (Playwright):** `44 / 44` UI/RBAC Tests Passed across Desktop & Mobile viewports.
+- **Responsive Integrity:** Verified down to `320px` width.
 
-| Standard | Current Implementation Status |
-|---|---|
-| **GCP-ASU / ICMR Guidelines** | ✅ Implemented (RBAC, Safety workflows) |
-| **NDCT Rules 2019** | ✅ Implemented (SAE 24h timelines) |
-| **ALCOA+** | ✅ Implemented (Audit trails, non-destructive updates) |
-| **CDISC (SDTM/CDASH)** | ⚠️ Prototype (Export structure foundation) |
-| **HL7 FHIR R4** | ⚠️ Prototype (Schema alignment) |
+## 20. Current Database / Demo Data
+The application connects to a MongoDB database pre-seeded with synthetic, de-identified demonstration data intended purely for SIH software testing. 
+*Do not treat any dashboard statistics as real patient data.*
 
----
+## 21. Local Setup
+*(Requires Node.js 18+, MongoDB instance, Redis Server)*
 
-## 💻 Local Setup & Deployment
-
-### Prerequisites
-- Node.js (v18+)
-- MongoDB (Local or Atlas URL)
-- Redis Server (Running locally or cloud)
-
-### Environment Variables
-Create a `.env` file in the `backend/` directory:
+**1. Clone the repository.**
+**2. Configure Backend:**
+Create `backend/.env`:
 ```env
 PORT=3000
-MONGODB_URI=mongodb://localhost:27017/trialorbit
-MONGODB_TEST_URI=mongodb://localhost:27017/trialorbit_test
-JWT_SECRET=your_super_secret_key_change_me
+MONGODB_URI=mongodb://localhost:27017/aiia_trialorbit
+JWT_SECRET=local_development_secret
 REDIS_URL=redis://localhost:6379
 FRONTEND_URL=http://localhost:5173
 ```
-
-### Run Locally
 ```bash
-# Terminal 1: Backend
 cd backend
 npm install
-npm run seed  # Optional: Generates demo data
+npm run seed  # Generates demo data
 npm run dev
-
-# Terminal 2: Frontend
+```
+**3. Configure Frontend:**
+```bash
 cd frontend
 npm install
 npm run dev
 ```
 
----
+## 22. Deployment
+- **CURRENT DEPLOYMENT:** Configurable for standard cloud platforms.
+- **PLANNED DEPLOYMENT:** Frontend (Vercel), Backend (Render/AWS), Database (MongoDB Atlas), Cache (Redis Cloud).
+*(Production secrets and credentials are never stored in the repository.)*
 
-## 🧪 Testing
+## 23. Known Limitations
+- **External Integration:** Live webhook connections to external hospital EMRs are not implemented.
+- **Dictionary Lookups:** MedDRA and WHO Drug dictionaries are not loaded into the database due to licensing restrictions; fields rely on manual text inputs.
+- **Compliance:** This is a software prototype and requires third-party penetration testing, DPDP Act compliance review, and institutional governance approval before managing real Protected Health Information (PHI).
 
-The platform has undergone intense, zero-tolerance E2E and Unit testing:
-- **Backend (Jest):** `123 / 123` Tests Passed (19 Test Suites)
-- **Frontend (Playwright):** `44 / 44` E2E Scenarios Passed
-- **Build Integrity:** `Vite Build` verified.
-- **Responsive Matrix Verified:** `320x568` up to `1920x1080`.
+## 24. Future Roadmap
+- **Phase 1 (Current):** Unified CTMS, RBAC, Real-Time Safety & Alert Workflows.
+- **Phase 2:** Advanced live EHR Integration via FHIR/ABDM.
+- **Phase 3:** Fully validated CDISC XML Export Engine.
+- **Phase 4:** Production deployment and security hardening.
 
-To run tests:
-```bash
-# Backend
-cd backend && npm test
-
-# Frontend (Playwright)
-cd frontend && npx playwright test
-```
-
----
-
-## ⚠️ Known Limitations
-- **Prototype Integration:** FHIR and CDISC modules represent architectural foundations (export schemas) but are not currently wired to live external EMR/EHR hospitals.
-- **Dictionary Lookups:** Adverse Event coding (MedDRA/WHO Drug) is structured in the database schema but relies on manual entry rather than a live licensed API integration.
-- **Regulatory Status:** This is a Smart India Hackathon prototype and must undergo rigorous penetration testing and compliance auditing before true clinical deployment.
-
----
-
-## 🗺️ Roadmap
-- [x] **Phase 1:** Core CTMS & RBAC
-- [x] **Phase 2:** Real-Time Safety & Alert Workflows
-- [ ] **Phase 3:** Live EHR Integration via FHIR
-- [ ] **Phase 4:** Fully Validated CDISC Export Engine
-- [ ] **Phase 5:** Predictive AI for Site Performance Risk
-
----
-*Developed for the Ministry of Ayush by Team AsyncOrbit.*
+## 25. Project Status
+**COMPLETED FOR SIH 2026**
+The repository is fully stabilized and passes all end-to-end integration verifications.
