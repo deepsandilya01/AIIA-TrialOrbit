@@ -16,7 +16,7 @@ let aeId = '';
 beforeAll(async () => {
   await connectTestDB();
   await clearTestDB();
-});
+}, 30000);
 
 afterAll(async () => {
   await closeTestDB();
@@ -193,12 +193,12 @@ describe('E2E Clinical Trial Management System Flow', () => {
       .set('Authorization', `Bearer ${token}`);
     
     expect(res.status).toBe(200);
-    expect(res.body.data.status).toBe('Resolved');
+    expect(res.body.data.status).toBe('RESOLVED');
   });
 
   it('12. CREATE REGULATORY MILESTONE', async () => {
     const res = await request(app)
-      .post('/api/v1/regulatory')
+      .post('/api/v1/regulatory/milestones')
       .set('Authorization', `Bearer ${token}`)
       .send({
         studyId,
@@ -214,7 +214,7 @@ describe('E2E Clinical Trial Management System Flow', () => {
 
   it('13. CREATE SAE', async () => {
     const res = await request(app)
-      .post('/api/v1/safety')
+      .post('/api/v1/safety/events')
       .set('Authorization', `Bearer ${token}`)
       .send({
         studyId,

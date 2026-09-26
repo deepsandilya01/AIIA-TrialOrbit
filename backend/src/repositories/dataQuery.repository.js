@@ -30,13 +30,13 @@ class DataQueryRepository {
   }
 
   async countOpen() {
-    return await DataQuery.countDocuments({ status: { $ne: 'Resolved' } });
+    return await DataQuery.countDocuments({ status: { $ne: 'RESOLVED' } });
   }
 
   async resolve(id) {
     return await DataQuery.findByIdAndUpdate(
       id,
-      { status: 'Resolved', resolvedAt: new Date() },
+      { status: 'RESOLVED', resolvedAt: new Date() },
       { new: true, runValidators: true }
     );
   }
