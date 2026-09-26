@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import React, { useState, useEffect } from 'react';
 import { Bell, Filter, CheckCircle2, ShieldCheck, AlertTriangle, Info } from 'lucide-react';
 import api from '../../services/api';
+import { useSocketEvent } from '../../hooks/useSocket';
 import Badge from '../../components/common/Badge';
 import StatusBadge from '../../components/common/StatusBadge';
 import Button from '../../components/common/Button';
@@ -22,6 +23,10 @@ const Alerts = () => {
   useEffect(() => {
     loadAlerts();
   }, []);
+
+  useSocketEvent('alert:created', loadAlerts);
+  useSocketEvent('alert:updated', loadAlerts);
+  useSocketEvent('alert:acknowledged', loadAlerts);
 
   const loadAlerts = async () => {
     setLoading(true);

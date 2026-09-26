@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AlertTriangle, Activity, CheckCircle, Clock, ShieldAlert, BarChart2 } from 'lucide-react';
 import api from '../../services/api';
+import { useSocketEvent } from '../../hooks/useSocket';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell
@@ -9,9 +10,19 @@ import {
 const SafetyDashboard = () => {
   const [aesaeData, setAesaeData] = useState([]);
 
-  useEffect(() => {
+  const loadData = () => {
     api.getSafetyEvents().then(setAesaeData).catch(console.error);
+  };
+
+  useEffect(() => {
+    loadData();
   }, []);
+
+  useSocketEvent('safety:event_created', loadData);
+  useSocketEvent('safety:event_updated', loadData);
+  useSocketEvent('safety:sae_due', loadData);
+  useSocketEvent('safety:sae_overdue', loadData);
+  useSocketEvent('safety:pv_review_updated', loadData);
   const totalAE = aesaeData.length;
   const totalSAE = aesaeData.filter(e => e.serious === 'Yes').length;
   const openEvents = aesaeData.filter(e => e.status !== 'Resolved').length;

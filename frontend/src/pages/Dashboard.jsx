@@ -17,6 +17,7 @@ import CreateStudy from '../features/studies/CreateStudy';
 import ReportSAE from '../features/safety/ReportSAE';
 import { useToast } from '../context/ToastContext';
 import api from '../services/api';
+import { useSocketEvent } from '../hooks/useSocket';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -33,28 +34,40 @@ const Dashboard = () => {
     chartData: []
   });
 
+  const fetchStats = async () => {
+    const [studies, sites, participants, aes] = await Promise.all([
+      api.getStudies(), api.getSites(), api.getParticipants(), api.getSafetyEvents()
+    ]);
+    setStats({
+      activeStudies: studies.filter(s => s.status === 'Ongoing').length,
+      totalStudies: studies.length,
+      activeSites: sites.filter(s => s.status === 'Active').length,
+      totalSites: sites.length,
+      participants: participants.length,
+      pendingSae: aes.filter(a => a.status === 'Pending Review' || a.status === 'Ongoing').length,
+      chartData: [
+        { name: 'Ongoing', value: studies.filter(s => s.status === 'Ongoing').length, color: 'var(--primary-color)' },
+        { name: 'Completed', value: studies.filter(s => s.status === 'Completed').length, color: 'var(--success)' },
+        { name: 'Planned/Draft', value: studies.filter(s => s.status === 'Planned' || s.status === 'Draft').length, color: 'var(--accent-color)' },
+        { name: 'On Hold', value: studies.filter(s => s.status === 'On Hold').length, color: 'var(--danger)' }
+      ].filter(d => d.value > 0)
+    });
+  };
+
   useEffect(() => {
-    const fetchStats = async () => {
-      const [studies, sites, participants, aes] = await Promise.all([
-        api.getStudies(), api.getSites(), api.getParticipants(), api.getSafetyEvents()
-      ]);
-      setStats({
-        activeStudies: studies.filter(s => s.status === 'Ongoing').length,
-        totalStudies: studies.length,
-        activeSites: sites.filter(s => s.status === 'Active').length,
-        totalSites: sites.length,
-        participants: participants.length,
-        pendingSae: aes.filter(a => a.status === 'Pending Review' || a.status === 'Ongoing').length,
-        chartData: [
-          { name: 'Ongoing', value: studies.filter(s => s.status === 'Ongoing').length, color: 'var(--primary-color)' },
-          { name: 'Completed', value: studies.filter(s => s.status === 'Completed').length, color: 'var(--success)' },
-          { name: 'Planned/Draft', value: studies.filter(s => s.status === 'Planned' || s.status === 'Draft').length, color: 'var(--accent-color)' },
-          { name: 'On Hold', value: studies.filter(s => s.status === 'On Hold').length, color: 'var(--danger)' }
-        ].filter(d => d.value > 0)
-      });
-    };
     fetchStats();
   }, []);
+
+  useSocketEvent('dashboard:kpi_updated', fetchStats);
+  useSocketEvent('study:created', fetchStats);
+  useSocketEvent('study:updated', fetchStats);
+  useSocketEvent('study:lifecycle_changed', fetchStats);
+  useSocketEvent('site:created', fetchStats);
+  useSocketEvent('site:updated', fetchStats);
+  useSocketEvent('site:status_changed', fetchStats);
+  useSocketEvent('participant:created', fetchStats);
+  useSocketEvent('participant:updated', fetchStats);
+  useSocketEvent('safety:event_created', fetchStats);
 
   const handleStudyCreated = async (newStudy) => {
     await api.createStudy(newStudy);

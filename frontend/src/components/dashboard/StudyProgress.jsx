@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AlertTriangle, ArrowRight } from 'lucide-react';
 import api from '../../services/api';
+import { useSocketEvent } from '../../hooks/useSocket';
 import StatusBadge from '../common/StatusBadge';
 import './StudyProgress.css';
 
@@ -11,9 +12,19 @@ const StudyProgress = () => {
   const navigate = useNavigate();
   const [studies, setStudies] = useState([]);
 
-  useEffect(() => {
+  const loadData = () => {
     api.getStudies().then(setStudies).catch(console.error);
+  };
+
+  useEffect(() => {
+    loadData();
   }, []);
+
+  useSocketEvent('study:created', loadData);
+  useSocketEvent('study:updated', loadData);
+  useSocketEvent('study:lifecycle_changed', loadData);
+  useSocketEvent('participant:created', loadData);
+  useSocketEvent('participant:updated', loadData);
 
   return (
     <div className="card study-progress-card">
