@@ -84,9 +84,9 @@ const AppRoutes = () => {
       <Route path="/ai-assistant" element={<ProtectedRoute><Layout><AIAssistant /></Layout></ProtectedRoute>} />
       <Route path="/insights" element={<ProtectedRoute><Layout><AIAssistant /></Layout></ProtectedRoute>} />
       
-      <Route path="/users" element={<ProtectedRoute><Layout><Users /></Layout></ProtectedRoute>} />
-      <Route path="/roles" element={<ProtectedRoute><Layout><Users /></Layout></ProtectedRoute>} />
-      <Route path="/permissions" element={<ProtectedRoute><Layout><Users /></Layout></ProtectedRoute>} />
+      <Route path="/users" element={<ProtectedRoute allowedRoles={['ADMIN']}><Layout><Users /></Layout></ProtectedRoute>} />
+      <Route path="/roles" element={<ProtectedRoute allowedRoles={['ADMIN']}><Layout><Users /></Layout></ProtectedRoute>} />
+      <Route path="/permissions" element={<ProtectedRoute allowedRoles={['ADMIN']}><Layout><Users /></Layout></ProtectedRoute>} />
       <Route path="/reports" element={<ProtectedRoute><Layout><Reports /></Layout></ProtectedRoute>} />
       <Route path="*" element={<NotFound />} />
     </Routes>

@@ -10,10 +10,13 @@ import DemoBadge from '../../components/common/DemoBadge';
 import './Profile.css';
 
 const ROLE_META = {
-  admin:         { label: 'System Administrator', color: '#7c3aed', bg: 'rgba(124,58,237,0.1)' },
-  investigator:  { label: 'Principal Investigator', color: '#0d9488', bg: 'rgba(13,148,136,0.1)' },
-  monitor:       { label: 'CRA / Monitor', color: '#2563eb', bg: 'rgba(37,99,235,0.1)' },
-  coordinator:   { label: 'Trial Coordinator', color: '#d97706', bg: 'rgba(217,119,6,0.1)' },
+  ADMIN:             { label: 'System Administrator', color: '#7c3aed', bg: 'rgba(124,58,237,0.1)' },
+  PI:                { label: 'Principal Investigator', color: '#0d9488', bg: 'rgba(13,148,136,0.1)' },
+  MONITOR:           { label: 'Clinical Monitor (CRA)', color: '#2563eb', bg: 'rgba(37,99,235,0.1)' },
+  COORDINATOR:       { label: 'Study Coordinator', color: '#d97706', bg: 'rgba(217,119,6,0.1)' },
+  ETHICS:            { label: 'Ethics Committee', color: '#16a34a', bg: 'rgba(22,163,74,0.1)' },
+  PHARMACOVIGILANCE: { label: 'Pharmacovigilance Officer', color: '#dc2626', bg: 'rgba(220,38,38,0.1)' },
+  REGULATOR:         { label: 'Regulator (Read-only)', color: '#64748b', bg: 'rgba(100,116,139,0.1)' }
 };
 
 const DEMO_PROFILE = {

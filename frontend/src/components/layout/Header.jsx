@@ -268,22 +268,10 @@ const Header = ({ onToggleSidebar }) => {
             {showRoleMenu && (
               <div className="role-dropdown card" role="menu">
                 <div className="role-dropdown-header">
-                  <div className="text-xs font-semibold uppercase text-muted">Simulate Role View (RBAC)</div>
-                  <div className="text-xs text-secondary mt-1">Switch view to demonstrate multi-stakeholder permissions:</div>
-                </div>
-                <div className="role-list">
-                  {usersList.map(r => (
-                    <div
-                      key={r.id}
-                      className={`role-item ${(user?.role || 'PI') === r.role ? 'selected' : ''}`}
-                      onClick={() => handleSwitchRole(r)}
-                      role="menuitem"
-                    >
-                      <div className="font-semibold text-xs text-primary">{r.role}</div>
-                      <div className="text-xs text-muted truncate">{r.name}</div>
-                      <div className="text-xs text-secondary mt-0.5" style={{ fontSize: '0.68rem' }}>{r.email}</div>
-                    </div>
-                  ))}
+                  <div className="text-xs font-semibold uppercase text-muted">User Profile</div>
+                  <div className="text-xs font-semibold text-primary mt-1">{user?.name}</div>
+                  <div className="text-xs text-secondary">{user?.email}</div>
+                  <div className="text-xs text-secondary mt-1">Role: {user?.role}</div>
                 </div>
                 <div className="role-dropdown-footer">
                   <button

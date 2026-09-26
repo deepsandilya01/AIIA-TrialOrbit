@@ -42,7 +42,8 @@ export const updateStudy = async (req, res, next) => {
     await invalidateCachePrefix('/api/v1/dashboard');
     res.status(200).json({ success: true, data: study });
   } catch (error) {
-    if (error.message === 'Study not found') res.status(404);
+    if (error.message === 'Study not found') return res.status(404).json({ success: false, message: error.message });
+    if (error.message.startsWith('Forbidden')) return res.status(403).json({ success: false, message: error.message });
     next(error);
   }
 };
@@ -54,7 +55,8 @@ export const updateLifecycle = async (req, res, next) => {
     await invalidateCachePrefix('/api/v1/dashboard');
     res.status(200).json({ success: true, data: study });
   } catch (error) {
-    if (error.message === 'Study not found') res.status(404);
+    if (error.message === 'Study not found') return res.status(404).json({ success: false, message: error.message });
+    if (error.message.startsWith('Forbidden')) return res.status(403).json({ success: false, message: error.message });
     next(error);
   }
 };

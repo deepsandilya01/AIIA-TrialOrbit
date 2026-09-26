@@ -11,9 +11,9 @@ import './Login.css';
 const DEMO_PRESETS = [
   { role: 'PI', name: 'Dr. Principal Investigator', email: 'pi@trialorbit.com', pass: 'PI@12345' },
   { role: 'COORDINATOR', name: 'Clinical Coordinator', email: 'coordinator@trialorbit.com', pass: 'Coordinator@12345' },
-  { role: 'PHARMACOVIGILANCE', name: 'PV Specialist', email: 'pv@trialorbit.com', pass: 'PV@12345' },
   { role: 'MONITOR', name: 'Clinical Monitor', email: 'monitor@trialorbit.com', pass: 'Monitor@12345' },
   { role: 'ETHICS', name: 'Ethics Committee', email: 'ethics@trialorbit.com', pass: 'Ethics@12345' },
+  { role: 'PHARMACOVIGILANCE', name: 'PV Specialist', email: 'pv@trialorbit.com', pass: 'PV@12345' },
   { role: 'REGULATOR', name: 'Regulatory Authority', email: 'regulator@trialorbit.com', pass: 'Regulator@12345' },
   { role: 'ADMIN', name: 'System Administrator', email: 'admin@trialorbit.com', pass: 'Admin@12345' }
 ];
@@ -138,7 +138,7 @@ const Login = () => {
                   className={`preset-chip ${role === p.role ? 'selected' : ''}`}
                   onClick={() => handleSelectPreset(p)}
                 >
-                  {p.role.split(' ')[0]}
+                  {p.role}
                 </button>
               ))}
             </div>
@@ -176,13 +176,16 @@ const Login = () => {
                 if (match) {
                   setName(match.name);
                   setEmail(match.email);
+                  setPassword(match.pass);
                 }
               }}>
-                <option value="Principal Investigator">Principal Investigator (Medical Oversight)</option>
-                <option value="Study Coordinator">Study Coordinator (CRF & Participant Follow-up)</option>
-                <option value="Pharmacovigilance Officer">Pharmacovigilance Officer (SAE & Safety)</option>
-                <option value="Clinical Monitor (CRA)">Clinical Monitor / CRA (SDV & Deviations)</option>
-                <option value="System Admin">System Administrator (Governance & Config)</option>
+                <option value="PI">Principal Investigator (PI)</option>
+                <option value="COORDINATOR">Study Coordinator</option>
+                <option value="MONITOR">Clinical Monitor (CRA)</option>
+                <option value="ETHICS">Ethics Committee</option>
+                <option value="PHARMACOVIGILANCE">Pharmacovigilance Officer</option>
+                <option value="REGULATOR">Regulator (Read-only)</option>
+                <option value="ADMIN">System Administrator</option>
               </select>
             </div>
 
