@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
 
 const apiClient = axios.create({
   baseURL: API_URL,
@@ -83,6 +83,12 @@ const mapDefault = (item) => {
 };
 
 export const api = {
+  // --- Dashboard ---
+  getDashboardKPIs: async () => {
+    const res = await apiClient.get('/dashboard/kpis');
+    return res.data.data || res.data || {};
+  },
+
   // --- Auth ---
   login: async (credentials) => {
     const response = await apiClient.post('/auth/login', credentials);
@@ -201,7 +207,7 @@ export const api = {
 
   // --- Audit Logs ---
   getAuditLogs: async () => {
-    const res = await apiClient.get('/audit'); 
+    const res = await apiClient.get('/audit-logs');
     return (res.data.data || []).map(mapAudit);
   },
 

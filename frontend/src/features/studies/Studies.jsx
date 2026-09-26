@@ -11,12 +11,14 @@ import EmptyState from '../../components/common/EmptyState';
 import { SkeletonTable } from '../../components/common/LoadingSkeleton';
 import CreateStudy from './CreateStudy';
 import { useToast } from '../../context/ToastContext';
+import usePermissions from '../../hooks/usePermissions';
 import './Studies.css';
 
 const Studies = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { success } = useToast();
+  const { canDo } = usePermissions();
 
   const [studiesList, setStudiesList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -75,9 +77,11 @@ const Studies = () => {
           <Button variant="outline" size="sm" icon={<Download size={14} />} onClick={handleExportList}>
             Export Roster
           </Button>
-          <Button onClick={() => setIsCreateModalOpen(true)} icon={<Plus size={16} />}>
-            Initialize Study
-          </Button>
+          {canDo('createStudy') && (
+            <Button onClick={() => setIsCreateModalOpen(true)} icon={<Plus size={16} />}>
+              Initialize Study
+            </Button>
+          )}
         </div>
       </div>
 
@@ -114,8 +118,8 @@ const Studies = () => {
             icon={<FlaskConical size={38} className="text-muted" />}
             title="Your study portfolio is empty"
             description={searchTerm ? "No studies match your current search query." : "No clinical trials have been initialized yet."}
-            actionLabel="Initialize First Study"
-            onAction={() => setIsCreateModalOpen(true)}
+            actionLabel={canDo('createStudy') ? "Initialize First Study" : undefined}
+            onAction={canDo('createStudy') ? () => setIsCreateModalOpen(true) : undefined}
           />
         ) : (
           <div className="table-responsive">
@@ -173,11 +177,13 @@ const Studies = () => {
         )}
       </div>
 
-      <CreateStudy
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        onStudyCreated={handleStudyCreated}
-      />
+      {canDo('createStudy') && (
+        <CreateStudy
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+          onStudyCreated={handleStudyCreated}
+        />
+      )}
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { Search, AlertCircle, Download, Plus, CheckCircle, ShieldAlert, Check } 
 import { api } from '../../services/api';
 import Button from '../../components/common/Button';
 import { useToast } from '../../context/ToastContext';
+import usePermissions from '../../hooks/usePermissions';
 
 const Deviations = () => {
   const [protocolDeviations, setDeviations] = useState([]);
@@ -10,6 +11,7 @@ const Deviations = () => {
   const [statusFilter, setStatusFilter] = useState('All');
   const [loading, setLoading] = useState(true);
   const { success } = useToast();
+  const { canDo } = usePermissions();
 
   useEffect(() => {
     loadDeviations();
@@ -59,7 +61,9 @@ const Deviations = () => {
         </div>
         <div className="flex gap-3">
           <Button variant="outline" icon={<Download size={16} />}>Export Log</Button>
-          <Button icon={<Plus size={16} />}>Log Deviation</Button>
+          {canDo('createDeviation') && (
+            <Button icon={<Plus size={16} />}>Log Deviation</Button>
+          )}
         </div>
       </div>
 
@@ -162,14 +166,16 @@ const Deviations = () => {
                     <td><span className={`badge ${getStatusBadge(d.status)}`}>{d.status}</span></td>
                     <td className="text-right">
                       {!d.status.includes('Resolved') && !d.status.includes('Approved') ? (
-                        <Button 
-                          variant="primary" 
-                          size="sm"
-                          icon={<Check size={14} />}
-                          onClick={() => handleApprove(d.id)}
-                        >
-                          Approve
-                        </Button>
+                        canDo('updateDeviation') ? (
+                          <Button 
+                            variant="primary" 
+                            size="sm"
+                            icon={<Check size={14} />}
+                            onClick={() => handleApprove(d.id)}
+                          >
+                            Approve
+                          </Button>
+                        ) : null
                       ) : (
                         <Button variant="outline" size="sm" disabled>Approved</Button>
                       )}

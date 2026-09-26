@@ -10,10 +10,12 @@ import EmptyState from '../../components/common/EmptyState';
 import { SkeletonTable } from '../../components/common/LoadingSkeleton';
 import ReportSAE from './ReportSAE';
 import { useToast } from '../../context/ToastContext';
+import usePermissions from '../../hooks/usePermissions';
 
 const AESAE = () => {
   const { t } = useTranslation();
   const { success } = useToast();
+  const { canDo } = usePermissions();
 
   const [eventsList, setEventsList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -75,9 +77,11 @@ const AESAE = () => {
           <Button variant="outline" size="sm" icon={<Download size={14} />} onClick={handleExportCIOMS}>
             CIOMS Line Listing
           </Button>
-          <Button variant="danger" icon={<AlertTriangle size={16} />} onClick={() => setIsReportOpen(true)}>
-            Expedited SAE Report (24h)
-          </Button>
+          {canDo('reportSAE') && (
+            <Button variant="danger" icon={<AlertTriangle size={16} />} onClick={() => setIsReportOpen(true)}>
+              Expedited SAE Report (24h)
+            </Button>
+          )}
         </div>
       </div>
 
@@ -126,8 +130,8 @@ const AESAE = () => {
             icon={<ShieldCheck size={38} className="text-success" />}
             title="No adverse events recorded"
             description="All monitored clinical participants are currently free of recorded safety signals."
-            actionLabel="File Safety Report"
-            onAction={() => setIsReportOpen(true)}
+            actionLabel={canDo('reportSAE') ? "File Safety Report" : undefined}
+            onAction={canDo('reportSAE') ? () => setIsReportOpen(true) : undefined}
           />
         ) : (
           <div className="table-responsive">
@@ -168,9 +172,11 @@ const AESAE = () => {
                       {event.status === 'Resolved' ? (
                         <span className="text-xs text-muted">Archived</span>
                       ) : (
-                        <Button variant="outline" size="sm" onClick={() => handleReviewEvent(event.id)}>
-                          Review
-                        </Button>
+                        canDo('pvReview') ? (
+                          <Button variant="outline" size="sm" onClick={() => handleReviewEvent(event.id)}>
+                            Review
+                          </Button>
+                        ) : null
                       )}
                     </td>
                   </tr>
@@ -181,11 +187,13 @@ const AESAE = () => {
         )}
       </div>
 
-      <ReportSAE
-        isOpen={isReportOpen}
-        onClose={() => setIsReportOpen(false)}
-        onSAEReported={handleSAEReported}
-      />
+      {canDo('reportSAE') && (
+        <ReportSAE
+          isOpen={isReportOpen}
+          onClose={() => setIsReportOpen(false)}
+          onSAEReported={handleSAEReported}
+        />
+      )}
     </div>
   );
 };

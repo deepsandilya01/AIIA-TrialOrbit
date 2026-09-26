@@ -3,8 +3,10 @@ import { serializeRegulatory } from '../utils/serializers.js';
 
 class RegulatoryService {
   async createMilestone(data, user) {
-    if (user.role !== 'PI' && user.role !== 'ETHICS' && user.role !== 'ADMIN') {
-      throw new Error('Unauthorized');
+    if (user.role === 'REGULATOR' || (user.role !== 'PI' && user.role !== 'ETHICS' && user.role !== 'ADMIN')) {
+      const err = new Error('Forbidden: insufficient permissions to create regulatory milestones');
+      err.statusCode = 403;
+      throw err;
     }
     const milestone = await regulatoryRepository.create(data);
     const { emitEvent } = await import('../sockets/index.js');
@@ -34,8 +36,10 @@ class RegulatoryService {
   }
 
   async updateMilestone(id, data, user) {
-    if (user.role !== 'PI' && user.role !== 'ETHICS' && user.role !== 'ADMIN') {
-      throw new Error('Unauthorized');
+    if (user.role === 'REGULATOR' || (user.role !== 'PI' && user.role !== 'ETHICS' && user.role !== 'ADMIN')) {
+      const err = new Error('Forbidden: insufficient permissions to update regulatory milestones');
+      err.statusCode = 403;
+      throw err;
     }
     const milestone = await regulatoryRepository.update(id, data);
     if (!milestone) throw new Error('Milestone not found');
@@ -45,8 +49,10 @@ class RegulatoryService {
   }
 
   async completeMilestone(id, user) {
-    if (user.role !== 'PI' && user.role !== 'ETHICS' && user.role !== 'ADMIN') {
-      throw new Error('Unauthorized');
+    if (user.role === 'REGULATOR' || (user.role !== 'PI' && user.role !== 'ETHICS' && user.role !== 'ADMIN')) {
+      const err = new Error('Forbidden: insufficient permissions to complete regulatory milestones');
+      err.statusCode = 403;
+      throw err;
     }
     const milestone = await regulatoryRepository.complete(id, user.id);
     if (!milestone) throw new Error('Milestone not found');

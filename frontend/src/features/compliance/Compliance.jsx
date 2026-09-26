@@ -8,10 +8,12 @@ import StatusBadge from '../../components/common/StatusBadge';
 import DemoBadge from '../../components/common/DemoBadge';
 import Modal from '../../components/common/Modal';
 import { useToast } from '../../context/ToastContext';
+import usePermissions from '../../hooks/usePermissions';
 
 const Compliance = () => {
   const { t } = useTranslation();
   const { success, error } = useToast();
+  const { canDo } = usePermissions();
 
   const [data, setData] = useState([]);
 
@@ -57,9 +59,11 @@ const Compliance = () => {
           </div>
           <p className="page-subtitle">Track Institutional Ethics Committee (IEC), CTRI registration, and GCP monitoring checkpoints</p>
         </div>
-        <Button icon={<UploadCloud size={16} />} onClick={() => setIsUploadOpen(true)}>
-          Upload Compliance Filing
-        </Button>
+        {canDo('createMilestone') && (
+          <Button icon={<UploadCloud size={16} />} onClick={() => setIsUploadOpen(true)}>
+            Upload Compliance Filing
+          </Button>
+        )}
       </div>
 
       <div className="card">
@@ -113,50 +117,52 @@ const Compliance = () => {
       </div>
 
       {/* Upload Modal */}
-      <Modal
-        isOpen={isUploadOpen}
-        onClose={() => setIsUploadOpen(false)}
-        title="Upload Regulatory Compliance Filing"
-        subtitle="Submit signed approvals, ethics committee letters, or CTRI updates"
-      >
-        <form onSubmit={handleUploadSubmit} className="flex flex-col gap-4">
-          <div>
-            <label className="text-xs font-semibold text-secondary uppercase block mb-1">
-              Regulatory Requirement
-            </label>
-            <select
-              value={uploadForm.requirement}
-              onChange={(e) => setUploadForm({ ...uploadForm, requirement: e.target.value })}
-            >
-              <option value="Institutional Ethics Committee (IEC) Clearance">IEC Clearance Renewal</option>
-              <option value="CTRI Clinical Trial Registry Filing">CTRI Registration Certificate</option>
-              <option value="Annual Safety Report (ASR) to CDSCO">Annual Safety Report (CDSCO)</option>
-              <option value="Investigator Brochure v3.0">Investigator Brochure Revision</option>
-            </select>
-          </div>
+      {canDo('createMilestone') && (
+        <Modal
+          isOpen={isUploadOpen}
+          onClose={() => setIsUploadOpen(false)}
+          title="Upload Regulatory Compliance Filing"
+          subtitle="Submit signed approvals, ethics committee letters, or CTRI updates"
+        >
+          <form onSubmit={handleUploadSubmit} className="flex flex-col gap-4">
+            <div>
+              <label className="text-xs font-semibold text-secondary uppercase block mb-1">
+                Regulatory Requirement
+              </label>
+              <select
+                value={uploadForm.requirement}
+                onChange={(e) => setUploadForm({ ...uploadForm, requirement: e.target.value })}
+              >
+                <option value="Institutional Ethics Committee (IEC) Clearance">IEC Clearance Renewal</option>
+                <option value="CTRI Clinical Trial Registry Filing">CTRI Registration Certificate</option>
+                <option value="Annual Safety Report (ASR) to CDSCO">Annual Safety Report (CDSCO)</option>
+                <option value="Investigator Brochure v3.0">Investigator Brochure Revision</option>
+              </select>
+            </div>
 
-          <div>
-            <label className="text-xs font-semibold text-secondary uppercase block mb-1">
-              Document File / Title <span className="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              placeholder="e.g., AIIA_IEC_Approval_Letter_2026.pdf"
-              value={uploadForm.documentName}
-              onChange={(e) => setUploadForm({ ...uploadForm, documentName: e.target.value })}
-            />
-          </div>
+            <div>
+              <label className="text-xs font-semibold text-secondary uppercase block mb-1">
+                Document File / Title <span className="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                placeholder="e.g., AIIA_IEC_Approval_Letter_2026.pdf"
+                value={uploadForm.documentName}
+                onChange={(e) => setUploadForm({ ...uploadForm, documentName: e.target.value })}
+              />
+            </div>
 
-          <div className="flex flex-wrap justify-end gap-2 mt-2 pt-3" style={{ borderTop: '1px solid var(--border-color)' }}>
-            <Button variant="ghost" onClick={() => setIsUploadOpen(false)}>
-              Cancel
-            </Button>
-            <Button type="submit" variant="primary" icon={<UploadCloud size={16} />}>
-              Submit Document
-            </Button>
-          </div>
-        </form>
-      </Modal>
+            <div className="flex flex-wrap justify-end gap-2 mt-2 pt-3" style={{ borderTop: '1px solid var(--border-color)' }}>
+              <Button variant="ghost" onClick={() => setIsUploadOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" variant="primary" icon={<UploadCloud size={16} />}>
+                Submit Document
+              </Button>
+            </div>
+          </form>
+        </Modal>
+      )}
     </div>
   );
 };

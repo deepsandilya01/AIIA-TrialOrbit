@@ -15,7 +15,7 @@ class DashboardService {
     if (user && user.role !== 'ADMIN') {
       if (user.role === 'PI') {
         studyFilter = { pi_id: user.id };
-        const studies = await studyRepository.find(studyFilter);
+        const studies = await studyRepository.findMany(studyFilter);
         const studyIds = studies.map(s => s._id);
         siteFilter = { studyId: { $in: studyIds } };
         participantFilter = { studyId: { $in: studyIds } };

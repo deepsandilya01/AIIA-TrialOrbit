@@ -4,6 +4,7 @@ import { api } from '../../services/api';
 import { useSocketEvent } from '../../hooks/useSocket';
 import Button from '../../components/common/Button';
 import { useToast } from '../../context/ToastContext';
+import usePermissions from '../../hooks/usePermissions';
 
 const Visits = () => {
   const [visits, setVisits] = useState([]);
@@ -11,6 +12,7 @@ const Visits = () => {
   const [statusFilter, setStatusFilter] = useState('All');
   const [loading, setLoading] = useState(true);
   const { success } = useToast();
+  const { canDo } = usePermissions();
 
   useEffect(() => {
     loadVisits();
@@ -58,7 +60,9 @@ const Visits = () => {
         </div>
         <div className="flex gap-3">
           <Button variant="outline" icon={<Download size={16} />}>Export Schedule</Button>
-          <Button icon={<CalendarCheck size={16} />}>Schedule Visit</Button>
+          {canDo('createVisit') && (
+            <Button icon={<CalendarCheck size={16} />}>Schedule Visit</Button>
+          )}
         </div>
       </div>
 
@@ -165,14 +169,16 @@ const Visits = () => {
                     </td>
                     <td className="text-right">
                       {!v.status.includes('Completed') ? (
-                         <Button 
-                           variant="primary" 
-                           size="sm" 
-                           icon={<Check size={14} />}
-                           onClick={() => handleMarkComplete(v.id)}
-                         >
-                           Complete
-                         </Button>
+                        canDo('completeVisit') ? (
+                           <Button 
+                             variant="primary" 
+                             size="sm" 
+                             icon={<Check size={14} />}
+                             onClick={() => handleMarkComplete(v.id)}
+                           >
+                             Complete
+                           </Button>
+                        ) : null
                       ) : (
                          <Button variant="outline" size="sm" disabled>Completed</Button>
                       )}

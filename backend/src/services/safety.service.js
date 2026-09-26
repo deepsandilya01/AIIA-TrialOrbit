@@ -50,8 +50,8 @@ class SafetyService {
   }
 
   async pvReview(id, reviewData, user) {
-    if (user.role !== 'PV_OFFICER' && user.role !== 'ADMIN') {
-      throw new Error('Only PV Officer can perform safety reviews');
+    if (user.role !== 'PHARMACOVIGILANCE' && user.role !== 'ADMIN') {
+      throw new Error('Only Pharmacovigilance Officer can perform safety reviews');
     }
     
     const update = {

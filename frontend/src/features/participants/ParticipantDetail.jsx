@@ -3,12 +3,14 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, User, FileSignature, Clock, CheckCircle, ShieldAlert, FileWarning, Calendar } from 'lucide-react';
 import Button from '../../components/common/Button';
 import { api } from '../../services/api';
+import usePermissions from '../../hooks/usePermissions';
 
 const ParticipantDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { canDo } = usePermissions();
 
   useEffect(() => {
     loadData();
@@ -130,7 +132,9 @@ const ParticipantDetail = () => {
                <p className="text-xs text-muted">Method: eConsent (Tablet)</p>
                <p className="text-xs text-muted">Obtained: {participant.consentDate || '2026-08-15'}</p>
              </div>
-             <Button variant="outline" size="sm" className="w-full">Re-consent Subject</Button>
+             {canDo('editParticipant') && (
+               <Button variant="outline" size="sm" className="w-full">Re-consent Subject</Button>
+             )}
           </div>
         </div>
 

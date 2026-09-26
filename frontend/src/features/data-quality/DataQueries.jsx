@@ -4,6 +4,7 @@ import { api } from '../../services/api';
 import { useSocketEvent } from '../../hooks/useSocket';
 import Button from '../../components/common/Button';
 import { useToast } from '../../context/ToastContext';
+import usePermissions from '../../hooks/usePermissions';
 
 const DataQueries = () => {
   const [dataQueries, setDataQueries] = useState([]);
@@ -11,6 +12,7 @@ const DataQueries = () => {
   const [statusFilter, setStatusFilter] = useState('All');
   const [loading, setLoading] = useState(true);
   const { success } = useToast();
+  const { canDo } = usePermissions();
 
   useEffect(() => {
     loadQueries();
@@ -89,7 +91,9 @@ const DataQueries = () => {
         </div>
         <div className="flex gap-3">
           <Button variant="outline" icon={<Download size={16} />}>Export Log</Button>
-          <Button icon={<Plus size={16} />}>Raise Manual Query</Button>
+          {canDo('createQuery') && (
+            <Button icon={<Plus size={16} />}>Raise Manual Query</Button>
+          )}
         </div>
       </div>
 
@@ -202,14 +206,16 @@ const DataQueries = () => {
                     <td><span className={`badge ${getStatusBadge(q.status)}`}>{q.status}</span></td>
                     <td className="text-right">
                       {q.status !== 'Resolved' && q.status !== 'Closed' ? (
-                         <Button 
-                           variant="primary" 
-                           size="sm"
-                           icon={<Check size={14} />}
-                           onClick={() => handleResolve(q.id)}
-                         >
-                           Resolve
-                         </Button>
+                        canDo('resolveQuery') ? (
+                           <Button 
+                             variant="primary" 
+                             size="sm"
+                             icon={<Check size={14} />}
+                             onClick={() => handleResolve(q.id)}
+                           >
+                             Resolve
+                           </Button>
+                        ) : null
                       ) : (
                          <Button variant="outline" size="sm" disabled>Resolved</Button>
                       )}

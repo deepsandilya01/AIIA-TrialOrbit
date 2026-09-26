@@ -10,11 +10,13 @@ import DemoBadge from '../../components/common/DemoBadge';
 import Modal from '../../components/common/Modal';
 import { useToast } from '../../context/ToastContext';
 import { SkeletonTable } from '../../components/common/LoadingSkeleton';
+import usePermissions from '../../hooks/usePermissions';
 
 const Sites = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { success } = useToast();
+  const { canDo } = usePermissions();
 
   const [sitesList, setSitesList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -84,9 +86,11 @@ const Sites = () => {
           <Button variant="outline" size="sm" icon={<Download size={14} />} onClick={() => success('Exported site network directory.')}>
             Export Directory
           </Button>
-          <Button icon={<Plus size={16} />} onClick={() => setIsAddOpen(true)}>
-            Add Research Site
-          </Button>
+          {canDo('createSite') && (
+            <Button icon={<Plus size={16} />} onClick={() => setIsAddOpen(true)}>
+              Add Research Site
+            </Button>
+          )}
         </div>
       </div>
 
@@ -153,75 +157,77 @@ const Sites = () => {
       </div>
 
       {/* Add Site Modal */}
-      <Modal
-        isOpen={isAddOpen}
-        onClose={() => setIsAddOpen(false)}
-        title="Onboard New Clinical Research Site"
-        subtitle="Register institutional healthcare facility, investigator team, and target cohort"
-      >
-        <form onSubmit={handleCreateSite} className="flex flex-col gap-4">
-          <div>
-            <label className="text-xs font-semibold text-secondary uppercase block mb-1">
-              Facility / Hospital Name <span className="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              placeholder="e.g., Regional Ayurveda Research Institute"
-              value={newSite.name}
-              onChange={(e) => setNewSite({ ...newSite, name: e.target.value })}
-              required
-            />
-          </div>
-
-          <div className="form-grid-2">
+      {canDo('createSite') && (
+        <Modal
+          isOpen={isAddOpen}
+          onClose={() => setIsAddOpen(false)}
+          title="Onboard New Clinical Research Site"
+          subtitle="Register institutional healthcare facility, investigator team, and target cohort"
+        >
+          <form onSubmit={handleCreateSite} className="flex flex-col gap-4">
             <div>
               <label className="text-xs font-semibold text-secondary uppercase block mb-1">
-                City / State
+                Facility / Hospital Name <span className="text-danger">*</span>
               </label>
               <input
                 type="text"
-                placeholder="e.g., Lucknow, Uttar Pradesh"
-                value={newSite.location}
-                onChange={(e) => setNewSite({ ...newSite, location: e.target.value })}
+                placeholder="e.g., Regional Ayurveda Research Institute"
+                value={newSite.name}
+                onChange={(e) => setNewSite({ ...newSite, name: e.target.value })}
+                required
               />
+            </div>
+
+            <div className="form-grid-2">
+              <div>
+                <label className="text-xs font-semibold text-secondary uppercase block mb-1">
+                  City / State
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g., Lucknow, Uttar Pradesh"
+                  value={newSite.location}
+                  onChange={(e) => setNewSite({ ...newSite, location: e.target.value })}
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-secondary uppercase block mb-1">
+                  Assigned Target Subjects
+                </label>
+                <input
+                  type="number"
+                  min="10"
+                  value={newSite.target}
+                  onChange={(e) => setNewSite({ ...newSite, target: e.target.value })}
+                />
+              </div>
             </div>
 
             <div>
               <label className="text-xs font-semibold text-secondary uppercase block mb-1">
-                Assigned Target Subjects
+                Site Principal Investigator <span className="text-danger">*</span>
               </label>
               <input
-                type="number"
-                min="10"
-                value={newSite.target}
-                onChange={(e) => setNewSite({ ...newSite, target: e.target.value })}
+                type="text"
+                placeholder="Dr. Full Name"
+                value={newSite.pi}
+                onChange={(e) => setNewSite({ ...newSite, pi: e.target.value })}
+                required
               />
             </div>
-          </div>
 
-          <div>
-            <label className="text-xs font-semibold text-secondary uppercase block mb-1">
-              Site Principal Investigator <span className="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              placeholder="Dr. Full Name"
-              value={newSite.pi}
-              onChange={(e) => setNewSite({ ...newSite, pi: e.target.value })}
-              required
-            />
-          </div>
-
-          <div className="flex flex-wrap justify-end gap-2 mt-2 pt-3" style={{ borderTop: '1px solid var(--border-color)' }}>
-            <Button variant="ghost" onClick={() => setIsAddOpen(false)}>
-              Cancel
-            </Button>
-            <Button type="submit" variant="primary" icon={<Building2 size={16} />}>
-              Register Site
-            </Button>
-          </div>
-        </form>
-      </Modal>
+            <div className="flex flex-wrap justify-end gap-2 mt-2 pt-3" style={{ borderTop: '1px solid var(--border-color)' }}>
+              <Button variant="ghost" onClick={() => setIsAddOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" variant="primary" icon={<Building2 size={16} />}>
+                Register Site
+              </Button>
+            </div>
+          </form>
+        </Modal>
+      )}
     </div>
   );
 };

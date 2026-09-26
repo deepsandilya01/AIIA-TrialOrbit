@@ -9,7 +9,8 @@ const Users = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [usersList, setUsersList] = useState([]);
   const { user, login } = useAuth();
-  const { success } = useToast();
+  const { success, error } = useToast();
+  const [switching, setSwitching] = useState(false);
 
   useEffect(() => {
     api.getUsers().then(setUsersList).catch(console.error);
@@ -88,18 +89,25 @@ const Users = () => {
                             variant="primary" 
                             size="sm" 
                             icon={<Key size={14} />}
-                            onClick={() => {
-                              login({
-                                name: u.name,
-                                role: u.role,
-                                email: `${u.id}@aiia.gov.in`
-                              });
-                              success(`Role switched to ${u.role}`);
-                              // Small delay before reload for toast to show
-                              setTimeout(() => window.location.reload(), 1000);
+                            onClick={async () => {
+                              // Map the role to the known demo account password convention
+                              const email = `${u.id}@aiia.gov.in`;
+                              const baseRoleStr = u.role === 'PHARMACOVIGILANCE' ? 'PV' : (u.role.charAt(0).toUpperCase() + u.role.slice(1).toLowerCase());
+                              const password = u.role === 'PI' ? 'PI@12345' : `${baseRoleStr}@12345`;
+                              
+                              setSwitching(true);
+                              try {
+                                await login({ email, password });
+                                success(`Real backend authentication successful. Switched to ${u.role}`);
+                                setTimeout(() => window.location.reload(), 800);
+                              } catch (err) {
+                                error(`Failed to switch role: ${err.message || 'Invalid credentials'}`);
+                              } finally {
+                                setSwitching(false);
+                              }
                             }}
                           >
-                            Switch to Role
+                            {switching ? 'Switching...' : 'Switch to Role'}
                           </Button>
                         ) : (
                           <Button variant="outline" size="sm" disabled>Active Session</Button>

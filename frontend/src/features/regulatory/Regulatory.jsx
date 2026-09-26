@@ -3,6 +3,7 @@ import { Search, Filter, AlertTriangle, CheckCircle, Clock, Plus, Download, Edit
 import { api } from '../../services/api';
 import Button from '../../components/common/Button';
 import { useToast } from '../../context/ToastContext';
+import usePermissions from '../../hooks/usePermissions';
 
 const Regulatory = () => {
   const [milestones, setMilestones] = useState([]);
@@ -11,6 +12,7 @@ const Regulatory = () => {
   const [typeFilter, setTypeFilter] = useState('All');
   const [loading, setLoading] = useState(true);
   const { success } = useToast();
+  const { canDo } = usePermissions();
 
   useEffect(() => {
     loadMilestones();
@@ -56,7 +58,9 @@ const Regulatory = () => {
         </div>
         <div className="flex gap-3">
           <Button variant="outline" icon={<Download size={16} />}>Export Timeline</Button>
-          <Button icon={<Plus size={16} />}>New Milestone</Button>
+          {canDo('createMilestone') && (
+            <Button icon={<Plus size={16} />}>New Milestone</Button>
+          )}
         </div>
       </div>
 
@@ -160,14 +164,16 @@ const Regulatory = () => {
                     <td><span className={`badge ${getStatusBadge(m.status)}`}>{m.status}</span></td>
                     <td className="text-right">
                       {m.status !== 'Completed' ? (
-                        <Button 
-                          variant="primary" 
-                          size="sm"
-                          icon={<Check size={14} />}
-                          onClick={() => handleMarkComplete(m.id)}
-                        >
-                          Complete
-                        </Button>
+                        canDo('updateMilestone') ? (
+                          <Button 
+                            variant="primary" 
+                            size="sm"
+                            icon={<Check size={14} />}
+                            onClick={() => handleMarkComplete(m.id)}
+                          >
+                            Complete
+                          </Button>
+                        ) : null
                       ) : (
                         <Button variant="outline" size="sm" disabled>Completed</Button>
                       )}

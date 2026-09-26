@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Search, Filter, Download, UserPlus, Eye, Users } from 'lucide-react';
 import { api } from '../../services/api';
 import Button from '../../components/common/Button';
+import usePermissions from '../../hooks/usePermissions';
 
 const Participants = () => {
   const [participants, setParticipants] = useState([]);
@@ -12,6 +13,7 @@ const Participants = () => {
   const [statusFilter, setStatusFilter] = useState('All');
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { canDo } = usePermissions();
 
   useEffect(() => {
     loadData();
@@ -19,25 +21,31 @@ const Participants = () => {
 
   const loadData = async () => {
     setLoading(true);
-    const [pts, stds, sts] = await Promise.all([
-      api.getParticipants(),
-      api.getStudies(),
-      api.getSites()
-    ]);
-    setParticipants(pts);
-    setStudies(stds);
-    setSites(sts);
-    setLoading(false);
+    try {
+      const [pts, stds, sts] = await Promise.all([
+        api.getParticipants(),
+        api.getStudies(),
+        api.getSites()
+      ]);
+      setParticipants(Array.isArray(pts) ? pts : (pts?.participants || []));
+      setStudies(Array.isArray(stds) ? stds : []);
+      setSites(Array.isArray(sts) ? sts : []);
+    } catch (err) {
+      console.error('Failed to load participants data:', err);
+    } finally {
+      setLoading(false);
+    }
   };
-  
+
   const filteredParticipants = participants.filter(p => {
-    const matchesSearch = p.id.toLowerCase().includes(searchTerm.toLowerCase());
+    const code = (p.participantCode || p.id || '').toLowerCase();
+    const matchesSearch = code.includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'All' || p.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
   const getStatusBadgeClass = (status) => {
-    switch(status) {
+    switch (status) {
       case 'Active': return 'badge-success';
       case 'Screening': return 'badge-primary';
       case 'Withdrawn': return 'badge-danger';
@@ -56,7 +64,9 @@ const Participants = () => {
         </div>
         <div className="flex gap-3">
           <Button variant="outline" icon={<Download size={16} />}>Export Line Listing</Button>
-          <Button icon={<UserPlus size={16} />}>Register Participant</Button>
+          {canDo('createParticipant') && (
+            <Button icon={<UserPlus size={16} />}>Register Participant</Button>
+          )}
         </div>
       </div>
 
@@ -71,18 +81,18 @@ const Participants = () => {
               <h3 className="text-xl font-bold">{participants.length} Subjects</h3>
             </div>
           </div>
-          
+
           <div className="flex gap-3 w-full md:w-auto">
             <div className="search-bar w-full md:w-64">
               <Search size={16} className="text-muted" />
-              <input 
-                type="text" 
-                placeholder="Search participant code..." 
+              <input
+                type="text"
+                placeholder="Search participant code..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <select 
+            <select
               className="form-select w-full md:w-48"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
@@ -119,7 +129,7 @@ const Participants = () => {
                 filteredParticipants.map(p => {
                   const studyInfo = studies.find(s => s.id === p.studyId);
                   const siteInfo = sites.find(s => s.id === p.siteId);
-                  
+
                   return (
                     <tr key={p.id}>
                       <td>
@@ -141,8 +151,8 @@ const Participants = () => {
                         <div className="text-xs text-secondary">{p.consentStatus}</div>
                       </td>
                       <td>
-                        <div className={`text-sm ${p.visitStatus.includes('Overdue') ? 'text-danger font-semibold' : ''}`}>
-                          {p.visitStatus}
+                        <div className={`text-sm ${(p.visitStatus || '').includes('Overdue') ? 'text-danger font-semibold' : ''}`}>
+                          {p.visitStatus || '—'}
                         </div>
                       </td>
                       <td className="text-right">
