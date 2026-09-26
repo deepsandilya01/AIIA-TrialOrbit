@@ -1,4 +1,4 @@
-const Alert = require('../models/Alert');
+import Alert from '../models/Alert.js';
 
 class AlertRepository {
   async create(data) {
@@ -40,4 +40,4 @@ class AlertRepository {
   }
 }
 
-module.exports = new AlertRepository();
+export default new AlertRepository();

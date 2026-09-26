@@ -1,4 +1,4 @@
-const auditRepository = require('../repositories/audit.repository');
+import auditRepository from '../repositories/audit.repository.js';
 
 class AuditService {
   async logEvent(data) {
@@ -35,4 +35,4 @@ class AuditService {
   }
 }
 
-module.exports = new AuditService();
+export default new AuditService();

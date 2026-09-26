@@ -1,6 +1,6 @@
-const participantService = require('../services/participant.service');
+import participantService from '../services/participant.service.js';
 
-exports.createParticipant = async (req, res, next) => {
+export const createParticipant = async (req, res, next) => {
   try {
     const participant = await participantService.createParticipant(req.body, req.user);
     res.status(201).json({ success: true, data: participant });
@@ -9,7 +9,7 @@ exports.createParticipant = async (req, res, next) => {
   }
 };
 
-exports.getParticipants = async (req, res, next) => {
+export const getParticipants = async (req, res, next) => {
   try {
     const result = await participantService.getParticipants(req.query);
     res.status(200).json({ 
@@ -22,7 +22,7 @@ exports.getParticipants = async (req, res, next) => {
   }
 };
 
-exports.getParticipantById = async (req, res, next) => {
+export const getParticipantById = async (req, res, next) => {
   try {
     const participant = await participantService.getParticipantById(req.params.id);
     res.status(200).json({ success: true, data: participant });
@@ -32,7 +32,7 @@ exports.getParticipantById = async (req, res, next) => {
   }
 };
 
-exports.updateParticipant = async (req, res, next) => {
+export const updateParticipant = async (req, res, next) => {
   try {
     const participant = await participantService.updateParticipant(req.params.id, req.body, req.user);
     res.status(200).json({ success: true, data: participant });
@@ -42,7 +42,7 @@ exports.updateParticipant = async (req, res, next) => {
   }
 };
 
-exports.updateStatus = async (req, res, next) => {
+export const updateStatus = async (req, res, next) => {
   try {
     const participant = await participantService.updateStatus(req.params.id, req.body.status, req.user);
     res.status(200).json({ success: true, data: participant });

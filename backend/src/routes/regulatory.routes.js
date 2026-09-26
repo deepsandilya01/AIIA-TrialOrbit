@@ -1,8 +1,7 @@
-const express = require('express');
-const { 
-  createMilestone, getMilestones, updateMilestone, completeMilestone
-} = require('../controllers/regulatory.controller');
-const { protect } = require('../middleware/auth.middleware');
+import express from 'express';
+import { createMilestone, getMilestones, updateMilestone, completeMilestone
+ } from '../controllers/regulatory.controller.js';
+import { protect  } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
@@ -17,4 +16,4 @@ router.route('/milestones/:id')
 
 router.patch('/milestones/:id/complete', completeMilestone);
 
-module.exports = router;
+export default router;

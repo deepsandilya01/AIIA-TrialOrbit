@@ -1,8 +1,7 @@
-const express = require('express');
-const { 
-  createEvent, getEvents, updateEvent, pvReview
-} = require('../controllers/safety.controller');
-const { protect } = require('../middleware/auth.middleware');
+import express from 'express';
+import { createEvent, getEvents, updateEvent, pvReview
+ } from '../controllers/safety.controller.js';
+import { protect  } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
@@ -17,4 +16,4 @@ router.route('/events/:id')
 
 router.patch('/events/:id/pv-review', pvReview);
 
-module.exports = router;
+export default router;

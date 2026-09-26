@@ -1,4 +1,4 @@
-const Site = require('../models/Site');
+import Site from '../models/Site.js';
 
 class SiteRepository {
   async create(data) {
@@ -35,4 +35,4 @@ class SiteRepository {
   }
 }
 
-module.exports = new SiteRepository();
+export default new SiteRepository();

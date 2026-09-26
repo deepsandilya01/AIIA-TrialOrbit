@@ -1,9 +1,8 @@
-const express = require('express');
-const { 
-  createQuery, getQueries, resolveQuery,
+import express from 'express';
+import { createQuery, getQueries, resolveQuery,
   createDeviation, getDeviations, updateDeviationStatus
-} = require('../controllers/dataQuality.controller');
-const { protect } = require('../middleware/auth.middleware');
+ } from '../controllers/dataQuality.controller.js';
+import { protect  } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
@@ -23,4 +22,4 @@ router.route('/deviations')
 
 router.patch('/deviations/:id', updateDeviationStatus);
 
-module.exports = router;
+export default router;

@@ -1,6 +1,6 @@
-const visitService = require('../services/visit.service');
+import visitService from '../services/visit.service.js';
 
-exports.createVisit = async (req, res, next) => {
+export const createVisit = async (req, res, next) => {
   try {
     const visit = await visitService.createVisit(req.body, req.user);
     res.status(201).json({ success: true, data: visit });
@@ -9,7 +9,7 @@ exports.createVisit = async (req, res, next) => {
   }
 };
 
-exports.getVisits = async (req, res, next) => {
+export const getVisits = async (req, res, next) => {
   try {
     const result = await visitService.getVisits(req.query);
     res.status(200).json({ 
@@ -22,7 +22,7 @@ exports.getVisits = async (req, res, next) => {
   }
 };
 
-exports.getVisitById = async (req, res, next) => {
+export const getVisitById = async (req, res, next) => {
   try {
     const visit = await visitService.getVisitById(req.params.id);
     res.status(200).json({ success: true, data: visit });
@@ -32,7 +32,7 @@ exports.getVisitById = async (req, res, next) => {
   }
 };
 
-exports.updateVisit = async (req, res, next) => {
+export const updateVisit = async (req, res, next) => {
   try {
     const visit = await visitService.updateVisit(req.params.id, req.body, req.user);
     res.status(200).json({ success: true, data: visit });
@@ -42,7 +42,7 @@ exports.updateVisit = async (req, res, next) => {
   }
 };
 
-exports.completeVisit = async (req, res, next) => {
+export const completeVisit = async (req, res, next) => {
   try {
     const visit = await visitService.completeVisit(req.params.id, req.body.completedDate, req.user);
     res.status(200).json({ success: true, data: visit });

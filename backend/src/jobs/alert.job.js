@@ -1,5 +1,5 @@
-const cron = require('node-cron');
-const alertService = require('../services/alert.service');
+import cron from 'node-cron';
+import alertService from '../services/alert.service.js';
 
 // Run every day at midnight
 cron.schedule('0 0 * * *', async () => {

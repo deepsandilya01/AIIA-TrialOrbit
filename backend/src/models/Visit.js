@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const visitSchema = new mongoose.Schema({
   studyId: {
@@ -31,8 +31,8 @@ const visitSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['Upcoming', 'Due', 'Overdue', 'Completed', 'Missed'],
-    default: 'Upcoming'
+    enum: ['Scheduled', 'Due', 'Overdue', 'Completed', 'Missed', 'Cancelled', 'Upcoming'],
+    default: 'Scheduled'
   },
   notes: {
     type: String,
@@ -42,4 +42,4 @@ const visitSchema = new mongoose.Schema({
   timestamps: true
 });
 
-module.exports = mongoose.model('Visit', visitSchema);
+export default mongoose.model('Visit', visitSchema);

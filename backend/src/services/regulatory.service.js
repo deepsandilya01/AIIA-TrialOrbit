@@ -1,4 +1,4 @@
-const regulatoryRepository = require('../repositories/regulatory.repository');
+import regulatoryRepository from '../repositories/regulatory.repository.js';
 
 class RegulatoryService {
   async createMilestone(data, user) {
@@ -42,4 +42,4 @@ class RegulatoryService {
   }
 }
 
-module.exports = new RegulatoryService();
+export default new RegulatoryService();

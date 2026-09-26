@@ -1,4 +1,4 @@
-const visitRepository = require('../repositories/visit.repository');
+import visitRepository from '../repositories/visit.repository.js';
 
 class VisitService {
   async createVisit(data, user) {
@@ -64,4 +64,4 @@ class VisitService {
   }
 }
 
-module.exports = new VisitService();
+export default new VisitService();

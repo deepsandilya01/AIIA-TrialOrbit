@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const studySchema = new mongoose.Schema({
   protocolId: {
@@ -50,4 +50,4 @@ const studySchema = new mongoose.Schema({
   timestamps: true
 });
 
-module.exports = mongoose.model('Study', studySchema);
+export default mongoose.model('Study', studySchema);

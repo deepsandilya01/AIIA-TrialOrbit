@@ -1,12 +1,11 @@
-const express = require('express');
-const { 
-  createSite, 
+import express from 'express';
+import { createSite, 
   getSites, 
   getSiteById, 
   updateSite, 
   updateStatus 
-} = require('../controllers/site.controller');
-const { protect } = require('../middleware/auth.middleware');
+ } from '../controllers/site.controller.js';
+import { protect  } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
@@ -22,4 +21,4 @@ router.route('/:id')
 
 router.patch('/:id/status', updateStatus);
 
-module.exports = router;
+export default router;

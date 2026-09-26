@@ -1,8 +1,8 @@
-const jwt = require('jsonwebtoken');
-const env = require('../config/env');
-const userRepository = require('../repositories/user.repository');
+import jwt from 'jsonwebtoken';
+import env from '../config/env.js';
+import userRepository from '../repositories/user.repository.js';
 
-exports.protect = async (req, res, next) => {
+export const protect = async (req, res, next) => {
   let token;
 
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {

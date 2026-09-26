@@ -1,12 +1,11 @@
-const express = require('express');
-const { 
-  createParticipant, 
+import express from 'express';
+import { createParticipant, 
   getParticipants, 
   getParticipantById, 
   updateParticipant, 
   updateStatus 
-} = require('../controllers/participant.controller');
-const { protect } = require('../middleware/auth.middleware');
+ } from '../controllers/participant.controller.js';
+import { protect  } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
@@ -22,6 +21,5 @@ router.route('/:id')
 
 router.patch('/:id/status', updateStatus);
 
-// TODO: Add consent routes
 
-module.exports = router;
+export default router;

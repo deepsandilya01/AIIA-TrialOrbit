@@ -1,4 +1,4 @@
-const studyRepository = require('../repositories/study.repository');
+import studyRepository from '../repositories/study.repository.js';
 
 class StudyService {
   async createStudy(data, user) {
@@ -76,12 +76,43 @@ class StudyService {
       throw new Error('Only PI or ADMIN can update study lifecycle');
     }
 
-    const study = await studyRepository.updateLifecycle(id, status);
+    const study = await studyRepository.findById(id);
     if (!study) throw new Error('Study not found');
 
-    // TODO: Create Audit Log
-    return study;
+    const validTransitions = {
+      'Draft': ['Protocol Ready'],
+      'Protocol Ready': ['IEC Review'],
+      'IEC Review': ['IEC Approved', 'On Hold'],
+      'IEC Approved': ['CTRI Registered'],
+      'CTRI Registered': ['Site Activation'],
+      'Site Activation': ['Recruiting'],
+      'Recruiting': ['Active Follow-up'],
+      'Active Follow-up': ['Data Cleaning'],
+      'Data Cleaning': ['Close-out'],
+      'Close-out': ['Archived']
+    };
+
+    if (!validTransitions[study.status] || !validTransitions[study.status].includes(status)) {
+      throw new Error(`Invalid transition from ${study.status} to ${status}`);
+    }
+
+    const oldStatus = study.status;
+    const updatedStudy = await studyRepository.updateLifecycle(id, status);
+
+    // Audit Log
+    const AuditLog = (await import('../models/AuditLog.js')).default;
+    await AuditLog.create({
+      actorId: user.id,
+      action: 'UPDATE',
+      entityType: 'Study',
+      entityId: id,
+      oldValue: oldStatus,
+      newValue: status,
+      reason: 'Lifecycle transition'
+    });
+
+    return updatedStudy;
   }
 }
 
-module.exports = new StudyService();
+export default new StudyService();

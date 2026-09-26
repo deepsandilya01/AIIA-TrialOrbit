@@ -1,4 +1,4 @@
-const Participant = require('../models/Participant');
+import Participant from '../models/Participant.js';
 
 class ParticipantRepository {
   async create(data) {
@@ -46,4 +46,4 @@ class ParticipantRepository {
   }
 }
 
-module.exports = new ParticipantRepository();
+export default new ParticipantRepository();

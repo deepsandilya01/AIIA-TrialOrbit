@@ -1,12 +1,11 @@
-const express = require('express');
-const { 
-  createVisit, 
+import express from 'express';
+import { createVisit, 
   getVisits, 
   getVisitById, 
   updateVisit, 
   completeVisit 
-} = require('../controllers/visit.controller');
-const { protect } = require('../middleware/auth.middleware');
+ } from '../controllers/visit.controller.js';
+import { protect  } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
@@ -22,4 +21,4 @@ router.route('/:id')
 
 router.patch('/:id/complete', completeVisit);
 
-module.exports = router;
+export default router;

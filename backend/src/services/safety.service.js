@@ -1,4 +1,4 @@
-const safetyRepository = require('../repositories/adverseEvent.repository');
+import safetyRepository from '../repositories/adverseEvent.repository.js';
 
 class SafetyService {
   async createEvent(data, user) {
@@ -55,4 +55,4 @@ class SafetyService {
   }
 }
 
-module.exports = new SafetyService();
+export default new SafetyService();

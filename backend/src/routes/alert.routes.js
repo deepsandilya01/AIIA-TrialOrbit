@@ -1,6 +1,6 @@
-const express = require('express');
-const { getActiveAlerts, getAllAlerts, acknowledgeAlert } = require('../controllers/alert.controller');
-const { protect } = require('../middleware/auth.middleware');
+import express from 'express';
+import { getActiveAlerts, getAllAlerts, acknowledgeAlert  } from '../controllers/alert.controller.js';
+import { protect  } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
@@ -10,4 +10,4 @@ router.get('/', getAllAlerts);
 router.get('/active', getActiveAlerts);
 router.patch('/:id/acknowledge', acknowledgeAlert);
 
-module.exports = router;
+export default router;

@@ -1,6 +1,6 @@
-const express = require('express');
-const { getKPIs } = require('../controllers/dashboard.controller');
-const { protect } = require('../middleware/auth.middleware');
+import express from 'express';
+import { getKPIs  } from '../controllers/dashboard.controller.js';
+import { protect  } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
@@ -8,4 +8,4 @@ router.use(protect);
 
 router.get('/kpis', getKPIs);
 
-module.exports = router;
+export default router;

@@ -1,5 +1,5 @@
-const alertRepository = require('../repositories/alert.repository');
-const regulatoryRepository = require('../repositories/regulatory.repository');
+import alertRepository from '../repositories/alert.repository.js';
+import regulatoryRepository from '../repositories/regulatory.repository.js';
 
 class AlertService {
   async createAlert(data) {
@@ -51,4 +51,4 @@ class AlertService {
   }
 }
 
-module.exports = new AlertService();
+export default new AlertService();

@@ -1,10 +1,10 @@
-const studyRepository = require('../repositories/study.repository');
-const siteRepository = require('../repositories/site.repository');
-const participantRepository = require('../repositories/participant.repository');
-const queryRepository = require('../repositories/dataQuery.repository');
-const deviationRepository = require('../repositories/deviation.repository');
-const alertRepository = require('../repositories/alert.repository');
-const regulatoryRepository = require('../repositories/regulatory.repository');
+import studyRepository from '../repositories/study.repository.js';
+import siteRepository from '../repositories/site.repository.js';
+import participantRepository from '../repositories/participant.repository.js';
+import queryRepository from '../repositories/dataQuery.repository.js';
+import deviationRepository from '../repositories/deviation.repository.js';
+import alertRepository from '../repositories/alert.repository.js';
+import regulatoryRepository from '../repositories/regulatory.repository.js';
 
 class DashboardService {
   async getKPIs() {
@@ -38,4 +38,4 @@ class DashboardService {
   }
 }
 
-module.exports = new DashboardService();
+export default new DashboardService();

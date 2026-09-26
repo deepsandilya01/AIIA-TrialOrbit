@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['PI', 'COORDINATOR', 'MONITOR', 'PV_OFFICER', 'ETHICS', 'ADMIN', 'REGULATOR'],
+    enum: ['PI', 'COORDINATOR', 'MONITOR', 'PHARMACOVIGILANCE', 'ETHICS', 'ADMIN', 'REGULATOR'],
     required: [true, 'Role is required']
   },
   siteId: {
@@ -37,4 +37,4 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 });
 
-module.exports = mongoose.model('User', userSchema);
+export default mongoose.model('User', userSchema);

@@ -1,70 +1,28 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const adverseEventSchema = new mongoose.Schema({
-  studyId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Study',
-    required: true
-  },
-  siteId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Site',
-    required: true
-  },
-  participantId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Participant',
-    required: true
-  },
-  event: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  severity: {
-    type: String,
-    enum: ['Grade 1 (Mild)', 'Grade 2 (Moderate)', 'Grade 3 (Severe)', 'Grade 4 (Life-threatening)', 'Grade 5 (Death)'],
-    required: true
-  },
-  serious: {
-    type: String,
-    enum: ['Yes', 'No'],
-    default: 'No'
-  },
-  causality: {
-    type: String,
-    enum: ['Related', 'Probable', 'Possible', 'Unlikely', 'Not Related', 'Unknown'],
-    default: 'Unknown'
-  },
-  status: {
-    type: String,
-    enum: ['Ongoing', 'Resolved', 'Resolved with Sequelae', 'Fatal', 'Pending Review'],
-    default: 'Ongoing'
-  },
-  reportedAt: {
-    type: Date,
-    default: Date.now
-  },
-  reportingDueAt: {
-    type: Date, // Used for tracking 24h SAE timelines
-    default: null
-  },
-  pvReviewedBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    default: null
-  },
-  pvReviewedAt: {
-    type: Date,
-    default: null
-  },
-  coding: {
-    type: String, // Representative MedDRA/WHODrug code
-    trim: true,
-    default: null
-  }
-}, {
-  timestamps: true
-});
+  studyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Study', required: true },
+  siteId: { type: mongoose.Schema.Types.ObjectId, ref: 'Site', required: true },
+  participantId: { type: mongoose.Schema.Types.ObjectId, ref: 'Participant', required: true },
+  eventType: { type: String, enum: ['AE', 'ADR', 'SAE'], default: 'AE' },
+  event: { type: String, required: true, trim: true },
+  onsetDate: { type: Date, default: null },
+  resolutionDate: { type: Date, default: null },
+  seriousness: { type: String, enum: ['SERIOUS', 'NON_SERIOUS'], default: 'NON_SERIOUS' },
+  severity: { type: String, enum: ['MILD', 'MODERATE', 'SEVERE'], default: 'MILD' },
+  relationship: { type: String, enum: ['RELATED', 'POSSIBLY_RELATED', 'UNRELATED', 'UNKNOWN'], default: 'UNKNOWN' },
+  expectedness: { type: String, enum: ['EXPECTED', 'UNEXPECTED', 'UNKNOWN'], default: 'UNKNOWN' },
+  outcome: { type: String, enum: ['RECOVERED', 'RECOVERING', 'NOT_RECOVERED', 'FATAL', 'UNKNOWN'], default: 'UNKNOWN' },
+  actionTaken: { type: String, trim: true, default: null },
+  reportingDueDate: { type: Date, default: null },
+  reportedDate: { type: Date, default: null },
+  reportingStatus: { type: String, enum: ['NOT_DUE', 'DUE', 'SUBMITTED', 'OVERDUE', 'CLOSED'], default: 'NOT_DUE' },
+  pvReviewStatus: { type: String, enum: ['PENDING', 'UNDER_REVIEW', 'APPROVED', 'REJECTED'], default: 'PENDING' },
+  codingStatus: { type: String, enum: ['PENDING', 'CODED', 'VERIFIED'], default: 'PENDING' },
+  codedTerm: { type: String, trim: true, default: null },
+  dictionary: { type: String, trim: true, default: null },
+  version: { type: String, trim: true, default: null },
+  pvReviewedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null }
+}, { timestamps: true });
 
-module.exports = mongoose.model('AdverseEvent', adverseEventSchema);
+export default mongoose.model('AdverseEvent', adverseEventSchema);

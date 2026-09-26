@@ -1,5 +1,5 @@
-const dataQueryRepository = require('../repositories/dataQuery.repository');
-const deviationRepository = require('../repositories/deviation.repository');
+import dataQueryRepository from '../repositories/dataQuery.repository.js';
+import deviationRepository from '../repositories/deviation.repository.js';
 
 class DataQualityService {
   // Queries
@@ -61,4 +61,4 @@ class DataQualityService {
   }
 }
 
-module.exports = new DataQualityService();
+export default new DataQualityService();

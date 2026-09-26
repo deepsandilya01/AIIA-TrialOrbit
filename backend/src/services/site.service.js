@@ -1,4 +1,4 @@
-const siteRepository = require('../repositories/site.repository');
+import siteRepository from '../repositories/site.repository.js';
 
 class SiteService {
   async createSite(data, user) {
@@ -63,4 +63,4 @@ class SiteService {
   }
 }
 
-module.exports = new SiteService();
+export default new SiteService();

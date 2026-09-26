@@ -1,12 +1,23 @@
-const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
-const morgan = require('morgan');
-const rateLimit = require('express-rate-limit');
-const env = require('./config/env');
-const { errorHandler, notFoundHandler } = require('./middleware/error.middleware');
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import rateLimit from 'express-rate-limit';
+import mongoose from 'mongoose';
+import env from './config/env.js';
+import { errorHandler, notFoundHandler } from './middleware/error.middleware.js';
+import swaggerUi from 'swagger-ui-express';
+import yaml from 'yamljs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const swaggerDocument = yaml.load(path.join(__dirname, '../docs/swagger.yaml'));
 
 const app = express();
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Security Middleware
 app.use(helmet());
@@ -30,29 +41,54 @@ if (env.nodeEnv === 'development') {
 }
 
 // Health Check
-app.get('/api/v1/health', (req, res) => {
-  res.status(200).json({ success: true, message: 'Server is running normally' });
+app.get('/health', (req, res) => {
+  const isDbConnected = mongoose.connection.readyState === 1;
+  res.status(isDbConnected ? 200 : 503).json({
+    success: isDbConnected,
+    data: {
+      status: isDbConnected ? 'ok' : 'degraded',
+      service: 'aiia-trialorbit-backend',
+      database: isDbConnected ? 'connected' : 'disconnected'
+    }
+  });
 });
 
-// Import Routes
-app.use('/api/v1/auth', require('./routes/auth.routes'));
-app.use('/api/v1/studies', require('./routes/study.routes'));
-app.use('/api/v1/sites', require('./routes/site.routes'));
-app.use('/api/v1/participants', require('./routes/participant.routes'));
-app.use('/api/v1/visits', require('./routes/visit.routes'));
-app.use('/api/v1', require('./routes/dataQuality.routes'));
-app.use('/api/v1/regulatory', require('./routes/regulatory.routes'));
-app.use('/api/v1/safety', require('./routes/safety.routes'));
-app.use('/api/v1/audit-logs', require('./routes/audit.routes'));
-app.use('/api/v1/alerts', require('./routes/alert.routes'));
-app.use('/api/v1/dashboard', require('./routes/dashboard.routes'));
-app.use('/api/v1/export', require('./routes/export.routes'));
-app.use('/api/v1/integration', require('./routes/export.routes'));
-app.use('/api/v1/ai', require('./routes/ai.routes'));
-// TODO: Add other routes here
+import authRoutes from './routes/auth.routes.js';
+import studyRoutes from './routes/study.routes.js';
+import siteRoutes from './routes/site.routes.js';
+import participantRoutes from './routes/participant.routes.js';
+import visitRoutes from './routes/visit.routes.js';
+import dataQualityRoutes from './routes/dataQuality.routes.js';
+import regulatoryRoutes from './routes/regulatory.routes.js';
+import safetyRoutes from './routes/safety.routes.js';
+import auditRoutes from './routes/audit.routes.js';
+import alertRoutes from './routes/alert.routes.js';
+import dashboardRoutes from './routes/dashboard.routes.js';
+import exportRoutes from './routes/export.routes.js';
+import aiRoutes from './routes/ai.routes.js';
+
+import { validateObjectId } from './middleware/validate.middleware.js';
+
+app.use('/api/v1', validateObjectId);
+
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/studies', studyRoutes);
+app.use('/api/v1/sites', siteRoutes);
+app.use('/api/v1/participants', participantRoutes);
+app.use('/api/v1/visits', visitRoutes);
+app.use('/api/v1', dataQualityRoutes);
+app.use('/api/v1/regulatory', regulatoryRoutes);
+app.use('/api/v1/safety', safetyRoutes);
+app.use('/api/v1/audit-logs', auditRoutes);
+app.use('/api/v1/alerts', alertRoutes);
+app.use('/api/v1/dashboard', dashboardRoutes);
+app.use('/api/v1/export', exportRoutes);
+app.use('/api/v1/integration', exportRoutes);
+app.use('/api/v1/ai', aiRoutes);
+
 
 // Error Handling
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-module.exports = app;
+export default app;

@@ -1,6 +1,6 @@
-const studyService = require('../services/study.service');
+import studyService from '../services/study.service.js';
 
-exports.createStudy = async (req, res, next) => {
+export const createStudy = async (req, res, next) => {
   try {
     const study = await studyService.createStudy(req.body, req.user);
     res.status(201).json({ success: true, data: study });
@@ -9,7 +9,7 @@ exports.createStudy = async (req, res, next) => {
   }
 };
 
-exports.getStudies = async (req, res, next) => {
+export const getStudies = async (req, res, next) => {
   try {
     const result = await studyService.getStudies(req.query);
     res.status(200).json({ 
@@ -22,7 +22,7 @@ exports.getStudies = async (req, res, next) => {
   }
 };
 
-exports.getStudyById = async (req, res, next) => {
+export const getStudyById = async (req, res, next) => {
   try {
     const study = await studyService.getStudyById(req.params.id);
     res.status(200).json({ success: true, data: study });
@@ -32,7 +32,7 @@ exports.getStudyById = async (req, res, next) => {
   }
 };
 
-exports.updateStudy = async (req, res, next) => {
+export const updateStudy = async (req, res, next) => {
   try {
     const study = await studyService.updateStudy(req.params.id, req.body, req.user);
     res.status(200).json({ success: true, data: study });
@@ -42,7 +42,7 @@ exports.updateStudy = async (req, res, next) => {
   }
 };
 
-exports.updateLifecycle = async (req, res, next) => {
+export const updateLifecycle = async (req, res, next) => {
   try {
     const study = await studyService.updateLifecycle(req.params.id, req.body.status, req.user);
     res.status(200).json({ success: true, data: study });

@@ -1,13 +1,12 @@
-const express = require('express');
-const { 
-  createStudy, 
+import express from 'express';
+import { createStudy, 
   getStudies, 
   getStudyById, 
   updateStudy, 
   updateLifecycle 
-} = require('../controllers/study.controller');
-const { protect } = require('../middleware/auth.middleware');
-const { authorize } = require('../middleware/rbac.middleware');
+ } from '../controllers/study.controller.js';
+import { protect  } from '../middleware/auth.middleware.js';
+import { authorize  } from '../middleware/rbac.middleware.js';
 
 const router = express.Router();
 
@@ -23,4 +22,4 @@ router.route('/:id')
 
 router.post('/:id/lifecycle', authorize('PI', 'ADMIN'), updateLifecycle);
 
-module.exports = router;
+export default router;

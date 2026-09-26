@@ -1,4 +1,4 @@
-const AuditLog = require('../models/AuditLog');
+import AuditLog from '../models/AuditLog.js';
 
 class AuditRepository {
   async create(data) {
@@ -29,4 +29,4 @@ class AuditRepository {
   // STRICT RULE: No update() or delete() methods provided for AuditLog
 }
 
-module.exports = new AuditRepository();
+export default new AuditRepository();

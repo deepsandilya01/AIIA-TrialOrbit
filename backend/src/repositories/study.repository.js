@@ -1,4 +1,4 @@
-const Study = require('../models/Study');
+import Study from '../models/Study.js';
 
 class StudyRepository {
   async create(data) {
@@ -35,4 +35,4 @@ class StudyRepository {
   }
 }
 
-module.exports = new StudyRepository();
+export default new StudyRepository();

@@ -1,4 +1,4 @@
-const DataQuery = require('../models/DataQuery');
+import DataQuery from '../models/DataQuery.js';
 
 class DataQueryRepository {
   async create(data) {
@@ -42,4 +42,4 @@ class DataQueryRepository {
   }
 }
 
-module.exports = new DataQueryRepository();
+export default new DataQueryRepository();

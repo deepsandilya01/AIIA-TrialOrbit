@@ -1,4 +1,4 @@
-const Visit = require('../models/Visit');
+import Visit from '../models/Visit.js';
 
 class VisitRepository {
   async create(data) {
@@ -50,4 +50,4 @@ class VisitRepository {
   }
 }
 
-module.exports = new VisitRepository();
+export default new VisitRepository();

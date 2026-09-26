@@ -1,4 +1,4 @@
-const ProtocolDeviation = require('../models/ProtocolDeviation');
+import ProtocolDeviation from '../models/ProtocolDeviation.js';
 
 class DeviationRepository {
   async create(data) {
@@ -40,4 +40,4 @@ class DeviationRepository {
   }
 }
 
-module.exports = new DeviationRepository();
+export default new DeviationRepository();

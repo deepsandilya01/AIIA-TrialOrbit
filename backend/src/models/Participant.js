@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const participantSchema = new mongoose.Schema({
   studyId: {
@@ -50,4 +50,4 @@ const participantSchema = new mongoose.Schema({
   timestamps: true
 });
 
-module.exports = mongoose.model('Participant', participantSchema);
+export default mongoose.model('Participant', participantSchema);

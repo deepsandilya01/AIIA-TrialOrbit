@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const protocolDeviationSchema = new mongoose.Schema({
   studyId: {
@@ -22,8 +22,8 @@ const protocolDeviationSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['Reported', 'Under Review', 'Approved by PI', 'Corrective Action Taken', 'Resolved'],
-    default: 'Reported'
+    enum: ['OPEN', 'UNDER_REVIEW', 'ACTION_REQUIRED', 'CLOSED'],
+    default: 'OPEN'
   },
   description: {
     type: String,
@@ -34,4 +34,4 @@ const protocolDeviationSchema = new mongoose.Schema({
   timestamps: true
 });
 
-module.exports = mongoose.model('ProtocolDeviation', protocolDeviationSchema);
+export default mongoose.model('ProtocolDeviation', protocolDeviationSchema);

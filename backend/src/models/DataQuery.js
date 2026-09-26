@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const dataQuerySchema = new mongoose.Schema({
   studyId: {
@@ -22,8 +22,8 @@ const dataQuerySchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['Open', 'In Review', 'Resolved'],
-    default: 'Open'
+    enum: ['OPEN', 'IN_REVIEW', 'RESPONDED', 'RESOLVED', 'CLOSED'],
+    default: 'OPEN'
   },
   description: {
     type: String,
@@ -42,4 +42,4 @@ const dataQuerySchema = new mongoose.Schema({
   timestamps: true
 });
 
-module.exports = mongoose.model('DataQuery', dataQuerySchema);
+export default mongoose.model('DataQuery', dataQuerySchema);

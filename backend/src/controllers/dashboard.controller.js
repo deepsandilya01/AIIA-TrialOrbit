@@ -1,6 +1,6 @@
-const dashboardService = require('../services/dashboard.service');
+import dashboardService from '../services/dashboard.service.js';
 
-exports.getKPIs = async (req, res, next) => {
+export const getKPIs = async (req, res, next) => {
   try {
     const kpis = await dashboardService.getKPIs();
     res.status(200).json({ success: true, data: kpis });

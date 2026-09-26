@@ -1,6 +1,10 @@
-const app = require('./src/app');
-const connectDB = require('./src/config/db');
-const env = require('./src/config/env');
+import app from './src/app.js';
+import connectDB from './src/config/db.js';
+import env from './src/config/env.js';
+
+import dns from "dns";
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
+dns.setDefaultResultOrder("ipv4first");
 
 // Connect to MongoDB
 connectDB();

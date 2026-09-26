@@ -1,4 +1,4 @@
-const AdverseEvent = require('../models/AdverseEvent');
+import AdverseEvent from '../models/AdverseEvent.js';
 
 class AdverseEventRepository {
   async create(data) {
@@ -38,4 +38,4 @@ class AdverseEventRepository {
   }
 }
 
-module.exports = new AdverseEventRepository();
+export default new AdverseEventRepository();

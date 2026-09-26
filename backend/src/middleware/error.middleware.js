@@ -1,4 +1,4 @@
-const env = require('../config/env');
+import env from '../config/env.js';
 
 const notFoundHandler = (req, res, next) => {
   const error = new Error(`Not Found - ${req.originalUrl}`);
@@ -41,4 +41,4 @@ const errorHandler = (err, req, res, next) => {
   });
 };
 
-module.exports = { notFoundHandler, errorHandler };
+export {  notFoundHandler, errorHandler  };
