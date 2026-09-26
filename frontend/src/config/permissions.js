@@ -1,81 +1,72 @@
-/**
- * AIIA TrialOrbit — Centralized RBAC Permission Configuration
- * Single source of truth for all role-based access decisions.
- *
- * ROLE → PERMISSIONS → NAVIGATION → ROUTES → ACTIONS → DASHBOARD WIDGETS
- *
- * CANONICAL ROLES: ADMIN | PI | COORDINATOR | MONITOR | ETHICS | PHARMACOVIGILANCE | REGULATOR
- */
 
-// ─── 1. PERMISSION DEFINITIONS ─────────────────────────────────────────────
 export const PERMISSIONS = {
   // Studies
-  STUDY_VIEW:         'study.view',
-  STUDY_CREATE:       'study.create',
-  STUDY_UPDATE:       'study.update',
-  STUDY_LIFECYCLE:    'study.lifecycle',
+  STUDY_VIEW: 'study.view',
+  STUDY_CREATE: 'study.create',
+  STUDY_UPDATE: 'study.update',
+  STUDY_LIFECYCLE: 'study.lifecycle',
 
   // Sites
-  SITE_VIEW:          'site.view',
-  SITE_CREATE:        'site.create',
-  SITE_UPDATE:        'site.update',
+  SITE_VIEW: 'site.view',
+  SITE_CREATE: 'site.create',
+  SITE_UPDATE: 'site.update',
 
   // Participants
-  PARTICIPANT_VIEW:   'participant.view',
+  PARTICIPANT_VIEW: 'participant.view',
   PARTICIPANT_CREATE: 'participant.create',
   PARTICIPANT_UPDATE: 'participant.update',
   PARTICIPANT_CONSENT: 'participant.consent',
 
   // Visits
-  VISIT_VIEW:         'visit.view',
-  VISIT_CREATE:       'visit.create',
-  VISIT_UPDATE:       'visit.update',
-  VISIT_COMPLETE:     'visit.complete',
+  VISIT_VIEW: 'visit.view',
+  VISIT_CREATE: 'visit.create',
+  VISIT_UPDATE: 'visit.update',
+  VISIT_COMPLETE: 'visit.complete',
 
   // Recruitment
-  RECRUITMENT_VIEW:   'recruitment.view',
+  RECRUITMENT_VIEW: 'recruitment.view',
 
   // Data Quality
-  QUERY_VIEW:         'query.view',
-  QUERY_CREATE:       'query.create',
-  QUERY_RESOLVE:      'query.resolve',
-  DEVIATION_VIEW:     'deviation.view',
-  DEVIATION_CREATE:   'deviation.create',
-  DEVIATION_UPDATE:   'deviation.update',
+  QUERY_VIEW: 'query.view',
+  QUERY_CREATE: 'query.create',
+  QUERY_RESOLVE: 'query.resolve',
+  DEVIATION_VIEW: 'deviation.view',
+  DEVIATION_CREATE: 'deviation.create',
+  DEVIATION_UPDATE: 'deviation.update',
 
   // Regulatory / Ethics
-  REGULATORY_VIEW:    'regulatory.view',
-  REGULATORY_CREATE:  'regulatory.create',
-  REGULATORY_UPDATE:  'regulatory.update',
-  ETHICS_VIEW:        'ethics.view',
-  ETHICS_REVIEW:      'ethics.review',
+  REGULATORY_VIEW: 'regulatory.view',
+  REGULATORY_CREATE: 'regulatory.create',
+  REGULATORY_UPDATE: 'regulatory.update',
+  ETHICS_VIEW: 'ethics.view',
+  ETHICS_REVIEW: 'ethics.review',
 
   // Safety / PV
-  SAFETY_VIEW:        'safety.view',
-  SAFETY_CREATE:      'safety.create',
-  SAFETY_UPDATE:      'safety.update',
-  PV_REVIEW:          'safety.pv_review',
+  SAFETY_VIEW: 'safety.view',
+  SAFETY_CREATE: 'safety.create',
+  SAFETY_UPDATE: 'safety.update',
+  PV_REVIEW: 'safety.pv_review',
 
   // Alerts
-  ALERT_VIEW:         'alert.view',
-  ALERT_ACKNOWLEDGE:  'alert.acknowledge',
+  ALERT_VIEW: 'alert.view',
+  ALERT_ACKNOWLEDGE: 'alert.acknowledge',
 
   // Reports / Exports
-  REPORT_VIEW:        'report.view',
-  EXPORT_FHIR:        'export.fhir',
-  EXPORT_CDISC:       'export.cdisc',
+  REPORT_VIEW: 'report.view',
+  EXPORT_FHIR: 'export.fhir',
+  EXPORT_CDISC: 'export.cdisc',
 
   // Audit
-  AUDIT_VIEW:         'audit.view',
+  AUDIT_VIEW: 'audit.view',
 
   // Administration
-  USER_VIEW:          'user.view',
-  USER_CREATE:        'user.create',
-  USER_UPDATE:        'user.update',
-  USER_ROLE_CHANGE:   'user.role_change',
+  USER_VIEW: 'user.view',
+  USER_CREATE: 'user.create',
+  USER_UPDATE: 'user.update',
+  USER_ROLE_CHANGE: 'user.role_change',
 
   // AI / Insights
-  AI_VIEW:            'ai.view',
+  AI_VIEW: 'ai.view',
 };
 
 // ─── 2. ROLE → PERMISSION SETS ──────────────────────────────────────────────
@@ -183,10 +174,6 @@ export const canCreate = (role, resource) =>
 
 export const canUpdate = (role, resource) =>
   hasPermission(role, `${resource}.update`);
-
-// ─── 4. NAVIGATION CONFIGURATION ───────────────────────────────────────────
-// Each item specifies which permissions are required to see it.
-// ALL listed permissions must be present (AND logic), unless `anyPermission` is used (OR logic).
 
 import {
   LayoutDashboard, FlaskConical, Building2, Users, CalendarCheck,
@@ -440,32 +427,32 @@ export const getNavForRole = (role) => {
 // Maps each frontend route to the permissions required to access it.
 // Used by ProtectedRoute for direct URL protection.
 export const ROUTE_PERMISSIONS = {
-  '/dashboard':         null,                          // all authenticated
-  '/studies':           PERMISSIONS.STUDY_VIEW,
-  '/sites':             PERMISSIONS.SITE_VIEW,
-  '/participants':      PERMISSIONS.PARTICIPANT_VIEW,
-  '/visits':            PERMISSIONS.VISIT_VIEW,
-  '/recruitment':       PERMISSIONS.RECRUITMENT_VIEW,
-  '/queries':           PERMISSIONS.QUERY_VIEW,
-  '/deviations':        PERMISSIONS.DEVIATION_VIEW,
-  '/ethics':            PERMISSIONS.ETHICS_VIEW,
-  '/ctri':              PERMISSIONS.REGULATORY_VIEW,
-  '/milestones':        PERMISSIONS.REGULATORY_VIEW,
-  '/compliance':        PERMISSIONS.REGULATORY_VIEW,
-  '/safety-events':     PERMISSIONS.SAFETY_VIEW,
+  '/dashboard': null,                          // all authenticated
+  '/studies': PERMISSIONS.STUDY_VIEW,
+  '/sites': PERMISSIONS.SITE_VIEW,
+  '/participants': PERMISSIONS.PARTICIPANT_VIEW,
+  '/visits': PERMISSIONS.VISIT_VIEW,
+  '/recruitment': PERMISSIONS.RECRUITMENT_VIEW,
+  '/queries': PERMISSIONS.QUERY_VIEW,
+  '/deviations': PERMISSIONS.DEVIATION_VIEW,
+  '/ethics': PERMISSIONS.ETHICS_VIEW,
+  '/ctri': PERMISSIONS.REGULATORY_VIEW,
+  '/milestones': PERMISSIONS.REGULATORY_VIEW,
+  '/compliance': PERMISSIONS.REGULATORY_VIEW,
+  '/safety-events': PERMISSIONS.SAFETY_VIEW,
   '/pharmacovigilance': PERMISSIONS.SAFETY_VIEW,
-  '/safety-dashboard':  PERMISSIONS.SAFETY_VIEW,
-  '/alerts':            PERMISSIONS.ALERT_VIEW,
-  '/reports':           PERMISSIONS.REPORT_VIEW,
-  '/audit':             PERMISSIONS.AUDIT_VIEW,
-  '/fhir':              PERMISSIONS.EXPORT_FHIR,
-  '/cdisc':             PERMISSIONS.EXPORT_CDISC,
-  '/exports':           PERMISSIONS.REPORT_VIEW,
-  '/ai-assistant':      PERMISSIONS.AI_VIEW,
-  '/insights':          PERMISSIONS.AI_VIEW,
-  '/users':             PERMISSIONS.USER_VIEW,
-  '/roles':             PERMISSIONS.USER_VIEW,
-  '/permissions':       PERMISSIONS.USER_VIEW,
+  '/safety-dashboard': PERMISSIONS.SAFETY_VIEW,
+  '/alerts': PERMISSIONS.ALERT_VIEW,
+  '/reports': PERMISSIONS.REPORT_VIEW,
+  '/audit': PERMISSIONS.AUDIT_VIEW,
+  '/fhir': PERMISSIONS.EXPORT_FHIR,
+  '/cdisc': PERMISSIONS.EXPORT_CDISC,
+  '/exports': PERMISSIONS.REPORT_VIEW,
+  '/ai-assistant': PERMISSIONS.AI_VIEW,
+  '/insights': PERMISSIONS.AI_VIEW,
+  '/users': PERMISSIONS.USER_VIEW,
+  '/roles': PERMISSIONS.USER_VIEW,
+  '/permissions': PERMISSIONS.USER_VIEW,
 };
 
 /**
@@ -548,32 +535,32 @@ export const DASHBOARD_WIDGETS = {
     'visit_compliance', 'open_queries', 'open_deviations',
     'sae_count', 'active_alerts', 'pending_regulatory',
     'study_portfolio_chart', 'recent_alerts', 'study_progress',
-    'quick_actions_pi', 'compliance_overview', 'safety_overview',
+    'quick_actions_pi',
   ],
   COORDINATOR: [
     'total_participants', 'visit_compliance', 'open_queries',
-    'open_deviations', 'active_alerts', 'recent_alerts', 'quick_actions_coordinator',
-    'study_progress', 'recruitment_progress', 'active_studies'
+    'open_deviations', 'active_alerts',
+    'recent_alerts', 'quick_actions_coordinator',
   ],
   MONITOR: [
     'active_studies', 'total_sites', 'total_participants',
     'visit_compliance', 'open_queries', 'open_deviations',
     'recruitment_progress', 'active_alerts',
-    'recent_alerts', 'study_progress', 'study_portfolio_chart'
+    'recent_alerts', 'study_progress',
   ],
   ETHICS: [
     'active_studies', 'pending_regulatory', 'open_deviations',
     'sae_count', 'active_alerts',
-    'compliance_overview', 'recent_alerts', 'study_portfolio_chart', 'study_progress'
+    'compliance_overview', 'recent_alerts',
   ],
   PHARMACOVIGILANCE: [
     'ae_count', 'sae_count', 'overdue_sae', 'active_alerts',
-    'safety_overview', 'recent_alerts', 'quick_actions_pv', 'study_portfolio_chart'
+    'safety_overview', 'recent_alerts', 'quick_actions_pv',
   ],
   REGULATOR: [
     'active_studies', 'total_sites', 'pending_regulatory',
     'sae_count', 'open_deviations', 'active_alerts',
-    'compliance_overview', 'recent_alerts', 'study_portfolio_chart', 'safety_overview'
+    'compliance_overview', 'recent_alerts',
   ],
 };
 
@@ -582,31 +569,31 @@ export const canSeeWidget = (role, widgetKey) =>
 
 // ─── 8. ACTION PERMISSION HELPERS ───────────────────────────────────────────
 export const ACTION_PERMISSIONS = {
-  createStudy:           [PERMISSIONS.STUDY_CREATE],
-  editStudy:             [PERMISSIONS.STUDY_UPDATE],
+  createStudy: [PERMISSIONS.STUDY_CREATE],
+  editStudy: [PERMISSIONS.STUDY_UPDATE],
   advanceStudyLifecycle: [PERMISSIONS.STUDY_LIFECYCLE],
-  createSite:            [PERMISSIONS.SITE_CREATE],
-  editSite:              [PERMISSIONS.SITE_UPDATE],
-  createParticipant:     [PERMISSIONS.PARTICIPANT_CREATE],
-  editParticipant:       [PERMISSIONS.PARTICIPANT_UPDATE],
-  updateConsent:         [PERMISSIONS.PARTICIPANT_CONSENT],
-  createVisit:           [PERMISSIONS.VISIT_CREATE],
-  completeVisit:         [PERMISSIONS.VISIT_COMPLETE],
-  createQuery:           [PERMISSIONS.QUERY_CREATE],
-  resolveQuery:          [PERMISSIONS.QUERY_RESOLVE],
-  createDeviation:       [PERMISSIONS.DEVIATION_CREATE],
-  updateDeviation:       [PERMISSIONS.DEVIATION_UPDATE],
-  createMilestone:       [PERMISSIONS.REGULATORY_CREATE],
-  updateMilestone:       [PERMISSIONS.REGULATORY_UPDATE],
-  ethicsReview:          [PERMISSIONS.ETHICS_REVIEW],
-  reportSAE:             [PERMISSIONS.SAFETY_CREATE],
-  updateSAE:             [PERMISSIONS.SAFETY_UPDATE],
-  pvReview:              [PERMISSIONS.PV_REVIEW],
-  acknowledgeAlert:      [PERMISSIONS.ALERT_ACKNOWLEDGE],
-  manageUsers:           [PERMISSIONS.USER_CREATE, PERMISSIONS.USER_UPDATE],
-  changeUserRole:        [PERMISSIONS.USER_ROLE_CHANGE],
-  exportFHIR:            [PERMISSIONS.EXPORT_FHIR],
-  exportCDISC:           [PERMISSIONS.EXPORT_CDISC],
+  createSite: [PERMISSIONS.SITE_CREATE],
+  editSite: [PERMISSIONS.SITE_UPDATE],
+  createParticipant: [PERMISSIONS.PARTICIPANT_CREATE],
+  editParticipant: [PERMISSIONS.PARTICIPANT_UPDATE],
+  updateConsent: [PERMISSIONS.PARTICIPANT_CONSENT],
+  createVisit: [PERMISSIONS.VISIT_CREATE],
+  completeVisit: [PERMISSIONS.VISIT_COMPLETE],
+  createQuery: [PERMISSIONS.QUERY_CREATE],
+  resolveQuery: [PERMISSIONS.QUERY_RESOLVE],
+  createDeviation: [PERMISSIONS.DEVIATION_CREATE],
+  updateDeviation: [PERMISSIONS.DEVIATION_UPDATE],
+  createMilestone: [PERMISSIONS.REGULATORY_CREATE],
+  updateMilestone: [PERMISSIONS.REGULATORY_UPDATE],
+  ethicsReview: [PERMISSIONS.ETHICS_REVIEW],
+  reportSAE: [PERMISSIONS.SAFETY_CREATE],
+  updateSAE: [PERMISSIONS.SAFETY_UPDATE],
+  pvReview: [PERMISSIONS.PV_REVIEW],
+  acknowledgeAlert: [PERMISSIONS.ALERT_ACKNOWLEDGE],
+  manageUsers: [PERMISSIONS.USER_CREATE, PERMISSIONS.USER_UPDATE],
+  changeUserRole: [PERMISSIONS.USER_ROLE_CHANGE],
+  exportFHIR: [PERMISSIONS.EXPORT_FHIR],
+  exportCDISC: [PERMISSIONS.EXPORT_CDISC],
 };
 
 export const canPerformAction = (role, action) => {

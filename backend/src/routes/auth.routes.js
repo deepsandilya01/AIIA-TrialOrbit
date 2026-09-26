@@ -19,7 +19,7 @@ const loginLimiter = rateLimit({
   skip: (req) => process.env.NODE_ENV === 'test',
 });
 
-router.post('/register', register);
+router.post('/register', validate(authValidator.register), register);
 router.post('/login', loginLimiter, validate(authValidator.login), login);
 router.get('/me', protect, getMe);
 router.post('/logout', protect, logout);

@@ -35,12 +35,18 @@ class AlertRepository {
     return await Alert.countDocuments({ status: 'OPEN' });
   }
 
-  async acknowledge(id, userId) {
-    return await Alert.findByIdAndUpdate(
-      id,
-      { status: 'ACKNOWLEDGED', acknowledgedAt: new Date(), acknowledgedBy: userId },
-      { new: true, runValidators: true }
-    );
+  async acknowledge(id, userId, role) {
+    const alert = await Alert.findOne({
+      _id: id,
+      $or: [{ userId }, { role }]
+    });
+    
+    if (!alert) return null;
+
+    alert.status = 'ACKNOWLEDGED';
+    alert.acknowledgedAt = new Date();
+    alert.acknowledgedBy = userId;
+    return await alert.save();
   }
 }
 

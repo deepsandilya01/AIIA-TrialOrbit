@@ -8,22 +8,33 @@ import { getRedisClient } from '../config/redis.js';
 
 class AuthService {
   async register(userData) {
+    // Normalize email
+    const email = (userData.email || '').trim().toLowerCase();
+    if (!email) throw new Error('Email is required');
+
+    // Prevent public registration from escalating to privileged roles
+    const PRIVILEGED_ROLES = ['ADMIN', 'REGULATOR'];
+    const requestedRole = userData.role || 'PI';
+    if (PRIVILEGED_ROLES.includes(requestedRole)) {
+      throw new Error('Public registration is not permitted for this role. Contact your system administrator.');
+    }
+
     // Check if user exists
-    const existingUser = await userRepository.findByEmail(userData.email);
+    const existingUser = await userRepository.findByEmail(email);
     if (existingUser) {
       throw new Error('User already exists with this email');
     }
 
     // Hash password
-    const salt = await bcrypt.genSalt(10);
+    const salt = await bcrypt.genSalt(12);
     const passwordHash = await bcrypt.hash(userData.password, salt);
 
     // Create user
     const newUser = await userRepository.create({
-      email: userData.email,
+      email,
       passwordHash,
       name: userData.name,
-      role: userData.role || 'PI', // Default for now
+      role: requestedRole,
       siteId: userData.siteId
     });
 

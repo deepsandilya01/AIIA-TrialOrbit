@@ -137,9 +137,12 @@ const seedData = async () => {
       await RegulatoryMilestone.create({
         studyId: p.studyId, type: 'IEC_REVIEW', title: 'Annual IEC Renewal', dueDate: new Date(), status: 'PENDING'
       });
+    }
+
+    for (const s of studies) {
       await Alert.create({
         type: 'RECRUITMENT_LAG', severity: 'Warning', title: 'Recruitment Slow', message: 'Site recruitment behind schedule',
-        studyId: p.studyId, siteId: p.siteId, status: 'OPEN', text: 'Recruitment lag detected'
+        studyId: s._id, siteId: sites[0]._id, status: 'OPEN', text: 'Recruitment lag detected', entityId: s._id, entityType: 'Study'
       });
     }
 

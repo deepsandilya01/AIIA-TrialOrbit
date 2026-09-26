@@ -77,7 +77,7 @@ const Register = () => {
     }));
   };
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
 
     if (!formData.fullName.trim() || !formData.email.trim()) {
@@ -85,8 +85,8 @@ const Register = () => {
       return;
     }
 
-    if (formData.password.length < 6) {
-      error('Password must be at least 6 characters long.');
+    if (formData.password.length < 8) {
+      error('Password must be at least 8 characters long.');
       return;
     }
 
@@ -102,20 +102,41 @@ const Register = () => {
 
     setIsSubmitting(true);
 
-    setTimeout(() => {
+    try {
       const displayName = `${formData.title} ${formData.fullName.trim()}`;
 
-      // Auto login in demo mode
-      login({
-        email: formData.email,
-        role: formData.role,
+      // Map clinical role label → RBAC role enum (public registration limited to non-admin roles)
+      const roleMap = {
+        'Principal Investigator': 'PI',
+        'Co-Investigator': 'PI',
+        'Study Coordinator': 'COORDINATOR',
+        'Pharmacovigilance Officer': 'PHARMACOVIGILANCE',
+        'Clinical Monitor (CRA)': 'MONITOR'
+      };
+      const rbacRole = roleMap[formData.role] || 'PI';
+
+      const { api } = await import('../../services/api');
+      const res = await api.register({
         name: displayName,
-        institute: formData.institute
+        email: formData.email.trim().toLowerCase(),
+        password: formData.password,
+        role: rbacRole
       });
+
+      // Auto login with the returned token
+      const token = res.data.token;
+      const userData = res.data.user;
+      localStorage.setItem('ctms_token', token);
+      sessionStorage.setItem('ctms_user', JSON.stringify(userData));
 
       success(`Investigator profile provisioned for ${displayName}! Welcome to TrialOrbit.`);
       navigate('/dashboard', { replace: true });
-    }, 600);
+    } catch (err) {
+      const msg = err.response?.data?.message || err.response?.data?.error?.message || 'Registration failed. Please try again.';
+      error(msg);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

@@ -58,7 +58,7 @@ const mapAlert = (a) => ({
   text: a.title || a.message || a.text,
   study: extractStudyName(a.studyId),
   date: new Date(a.createdAt).toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
-  resolved: a.status === 'RESOLVED'
+  resolved: a.status !== 'OPEN'
 });
 
 const mapSae = (s) => ({
@@ -96,6 +96,10 @@ export const api = {
   },
 
   // --- Auth ---
+  register: async (userData) => {
+    const response = await apiClient.post('/auth/register', userData);
+    return response.data;
+  },
   login: async (credentials) => {
     const response = await apiClient.post('/auth/login', credentials);
     return response.data;
@@ -208,7 +212,7 @@ export const api = {
   },
   acknowledgeAlert: async (id) => {
     const res = await apiClient.patch(`/alerts/${id}/acknowledge`);
-    return [mapAlert(res.data.data)];
+    return mapAlert(res.data.data);
   },
 
   // --- Audit Logs ---

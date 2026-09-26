@@ -17,6 +17,11 @@ export const getAllAlerts = async (req, res, next) => {
 export const acknowledgeAlert = async (req, res, next) => {
   try {
     const result = await alertService.acknowledge(req.params.id, req.user);
-    res.status(200).json({ success: true, data: result });
-  } catch (error) { next(error); }
+    res.status(200).json({ success: true, message: 'Alert acknowledged successfully', data: result });
+  } catch (error) {
+    if (error.message === 'Alert not found') {
+      return res.status(404).json({ success: false, message: 'Alert not found or access denied' });
+    }
+    next(error);
+  }
 };

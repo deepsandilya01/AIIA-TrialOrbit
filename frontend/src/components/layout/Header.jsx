@@ -1,8 +1,8 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import {
   Bell, ChevronDown, Sun, Moon, Globe, LogOut,
   LayoutDashboard, ChevronRight, Search, Menu,
-  Shield, UserCheck, AlertTriangle, CheckCircle2, ArrowRight
+  X, ArrowRight
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
@@ -10,15 +10,19 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useToast } from '../../context/ToastContext';
 import api from '../../services/api';
+import usePermissions from '../../hooks/usePermissions';
+import { useSocketEvent } from '../../hooks/useSocket';
 import './Header.css';
 
 const Header = ({ onToggleSidebar }) => {
   const { theme, toggleTheme } = useTheme();
   const { t, i18n } = useTranslation();
   const { user, login, logout } = useAuth();
-  const { success } = useToast();
+  const { success, error: toastError } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
+  const { role } = usePermissions();
+  const canDismissAlerts = role !== 'REGULATOR';
 
   const [showNotifications, setShowNotifications] = useState(false);
   const [showRoleMenu, setShowRoleMenu] = useState(false);
@@ -42,19 +46,49 @@ const Header = ({ onToggleSidebar }) => {
     
     // Load alerts
     const loadAlerts = async () => {
-      const data = await api.getAlerts();
-      setActiveAlerts(data.filter(a => !a.resolved));
+      try {
+        const data = await api.getAlerts();
+        setActiveAlerts(data.filter(a => !a.resolved));
+      } catch (e) {
+        // Silent — header just won't show alert count
+      }
     };
     loadAlerts();
     
-    // Refresh alerts periodically to simulate live updates
-    const interval = setInterval(loadAlerts, 10000);
+    // Refresh alerts periodically to catch real backend state
+    const interval = setInterval(loadAlerts, 15000);
     
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
       clearInterval(interval);
     };
   }, []);
+
+  // Sync alert bell with real-time socket events
+  const handleAlertCreated = useCallback(() => {
+    api.getAlerts().then(data => setActiveAlerts(data.filter(a => !a.resolved))).catch(() => {});
+  }, []);
+  const handleAlertAcknowledged = useCallback((payload) => {
+    if (payload?._id) {
+      setActiveAlerts(prev => prev.filter(a => a.id !== payload._id));
+    } else {
+      api.getAlerts().then(data => setActiveAlerts(data.filter(a => !a.resolved))).catch(() => {});
+    }
+  }, []);
+  useSocketEvent('alert:created', handleAlertCreated);
+  useSocketEvent('alert:acknowledged', handleAlertAcknowledged);
+
+  const handleDismissAlert = useCallback(async (e, alertId) => {
+    e.stopPropagation(); // prevent opening /alerts
+    try {
+      await api.acknowledgeAlert(alertId);
+      setActiveAlerts(prev => prev.filter(a => a.id !== alertId));
+      success('Alert cleared.');
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Could not clear alert.';
+      toastError(msg);
+    }
+  }, [success, toastError]);
 
   const getBreadcrumb = () => {
     const path = location.pathname;
@@ -220,17 +254,32 @@ const Header = ({ onToggleSidebar }) => {
                   <span className="badge badge-danger text-xs">{activeAlerts.length} Attention</span>
                 </div>
                 <div className="notif-list">
-                  {activeAlerts.map(a => (
+                  {activeAlerts.length === 0 ? (
+                    <div style={{ padding: '1rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+                      No active monitoring signals
+                    </div>
+                  ) : activeAlerts.map(a => (
                     <div
                       key={a.id}
                       className="notif-item"
+                      style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}
                       onClick={() => { setShowNotifications(false); navigate('/alerts'); }}
                     >
-                      <div className={`notif-indicator ${a.type === 'Critical' ? 'bg-danger' : 'bg-warning'}`} />
-                      <div className="notif-content">
+                      <div className={`notif-indicator ${a.type === 'Critical' ? 'bg-danger' : 'bg-warning'}`} style={{ flexShrink: 0, marginTop: '5px' }} />
+                      <div className="notif-content" style={{ flex: 1 }}>
                         <p className="notif-text">{a.text}</p>
                         <span className="notif-meta">Study {a.study} • {a.date}</span>
                       </div>
+                      {canDismissAlerts && (
+                        <button
+                          title="Dismiss alert"
+                          aria-label="Dismiss alert"
+                          onClick={(e) => handleDismissAlert(e, a.id)}
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 4px', color: 'var(--text-muted)', flexShrink: 0 }}
+                        >
+                          <X size={13} />
+                        </button>
+                      )}
                     </div>
                   ))}
                 </div>

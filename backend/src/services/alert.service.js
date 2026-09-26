@@ -30,7 +30,7 @@ class AlertService {
   }
 
   async acknowledge(id, user) {
-    const alert = await alertRepository.acknowledge(id, user.id);
+    const alert = await alertRepository.acknowledge(id, user.id, user.role);
     if (!alert) throw new Error('Alert not found');
     const { emitEvent } = await import('../sockets/index.js');
     emitEvent(`role:${alert.role}`, 'alert:acknowledged', serializeAlert(alert));

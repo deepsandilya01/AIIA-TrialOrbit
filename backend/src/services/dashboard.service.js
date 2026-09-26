@@ -109,7 +109,9 @@ class DashboardService {
       aeCount,
       saeCount,
       overdueSaeCount,
-      activeAlertsCount
+      activeAlertsCount,
+      targetParticipants,
+      enrolledParticipants: actualEnrolled
     };
   }
 }

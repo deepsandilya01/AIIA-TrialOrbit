@@ -13,7 +13,7 @@ import { useToast } from '../../context/ToastContext';
 
 const Alerts = () => {
   const { t } = useTranslation();
-  const { success } = useToast();
+  const { success, error: toastError } = useToast();
 
   const [alertsList, setAlertsList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,9 +41,17 @@ const Alerts = () => {
   useSocketEvent('alert:acknowledged', loadAlerts);
 
   const handleAcknowledge = async (id) => {
-    await api.acknowledgeAlert(id);
-    setAlertsList(prev => prev.map(a => a.id === id ? { ...a, resolved: true } : a));
-    success('Alert acknowledged and logged in institutional audit trail.');
+    try {
+      const updated = await api.acknowledgeAlert(id);
+      if (updated) {
+        setAlertsList(prev => prev.map(a => a.id === id ? { ...a, resolved: true } : a));
+      }
+      success('Alert acknowledged and logged in institutional audit trail.');
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Unable to acknowledge alert. Please try again.';
+      toastError(msg);
+      console.error('Alert acknowledge failed:', err);
+    }
   };
 
   const filtered = alertsList.filter(a => {
