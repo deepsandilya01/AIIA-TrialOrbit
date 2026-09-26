@@ -31,8 +31,11 @@ const Deviations = () => {
   };
 
   const filteredDeviations = protocolDeviations.filter(d => {
-    const searchMatch = d.id.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                        d.participant.toLowerCase().includes(searchTerm.toLowerCase());
+    const pStr = typeof d.participant === 'object' && d.participant !== null 
+      ? (d.participant.participantCode || d.participant._id || '') 
+      : (d.participant || '');
+    const searchMatch = (d.id || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
+                        pStr.toLowerCase().includes(searchTerm.toLowerCase());
     const statusMatch = statusFilter === 'All' || d.status.includes(statusFilter) || (statusFilter === 'Open' && !d.status.includes('Resolved') && !d.status.includes('Approved'));
     return searchMatch && statusMatch;
   });

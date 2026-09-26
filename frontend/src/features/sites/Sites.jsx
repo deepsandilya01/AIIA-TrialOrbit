@@ -66,10 +66,10 @@ const Sites = () => {
   };
 
   const filtered = sitesList.filter(s =>
-    s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    s.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    s.pi.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    s.id.toLowerCase().includes(searchTerm.toLowerCase())
+    (s.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (s.location || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (s.pi || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (s.id || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (

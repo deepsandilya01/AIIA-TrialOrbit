@@ -26,14 +26,6 @@ const Studies = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-  useEffect(() => {
-    loadStudies();
-  }, []);
-
-  useSocketEvent('study:created', loadStudies);
-  useSocketEvent('study:updated', loadStudies);
-  useSocketEvent('study:lifecycle_changed', loadStudies);
-
   const loadStudies = async () => {
     setLoading(true);
     try {
@@ -46,6 +38,14 @@ const Studies = () => {
     }
   };
 
+  useEffect(() => {
+    loadStudies();
+  }, []);
+
+  useSocketEvent('study:created', loadStudies);
+  useSocketEvent('study:updated', loadStudies);
+  useSocketEvent('study:lifecycle_changed', loadStudies);
+
   const handleStudyCreated = async (newStudy) => {
     const created = await api.createStudy(newStudy);
     setStudiesList(prev => [created, ...prev]);
@@ -56,10 +56,10 @@ const Studies = () => {
   };
 
   const filteredStudies = studiesList.filter(s => {
-    const matchesSearch = s.id.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          s.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          (s.pi && s.pi.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesStatus = statusFilter === 'all' || s.status.toLowerCase() === statusFilter.toLowerCase();
+    const matchesSearch = (s.id || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          (s.title || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          ((s.pi || '').toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesStatus = statusFilter === 'all' || (s.status || '').toLowerCase() === statusFilter.toLowerCase();
     return matchesSearch && matchesStatus;
   });
 

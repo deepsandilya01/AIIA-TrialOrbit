@@ -24,7 +24,6 @@ const Header = ({ onToggleSidebar }) => {
   const [showRoleMenu, setShowRoleMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeAlerts, setActiveAlerts] = useState([]);
-  const [usersList, setUsersList] = useState([]);
 
   const notifRef = useRef(null);
   const roleRef = useRef(null);
@@ -48,8 +47,6 @@ const Header = ({ onToggleSidebar }) => {
     };
     loadAlerts();
     
-    // Load users for role menu
-    api.getUsers().then(setUsersList).catch(console.error);
     // Refresh alerts periodically to simulate live updates
     const interval = setInterval(loadAlerts, 10000);
     

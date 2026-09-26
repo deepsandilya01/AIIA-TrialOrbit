@@ -12,7 +12,7 @@ import { getRedisClient } from '../config/redis.js';
 
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 15,
+  max: 100,
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, message: 'Too many login attempts, please try again after 15 minutes' },

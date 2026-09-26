@@ -1,0 +1,39 @@
+const { test, expect } = require('@playwright/test');
+
+const ROLES = [
+  { role: 'PI', email: 'pi@aiia.gov.in', password: 'password123' },
+  { role: 'COORDINATOR', email: 'coordinator@aiia.gov.in', password: 'password123' },
+  { role: 'MONITOR', email: 'monitor@aiia.gov.in', password: 'password123' },
+  { role: 'ETHICS', email: 'ethics@aiia.gov.in', password: 'password123' },
+  { role: 'PHARMACOVIGILANCE', email: 'pharmacovigilance@aiia.gov.in', password: 'password123' },
+  { role: 'REGULATOR', email: 'regulator@aiia.gov.in', password: 'password123' }
+];
+
+test.describe('Unauthorized Direct URL Access Tests', () => {
+  for (const user of ROLES) {
+    test(`Verify ${user.role} is blocked from /users without white screen`, async ({ page }) => {
+      // 1. Login
+      await page.goto('http://localhost:5173/login');
+      await page.fill('input[name="email"]', user.email);
+      await page.fill('input[name="password"]', user.password);
+      await page.click('button[type="submit"]');
+      
+      // Wait for dashboard to load
+      await page.waitForURL('**/dashboard');
+      
+      // 2. Direct navigate to unauthorized route
+      await page.goto('http://localhost:5173/users');
+      
+      // 3. Verify shell is visible
+      await expect(page.locator('.app-header')).toBeVisible();
+      await expect(page.locator('.sidebar')).toBeVisible();
+      
+      // 4. Verify Access Restricted UI is visible
+      await expect(page.locator('text=Access Restricted')).toBeVisible();
+      await expect(page.locator(`text=${user.role}`)).toBeVisible();
+      
+      // 5. Verify the actual User list component didn't mount
+      await expect(page.locator('h1:has-text("User Management")')).not.toBeVisible();
+    });
+  }
+});

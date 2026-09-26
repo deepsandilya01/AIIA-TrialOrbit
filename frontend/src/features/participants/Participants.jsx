@@ -136,8 +136,8 @@ const Participants = () => {
                         <span className="font-bold text-primary">{p.id}</span>
                       </td>
                       <td>
-                        <div className="text-sm font-semibold">{p.studyId}</div>
-                        <div className="text-xs text-secondary">{p.siteId}</div>
+                        <div className="text-sm font-semibold">{typeof p.studyId === 'object' ? p.studyId.protocolId || p.studyId._id : p.studyId}</div>
+                        <div className="text-xs text-secondary">{typeof p.siteId === 'object' ? p.siteId.name || p.siteId.siteName || p.siteId._id : p.siteId}</div>
                       </td>
                       <td>
                         <div className="text-sm">{p.gender}, {p.age}y</div>

@@ -20,14 +20,6 @@ const Alerts = () => {
   const [filterSeverity, setFilterSeverity] = useState('all');
   const [showResolved, setShowResolved] = useState(false);
 
-  useEffect(() => {
-    loadAlerts();
-  }, []);
-
-  useSocketEvent('alert:created', loadAlerts);
-  useSocketEvent('alert:updated', loadAlerts);
-  useSocketEvent('alert:acknowledged', loadAlerts);
-
   const loadAlerts = async () => {
     setLoading(true);
     try {
@@ -40,6 +32,14 @@ const Alerts = () => {
     }
   };
 
+  useEffect(() => {
+    loadAlerts();
+  }, []);
+
+  useSocketEvent('alert:created', loadAlerts);
+  useSocketEvent('alert:updated', loadAlerts);
+  useSocketEvent('alert:acknowledged', loadAlerts);
+
   const handleAcknowledge = async (id) => {
     await api.acknowledgeAlert(id);
     setAlertsList(prev => prev.map(a => a.id === id ? { ...a, resolved: true } : a));
@@ -48,7 +48,7 @@ const Alerts = () => {
 
   const filtered = alertsList.filter(a => {
     const matchesResolved = showResolved ? true : !a.resolved;
-    const matchesSeverity = filterSeverity === 'all' || a.type.toLowerCase() === filterSeverity.toLowerCase();
+    const matchesSeverity = filterSeverity === 'all' || (a.type || '').toLowerCase() === filterSeverity.toLowerCase();
     return matchesResolved && matchesSeverity;
   });
 

@@ -14,6 +14,13 @@ const DataQueries = () => {
   const { success } = useToast();
   const { canDo } = usePermissions();
 
+  const loadQueries = async () => {
+    setLoading(true);
+    const data = await api.getDataQueries();
+    setDataQueries(data);
+    setLoading(false);
+  };
+
   useEffect(() => {
     loadQueries();
   }, []);
@@ -22,13 +29,6 @@ const DataQueries = () => {
   useSocketEvent('query:updated', loadQueries);
   useSocketEvent('query:resolved', loadQueries);
 
-  const loadQueries = async () => {
-    setLoading(true);
-    const data = await api.getDataQueries();
-    setDataQueries(data);
-    setLoading(false);
-  };
-
   const handleResolve = async (id) => {
     await api.resolveQuery(id);
     success('Query marked as resolved.');
@@ -36,8 +36,12 @@ const DataQueries = () => {
   };
 
   const filteredQueries = dataQueries.filter(q => {
-    const searchMatch = q.id.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                        q.participantId.toLowerCase().includes(searchTerm.toLowerCase());
+    const pIdStr = typeof q.participantId === 'object' && q.participantId !== null
+      ? (q.participantId.participantCode || q.participantId._id || '')
+      : (q.participantId || '');
+      
+    const searchMatch = (q.id || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
+                        pIdStr.toLowerCase().includes(searchTerm.toLowerCase());
     const statusMatch = statusFilter === 'All' || q.status === statusFilter;
     return searchMatch && statusMatch;
   });
@@ -190,8 +194,8 @@ const DataQueries = () => {
                   <tr key={q.id}>
                     <td><span className="font-bold text-primary">{q.id}</span></td>
                     <td>
-                      <div className="text-sm font-semibold">{q.studyId}</div>
-                      <div className="text-xs text-secondary">{q.siteId} | {q.participantId}</div>
+                      <div className="text-sm font-semibold">{typeof q.studyId === 'object' ? q.studyId.protocolId || q.studyId._id : q.studyId}</div>
+                      <div className="text-xs text-secondary">{typeof q.siteId === 'object' ? q.siteId.name || q.siteId.siteName || q.siteId._id : q.siteId} | {typeof q.participantId === 'object' ? q.participantId.participantCode || q.participantId._id : q.participantId}</div>
                     </td>
                     <td>
                       <div className="text-sm font-medium">{q.entity}</div>

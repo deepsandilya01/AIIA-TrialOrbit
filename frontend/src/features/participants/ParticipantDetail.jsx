@@ -57,7 +57,7 @@ const ParticipantDetail = () => {
             <div>
               <h2 className="text-xl font-bold">Subject: {participant.id}</h2>
               <p className="text-sm text-secondary">
-                Study: <span className="font-semibold">{study?.id || participant.studyId}</span> • Site: <span className="font-semibold">{site?.name || participant.siteId}</span>
+                Study: <span className="font-semibold">{study?.id || (typeof participant.studyId === 'object' ? participant.studyId.protocolId || participant.studyId._id : participant.studyId)}</span> • Site: <span className="font-semibold">{site?.name || (typeof participant.siteId === 'object' ? participant.siteId.name || participant.siteId.siteName || participant.siteId._id : participant.siteId)}</span>
               </p>
             </div>
           </div>

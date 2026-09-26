@@ -45,12 +45,18 @@ const mapStudy = (s) => ({
   startDate: s.startDate ? new Date(s.startDate).toISOString().split('T')[0] : ''
 });
 
+const extractStudyName = (studyRef) => {
+  if (!studyRef) return 'Unknown Protocol';
+  if (typeof studyRef === 'object') return studyRef.protocolId || studyRef._id || 'Unknown Protocol';
+  return studyRef;
+};
+
 const mapAlert = (a) => ({
   id: a._id,
   type: a.severity || 'Info', // Critical, Warning, Info
   category: a.type, // RECRUITMENT_LAG, SAE_OVERDUE
   text: a.title || a.message || a.text,
-  study: a.studyId?.protocolId || a.studyId || 'Unknown Protocol',
+  study: extractStudyName(a.studyId),
   date: new Date(a.createdAt).toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
   resolved: a.status === 'RESOLVED'
 });
@@ -59,7 +65,7 @@ const mapSae = (s) => ({
   id: s._id,
   event: s.event,
   participant: s.participantId?.participantCode || s.participantId || 'Unknown',
-  study: s.studyId?.protocolId || s.studyId || 'Unknown',
+  study: extractStudyName(s.studyId),
   date: new Date(s.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
   status: s.pvReviewstatus === 'PENDING' ? 'Pending Review' : s.pvReviewstatus,
   serious: s.serious ? 'Yes' : 'No',

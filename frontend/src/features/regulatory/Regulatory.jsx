@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Filter, AlertTriangle, CheckCircle, Clock, Plus, Download, Edit, Check } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import { api } from '../../services/api';
 import Button from '../../components/common/Button';
 import { useToast } from '../../context/ToastContext';
@@ -13,6 +14,18 @@ const Regulatory = () => {
   const [loading, setLoading] = useState(true);
   const { success } = useToast();
   const { canDo } = usePermissions();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Determine filter based on URL route
+    if (location.pathname.includes('/ethics')) {
+      setTypeFilter('IEC Approval');
+    } else if (location.pathname.includes('/ctri')) {
+      setTypeFilter('CTRI Registration');
+    } else {
+      setTypeFilter('All');
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     loadMilestones();
@@ -32,8 +45,11 @@ const Regulatory = () => {
   };
 
   const filteredMilestones = milestones.filter(m => {
-    const matchSearch = m.id.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                        m.study.toLowerCase().includes(searchTerm.toLowerCase());
+    const sStr = typeof m.study === 'object' && m.study !== null 
+      ? (m.study.protocolId || m.study._id || '') 
+      : (m.study || '');
+    const matchSearch = (m.id || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
+                        sStr.toLowerCase().includes(searchTerm.toLowerCase());
     const matchStatus = statusFilter === 'All' || m.status === statusFilter;
     const matchType = typeFilter === 'All' || m.type === typeFilter;
     return matchSearch && matchStatus && matchType;

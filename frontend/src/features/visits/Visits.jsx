@@ -14,6 +14,13 @@ const Visits = () => {
   const { success } = useToast();
   const { canDo } = usePermissions();
 
+  const loadVisits = async () => {
+    setLoading(true);
+    const data = await api.getVisits();
+    setVisits(data);
+    setLoading(false);
+  };
+
   useEffect(() => {
     loadVisits();
   }, []);
@@ -23,13 +30,6 @@ const Visits = () => {
   useSocketEvent('visit:completed', loadVisits);
   useSocketEvent('visit:missed', loadVisits);
 
-  const loadVisits = async () => {
-    setLoading(true);
-    const data = await api.getVisits();
-    setVisits(data);
-    setLoading(false);
-  };
-
   const handleMarkComplete = async (id) => {
     await api.markVisitCompleted(id);
     success('Visit marked as completed successfully.');
@@ -37,9 +37,12 @@ const Visits = () => {
   };
 
   const filteredVisits = visits.filter(v => {
+    const pIdStr = typeof v.participantId === 'object' && v.participantId !== null 
+      ? (v.participantId.participantCode || v.participantId._id || '') 
+      : (v.participantId || '');
     const searchMatch = 
-      v.participantId.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      v.id.toLowerCase().includes(searchTerm.toLowerCase());
+      pIdStr.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      (v.id || '').toLowerCase().includes(searchTerm.toLowerCase());
     const statusMatch = statusFilter === 'All' || v.status.includes(statusFilter);
     return searchMatch && statusMatch;
   });
@@ -156,10 +159,10 @@ const Visits = () => {
                 filteredVisits.map(v => (
                   <tr key={v.id}>
                     <td><span className="font-medium text-secondary">{v.id}</span></td>
-                    <td><span className="font-bold text-primary">{v.participantId}</span></td>
+                    <td><span className="font-bold text-primary">{typeof v.participantId === 'object' ? v.participantId.participantCode || v.participantId._id : v.participantId}</span></td>
                     <td>
-                      <div className="text-sm font-semibold">{v.studyId}</div>
-                      <div className="text-xs text-secondary">{v.siteId}</div>
+                      <div className="text-sm font-semibold">{typeof v.studyId === 'object' ? v.studyId.protocolId || v.studyId._id : v.studyId}</div>
+                      <div className="text-xs text-secondary">{typeof v.siteId === 'object' ? v.siteId.name || v.siteId.siteName || v.siteId._id : v.siteId}</div>
                     </td>
                     <td>{v.type}</td>
                     <td>{v.scheduledDate}</td>

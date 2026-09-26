@@ -49,45 +49,45 @@ const AppRoutes = () => {
       <Route path="/register" element={<Register />} />
       
       {/* Protected/App Routes */}
-      <Route path="/dashboard" element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} />
-      <Route path="/studies" element={<ProtectedRoute><Layout><Studies /></Layout></ProtectedRoute>} />
-      <Route path="/studies/:id" element={<ProtectedRoute><Layout><StudyDetails /></Layout></ProtectedRoute>} />
-      <Route path="/sites" element={<ProtectedRoute><Layout><Sites /></Layout></ProtectedRoute>} />
-      <Route path="/sites/:id" element={<ProtectedRoute><Layout><SiteDetails /></Layout></ProtectedRoute>} />
-      <Route path="/participants" element={<ProtectedRoute><Layout><Participants /></Layout></ProtectedRoute>} />
-      <Route path="/participants/:id" element={<ProtectedRoute><Layout><ParticipantDetail /></Layout></ProtectedRoute>} />
-      <Route path="/recruitment" element={<ProtectedRoute><Layout><Recruitment /></Layout></ProtectedRoute>} />
-      <Route path="/visits" element={<ProtectedRoute><Layout><Visits /></Layout></ProtectedRoute>} />
+      <Route path="/dashboard" element={<Layout><ProtectedRoute><Dashboard /></ProtectedRoute></Layout>} />
+      <Route path="/studies" element={<Layout><ProtectedRoute><Studies /></ProtectedRoute></Layout>} />
+      <Route path="/studies/:id" element={<Layout><ProtectedRoute><StudyDetails /></ProtectedRoute></Layout>} />
+      <Route path="/sites" element={<Layout><ProtectedRoute><Sites /></ProtectedRoute></Layout>} />
+      <Route path="/sites/:id" element={<Layout><ProtectedRoute><SiteDetails /></ProtectedRoute></Layout>} />
+      <Route path="/participants" element={<Layout><ProtectedRoute><Participants /></ProtectedRoute></Layout>} />
+      <Route path="/participants/:id" element={<Layout><ProtectedRoute><ParticipantDetail /></ProtectedRoute></Layout>} />
+      <Route path="/recruitment" element={<Layout><ProtectedRoute><Recruitment /></ProtectedRoute></Layout>} />
+      <Route path="/visits" element={<Layout><ProtectedRoute><Visits /></ProtectedRoute></Layout>} />
       
-      <Route path="/queries" element={<ProtectedRoute><Layout><DataQueries /></Layout></ProtectedRoute>} />
-      <Route path="/deviations" element={<ProtectedRoute><Layout><Deviations /></Layout></ProtectedRoute>} />
+      <Route path="/queries" element={<Layout><ProtectedRoute><DataQueries /></ProtectedRoute></Layout>} />
+      <Route path="/deviations" element={<Layout><ProtectedRoute><Deviations /></ProtectedRoute></Layout>} />
       
-      <Route path="/ethics" element={<ProtectedRoute><Layout><Regulatory /></Layout></ProtectedRoute>} />
-      <Route path="/ctri" element={<ProtectedRoute><Layout><Regulatory /></Layout></ProtectedRoute>} />
-      <Route path="/milestones" element={<ProtectedRoute><Layout><Regulatory /></Layout></ProtectedRoute>} />
+      <Route path="/ethics" element={<Layout><ProtectedRoute><Regulatory /></ProtectedRoute></Layout>} />
+      <Route path="/ctri" element={<Layout><ProtectedRoute><Regulatory /></ProtectedRoute></Layout>} />
+      <Route path="/milestones" element={<Layout><ProtectedRoute><Regulatory /></ProtectedRoute></Layout>} />
       
-      <Route path="/compliance" element={<ProtectedRoute><Layout><Compliance /></Layout></ProtectedRoute>} />
+      <Route path="/compliance" element={<Layout><ProtectedRoute><Compliance /></ProtectedRoute></Layout>} />
       
-      <Route path="/safety-events" element={<ProtectedRoute><Layout><AESAE /></Layout></ProtectedRoute>} />
-      <Route path="/pharmacovigilance" element={<ProtectedRoute><Layout><AESAE /></Layout></ProtectedRoute>} />
-      <Route path="/safety-dashboard" element={<ProtectedRoute><Layout><SafetyDashboard /></Layout></ProtectedRoute>} />
+      <Route path="/safety-events" element={<Layout><ProtectedRoute><AESAE /></ProtectedRoute></Layout>} />
+      <Route path="/pharmacovigilance" element={<Layout><ProtectedRoute><AESAE /></ProtectedRoute></Layout>} />
+      <Route path="/safety-dashboard" element={<Layout><ProtectedRoute><SafetyDashboard /></ProtectedRoute></Layout>} />
       
-      <Route path="/alerts" element={<ProtectedRoute><Layout><Alerts /></Layout></ProtectedRoute>} />
-      <Route path="/kpis" element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} />
+      <Route path="/alerts" element={<Layout><ProtectedRoute><Alerts /></ProtectedRoute></Layout>} />
+      <Route path="/kpis" element={<Layout><ProtectedRoute><Dashboard /></ProtectedRoute></Layout>} />
       
-      <Route path="/audit" element={<ProtectedRoute><Layout><AuditTrail /></Layout></ProtectedRoute>} />
+      <Route path="/audit" element={<Layout><ProtectedRoute><AuditTrail /></ProtectedRoute></Layout>} />
       
-      <Route path="/fhir" element={<ProtectedRoute><Layout><FHIRIntegration /></Layout></ProtectedRoute>} />
-      <Route path="/cdisc" element={<ProtectedRoute><Layout><CDISC /></Layout></ProtectedRoute>} />
-      <Route path="/exports" element={<ProtectedRoute><Layout><Exports /></Layout></ProtectedRoute>} />
+      <Route path="/fhir" element={<Layout><ProtectedRoute><FHIRIntegration /></ProtectedRoute></Layout>} />
+      <Route path="/cdisc" element={<Layout><ProtectedRoute><CDISC /></ProtectedRoute></Layout>} />
+      <Route path="/exports" element={<Layout><ProtectedRoute><Exports /></ProtectedRoute></Layout>} />
       
-      <Route path="/ai-assistant" element={<ProtectedRoute><Layout><AIAssistant /></Layout></ProtectedRoute>} />
-      <Route path="/insights" element={<ProtectedRoute><Layout><AIAssistant /></Layout></ProtectedRoute>} />
+      <Route path="/ai-assistant" element={<Layout><ProtectedRoute><AIAssistant /></ProtectedRoute></Layout>} />
+      <Route path="/insights" element={<Layout><ProtectedRoute><AIAssistant /></ProtectedRoute></Layout>} />
       
-      <Route path="/users" element={<ProtectedRoute allowedRoles={['ADMIN']}><Layout><Users /></Layout></ProtectedRoute>} />
-      <Route path="/roles" element={<ProtectedRoute allowedRoles={['ADMIN']}><Layout><Users /></Layout></ProtectedRoute>} />
-      <Route path="/permissions" element={<ProtectedRoute allowedRoles={['ADMIN']}><Layout><Users /></Layout></ProtectedRoute>} />
-      <Route path="/reports" element={<ProtectedRoute><Layout><Reports /></Layout></ProtectedRoute>} />
+      <Route path="/users" element={<Layout><ProtectedRoute allowedRoles={['ADMIN']}><Users /></ProtectedRoute></Layout>} />
+      <Route path="/roles" element={<Layout><ProtectedRoute allowedRoles={['ADMIN']}><Users /></ProtectedRoute></Layout>} />
+      <Route path="/permissions" element={<Layout><ProtectedRoute allowedRoles={['ADMIN']}><Users /></ProtectedRoute></Layout>} />
+      <Route path="/reports" element={<Layout><ProtectedRoute><Reports /></ProtectedRoute></Layout>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

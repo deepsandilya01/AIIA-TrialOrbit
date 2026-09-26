@@ -129,7 +129,7 @@ const Reports = () => {
             {studies.slice(0, 3).map(s => (
               <div key={s.id}>
                 <div className="flex justify-between items-center text-xs mb-1">
-                  <span className="font-semibold">{s.id} — {s.title.substring(0, 30)}...</span>
+                  <span className="font-semibold">{s.id} — {(s.title || '').substring(0, 30)}...</span>
                   <span className="font-bold text-success">{s.dataQualityScore || 96}%</span>
                 </div>
                 <div style={{ height: '6px', backgroundColor: 'var(--bg-tertiary)', borderRadius: '3px', overflow: 'hidden' }}>

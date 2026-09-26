@@ -81,7 +81,7 @@ class StudyService {
     const existingStudy = await studyRepository.findById(id);
     if (!existingStudy) throw new Error('Study not found');
 
-    if (user.role === 'PI' && existingStudy.pi_id.toString() !== user.id) {
+    if (user.role === 'PI' && (existingStudy.pi_id._id || existingStudy.pi_id).toString() !== user.id) {
       throw new Error('Forbidden: PI does not own this study');
     }
 
@@ -118,7 +118,7 @@ class StudyService {
     const study = await studyRepository.findById(id);
     if (!study) throw new Error('Study not found');
 
-    if (user.role === 'PI' && study.pi_id.toString() !== user.id) {
+    if (user.role === 'PI' && (study.pi_id._id || study.pi_id).toString() !== user.id) {
       throw new Error('Forbidden: PI does not own this study');
     }
 

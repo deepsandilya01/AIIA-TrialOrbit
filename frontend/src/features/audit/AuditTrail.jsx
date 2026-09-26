@@ -59,9 +59,9 @@ const AuditTrail = () => {
   };
 
   const filtered = logsList.filter(l => {
-    const matchesSearch = l.user.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          l.entity.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          l.newVal.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = (l.user || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          (l.entity || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          (l.newVal || '').toLowerCase().includes(searchTerm.toLowerCase());
     const matchesAction = actionFilter === 'ALL' || l.action === actionFilter;
     return matchesSearch && matchesAction;
   });

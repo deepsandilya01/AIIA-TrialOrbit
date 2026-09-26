@@ -81,6 +81,7 @@ describe('Studies Validation', () => {
       .post(`/api/v1/studies/${studyId}/lifecycle`)
       .set('Authorization', `Bearer ${token}`)
       .send({ status: 'Protocol Ready' });
+    if (res.status !== 200) console.log(res.body);
     expect(res.status).toBe(200);
     expect(res.body.data.status).toBe('Protocol Ready');
   });

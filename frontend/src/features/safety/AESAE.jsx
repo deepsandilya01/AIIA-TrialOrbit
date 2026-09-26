@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { AlertTriangle, Plus, ShieldCheck, Download, Search } from 'lucide-react';
 import api from '../../services/api';
 import Button from '../../components/common/Button';
@@ -22,6 +23,15 @@ const AESAE = () => {
   const [filterType, setFilterType] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [isReportOpen, setIsReportOpen] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname.includes('/pharmacovigilance')) {
+      setFilterType('sae');
+    } else {
+      setFilterType('all');
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     loadEvents();
@@ -54,10 +64,17 @@ const AESAE = () => {
   };
 
   const filtered = eventsList.filter(e => {
-    const matchesSearch = e.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          e.event.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          e.participant.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          e.study.toLowerCase().includes(searchTerm.toLowerCase());
+    const pStr = typeof e.participant === 'object' && e.participant !== null 
+      ? (e.participant.participantCode || e.participant._id || '') 
+      : (e.participant || '');
+    const sStr = typeof e.study === 'object' && e.study !== null 
+      ? (e.study.protocolId || e.study._id || '') 
+      : (e.study || '');
+      
+    const matchesSearch = (e.id || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          (e.event || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          pStr.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          sStr.toLowerCase().includes(searchTerm.toLowerCase());
     if (filterType === 'ae') return matchesSearch && e.serious === 'No';
     if (filterType === 'sae') return matchesSearch && e.serious === 'Yes';
     return matchesSearch;
