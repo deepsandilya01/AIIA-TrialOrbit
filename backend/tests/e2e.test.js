@@ -15,6 +15,7 @@ let aeId = '';
 
 beforeAll(async () => {
   await connectTestDB();
+  await clearTestDB();
 });
 
 afterAll(async () => {
@@ -53,7 +54,7 @@ describe('E2E Clinical Trial Management System Flow', () => {
 
   it('2. DASHBOARD (Initial)', async () => {
     const res = await request(app)
-      .get('/api/v1/dashboard/overview')
+      .get('/api/v1/dashboard/kpis')
       .set('Authorization', `Bearer ${token}`);
     
     expect(res.status).toBe(200);
@@ -132,7 +133,7 @@ describe('E2E Clinical Trial Management System Flow', () => {
         siteId,
         participantCode: 'SUB-001',
         age: 30,
-        gender: 'M',
+        gender: 'Male',
         status: 'Enrolled'
       });
     
@@ -149,7 +150,7 @@ describe('E2E Clinical Trial Management System Flow', () => {
         siteId,
         participantId,
         visitName: 'Baseline',
-        visitType: 'Clinic',
+        
         scheduledDate: new Date(),
         status: 'Scheduled'
       });
@@ -179,7 +180,7 @@ describe('E2E Clinical Trial Management System Flow', () => {
         category: 'Missing Data',
         description: 'Missing BP',
         severity: 'High',
-        status: 'Open'
+        status: 'OPEN'
       });
     
     expect(res.status).toBe(201);
@@ -201,10 +202,10 @@ describe('E2E Clinical Trial Management System Flow', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({
         studyId,
-        type: 'Ethics',
+        type: 'IEC_REVIEW',
         title: 'Initial IEC',
         dueDate: new Date(),
-        status: 'Pending'
+        status: 'PENDING'
       });
     
     expect(res.status).toBe(201);
@@ -220,10 +221,10 @@ describe('E2E Clinical Trial Management System Flow', () => {
         siteId,
         participantId,
         event: 'Severe Headache',
-        severity: 'Severe',
-        serious: true,
-        expectedness: 'Unexpected',
-        status: 'Reported'
+        severity: 'SEVERE',
+        seriousness: 'SERIOUS',
+        expectedness: 'UNEXPECTED',
+        pvReviewStatus: 'PENDING'
       });
     
     expect(res.status).toBe(201);
@@ -232,7 +233,7 @@ describe('E2E Clinical Trial Management System Flow', () => {
 
   it('14. DASHBOARD KPI & AUDIT', async () => {
     const dashRes = await request(app)
-      .get('/api/v1/dashboard/overview')
+      .get('/api/v1/dashboard/kpis')
       .set('Authorization', `Bearer ${token}`);
     
     expect(dashRes.status).toBe(200);
