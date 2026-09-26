@@ -1,29 +1,38 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { AlertTriangle, Activity, CheckCircle, Clock, ShieldAlert, BarChart2 } from 'lucide-react';
-import { aesaeData } from '../../data/dummyData';
+import api from '../../services/api';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell
 } from 'recharts';
 
 const SafetyDashboard = () => {
+  const [aesaeData, setAesaeData] = useState([]);
+
+  useEffect(() => {
+    api.getSafetyEvents().then(setAesaeData).catch(console.error);
+  }, []);
   const totalAE = aesaeData.length;
   const totalSAE = aesaeData.filter(e => e.serious === 'Yes').length;
   const openEvents = aesaeData.filter(e => e.status !== 'Resolved').length;
   const resolvedEvents = totalAE - openEvents;
 
-  // Mock data for charts
-  const severityData = [
-    { name: 'Mild', value: 8, color: 'var(--color-success)' },
-    { name: 'Moderate', value: 4, color: 'var(--color-warning)' },
-    { name: 'Severe', value: 2, color: 'var(--color-danger)' },
-  ];
+  const [severityData, setSeverityData] = useState([]);
+  const [studySummary, setStudySummary] = useState([]);
 
-  const studySummary = [
-    { name: 'AIIA-001', AE: 5, SAE: 1 },
-    { name: 'AIIA-002', AE: 6, SAE: 0 },
-    { name: 'AIIA-003', AE: 3, SAE: 1 },
-  ];
+  useEffect(() => {
+    // Simulated fetching for the chart data
+    setSeverityData([
+      { name: 'Mild', value: 8, color: 'var(--color-success)' },
+      { name: 'Moderate', value: 4, color: 'var(--color-warning)' },
+      { name: 'Severe', value: 2, color: 'var(--color-danger)' },
+    ]);
+    setStudySummary([
+      { name: 'AIIA-001', AE: 5, SAE: 1 },
+      { name: 'AIIA-002', AE: 6, SAE: 0 },
+      { name: 'AIIA-003', AE: 3, SAE: 1 },
+    ]);
+  }, []);
 
   return (
     <div className="page-container">

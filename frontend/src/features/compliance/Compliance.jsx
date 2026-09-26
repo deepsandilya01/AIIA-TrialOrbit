@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FileCheck, UploadCloud, Download, Shield, Calendar, Clock, CheckCircle } from 'lucide-react';
-import { complianceData } from '../../data/dummyData';
+import api from '../../services/api';
 import Button from '../../components/common/Button';
 import StatusBadge from '../../components/common/StatusBadge';
 import DemoBadge from '../../components/common/DemoBadge';
@@ -12,7 +12,11 @@ const Compliance = () => {
   const { t } = useTranslation();
   const { success, error } = useToast();
 
-  const [data, setData] = useState(complianceData);
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    api.getComplianceData().then(setData).catch(console.error);
+  }, []);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [uploadForm, setUploadForm] = useState({
     requirement: 'Annual Safety Report (ASR) to CDSCO',

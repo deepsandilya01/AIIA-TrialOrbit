@@ -1,12 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from '../../components/common/Modal';
 import Button from '../../components/common/Button';
 import { useToast } from '../../context/ToastContext';
 import { AlertTriangle, ShieldAlert } from 'lucide-react';
-import { studies, sites } from '../../data/dummyData';
+import api from '../../services/api';
 
 const ReportSAE = ({ isOpen, onClose, onSAEReported }) => {
   const { success, error } = useToast();
+  const [studies, setStudies] = useState([]);
+  const [sites, setSites] = useState([]);
+
+  useEffect(() => {
+    if (isOpen) {
+      api.getStudies().then(setStudies).catch(console.error);
+      api.getSites().then(setSites).catch(console.error);
+    }
+  }, [isOpen]);
+
   const [formData, setFormData] = useState({
     study: 'AIIA-001',
     participant: '',

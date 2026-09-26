@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Download, FileText, Database, ShieldAlert } from 'lucide-react';
-import { reportsCatalog } from '../../data/dummyData';
+import api from '../../services/api';
 import Button from '../../components/common/Button';
 
 const Exports = () => {
+  const [reportsCatalog, setReportsCatalog] = useState([]);
+
+  useEffect(() => {
+    api.getReportsCatalog().then(setReportsCatalog).catch(console.error);
+  }, []);
   return (
     <div className="page-container">
       <div className="page-header">

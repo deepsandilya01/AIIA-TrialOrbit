@@ -1,13 +1,14 @@
 import { useTranslation } from 'react-i18next';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Building2, MapPin, Users, Activity, ShieldCheck, Calendar, Download, Phone, Mail } from 'lucide-react';
-import { sites, studies } from '../../data/dummyData';
+import api from '../../services/api';
 import Badge from '../../components/common/Badge';
 import StatusBadge from '../../components/common/StatusBadge';
 import DemoBadge from '../../components/common/DemoBadge';
 import Button from '../../components/common/Button';
 import { useToast } from '../../context/ToastContext';
+import { SkeletonForm } from '../../components/common/LoadingSkeleton';
 
 const SiteDetails = () => {
   const { t } = useTranslation();
@@ -15,7 +16,23 @@ const SiteDetails = () => {
   const navigate = useNavigate();
   const { success } = useToast();
   
-  const site = sites.find(s => s.id === id) || sites[0];
+  const [site, setSite] = useState(null);
+  const [studies, setStudies] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      api.getSiteById(id),
+      api.getStudies()
+    ]).then(([s, st]) => {
+      setSite(s);
+      setStudies(st);
+      setLoading(false);
+    }).catch(console.error);
+  }, [id]);
+
+  if (loading) return <div className="page-container"><SkeletonForm rows={5} /></div>;
+  if (!site) return <div className="page-container">Site not found.</div>;
 
   return (
     <div className="page-container">

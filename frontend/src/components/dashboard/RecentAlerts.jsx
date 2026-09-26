@@ -1,13 +1,27 @@
 import { useTranslation } from 'react-i18next';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { alerts } from '../../data/dummyData';
+import api from '../../services/api';
+import { useSocketEvent } from '../../hooks/useSocket';
 import { AlertTriangle, Bell, ArrowRight } from 'lucide-react';
 import './RecentAlerts.css';
 
 const RecentAlerts = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [alerts, setAlerts] = useState([]);
+
+  const loadAlerts = () => {
+    api.getAlerts().then(setAlerts).catch(console.error);
+  };
+
+  useEffect(() => {
+    loadAlerts();
+  }, []);
+
+  useSocketEvent('alert:created', loadAlerts);
+  useSocketEvent('alert:updated', loadAlerts);
+  useSocketEvent('alert:acknowledged', loadAlerts);
 
   return (
     <div className="card alerts-card">

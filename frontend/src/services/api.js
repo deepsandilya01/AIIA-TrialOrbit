@@ -22,13 +22,65 @@ apiClient.interceptors.request.use((config) => {
 
 // Interceptor for handling 401s
 apiClient.interceptors.response.use((response) => response, (error) => {
-  if (error.response && error.response.status === 401) {
+  if (error.response && (error.response.status === 401 || error.response.status === 403)) {
     localStorage.removeItem('ctms_token');
-    localStorage.removeItem('ctms_user');
+    sessionStorage.removeItem('ctms_user');
     window.location.href = '/login'; // Redirect to login
   }
   return Promise.reject(error);
 });
+
+const mapStudy = (s) => ({
+  id: s._id,
+  protocolId: s.protocolId,
+  title: s.title,
+  phase: s.phase,
+  pi: s.pi_id?.name || 'Dr. Anurag Sharma', // Mocking PI name if not populated
+  status: s.status,
+  targetParticipants: s.targetParticipants,
+  participants: s.enrolledCount || 0,
+  progress: s.targetParticipants ? Math.round(((s.enrolledCount || 0) / s.targetParticipants) * 100) : 0,
+  sites: s.siteCount || 1,
+  dataQualityScore: 98, // Mocked as backend doesn't aggregate it yet
+  startDate: s.startDate ? new Date(s.startDate).toISOString().split('T')[0] : ''
+});
+
+const mapAlert = (a) => ({
+  id: a._id,
+  type: a.severity || 'Info', // Critical, Warning, Info
+  category: a.type, // RECRUITMENT_LAG, SAE_OVERDUE
+  text: a.title || a.message || a.text,
+  study: a.studyId?.protocolId || a.studyId || 'Unknown Protocol',
+  date: new Date(a.createdAt).toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+  resolved: a.status === 'RESOLVED'
+});
+
+const mapSae = (s) => ({
+  id: s._id,
+  event: s.event,
+  participant: s.participantId?.participantCode || s.participantId || 'Unknown',
+  study: s.studyId?.protocolId || s.studyId || 'Unknown',
+  date: new Date(s.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+  status: s.pvReviewstatus === 'PENDING' ? 'Pending Review' : s.pvReviewstatus,
+  serious: s.serious ? 'Yes' : 'No',
+  severity: s.severity
+});
+
+const mapAudit = (l) => ({
+  id: l._id,
+  time: new Date(l.createdAt).toLocaleString('en-GB') + ' IST',
+  user: l.userId?.name || 'System User',
+  action: l.action,
+  entity: l.resource,
+  oldVal: JSON.stringify(l.oldValue || '-'),
+  newVal: JSON.stringify(l.newValue || '-'),
+  ip: l.ipAddress || 'Demo Mode'
+});
+
+const mapDefault = (item) => {
+  if (item && item._id && !item.id) item.id = item._id;
+  return item;
+};
 
 export const api = {
   // --- Auth ---
@@ -40,125 +92,155 @@ export const api = {
   // --- Studies ---
   getStudies: async () => {
     const res = await apiClient.get('/studies');
-    return res.data.data;
+    return (res.data.data || []).map(mapStudy);
   },
   getStudyById: async (id) => {
     const res = await apiClient.get(`/studies/${id}`);
-    return res.data.data;
+    return mapStudy(res.data.data);
   },
   createStudy: async (data) => {
     const res = await apiClient.post('/studies', data);
-    return res.data.data;
+    return mapStudy(res.data.data);
   },
   updateStudyStatus: async (id, status) => {
     const res = await apiClient.patch(`/studies/${id}`, { status });
-    return res.data.data;
+    return mapStudy(res.data.data);
   },
 
   // --- Sites ---
   getSites: async () => {
     const res = await apiClient.get('/sites');
-    return res.data.data;
+    return (res.data.data || []).map(mapDefault);
   },
   getSiteById: async (id) => {
     const res = await apiClient.get(`/sites/${id}`);
-    return res.data.data;
+    return mapDefault(res.data.data);
   },
 
   // --- Participants ---
   getParticipants: async () => {
     const res = await apiClient.get('/participants');
-    return res.data.data;
+    return (res.data.data || []).map(mapDefault);
   },
   getParticipantById: async (id) => {
     const res = await apiClient.get(`/participants/${id}`);
-    return res.data.data;
+    return mapDefault(res.data.data);
   },
   updateParticipantStatus: async (id, status) => {
     const res = await apiClient.patch(`/participants/${id}/status`, { status });
-    return res.data.data;
+    return mapDefault(res.data.data);
   },
 
   // --- Visits ---
   getVisits: async () => {
     const res = await apiClient.get('/visits');
-    return res.data.data;
+    return (res.data.data || []).map(mapDefault);
   },
   markVisitCompleted: async (id) => {
     const res = await apiClient.patch(`/visits/${id}/complete`, { status: 'Completed', completedDate: new Date().toISOString() });
-    return [res.data.data]; // UI typically expects array update pattern in dummy, but adapt if needed
+    return [mapDefault(res.data.data)];
   },
 
   // --- Data Queries ---
   getDataQueries: async () => {
     const res = await apiClient.get('/data-quality/queries');
-    return res.data.data;
+    return (res.data.data || []).map(mapDefault);
   },
   resolveQuery: async (id) => {
     const res = await apiClient.patch(`/data-quality/queries/${id}/resolve`, { resolutionData: 'Resolved from UI' });
-    return [res.data.data];
+    return [mapDefault(res.data.data)];
   },
 
   // --- Protocol Deviations ---
   getProtocolDeviations: async () => {
     const res = await apiClient.get('/data-quality/deviations');
-    return res.data.data;
+    return (res.data.data || []).map(mapDefault);
   },
   updateDeviationStatus: async (id, status) => {
     const res = await apiClient.patch(`/data-quality/deviations/${id}`, { status });
-    return [res.data.data];
+    return [mapDefault(res.data.data)];
   },
 
   // --- Regulatory Milestones ---
   getMilestones: async () => {
     const res = await apiClient.get('/regulatory/milestones');
-    return res.data.data;
+    return (res.data.data || []).map(mapDefault);
   },
   completeMilestone: async (id) => {
     const res = await apiClient.patch(`/regulatory/milestones/${id}`, { status: 'Completed', actualDate: new Date().toISOString() });
-    return [res.data.data];
+    return [mapDefault(res.data.data)];
   },
 
   // --- Safety / SAE ---
   getSafetyEvents: async () => {
     const res = await apiClient.get('/safety/events');
-    return res.data.data; // Note pagination wrapper is typically present, we may need res.data.data.events
+    return (res.data.data || []).map(mapSae);
   },
   reportSAE: async (data) => {
     const res = await apiClient.post('/safety/events', data);
-    return res.data.data;
+    return mapSae(res.data.data);
   },
   updateSAEStatus: async (id, status) => {
     const res = await apiClient.patch(`/safety/events/${id}`, { status });
-    return [res.data.data];
+    return [mapSae(res.data.data)];
   },
 
   // --- Alerts ---
   getAlerts: async () => {
     const res = await apiClient.get('/alerts');
-    return res.data.data;
+    return (res.data.data || []).map(mapAlert);
   },
   acknowledgeAlert: async (id) => {
     const res = await apiClient.patch(`/alerts/${id}/acknowledge`);
-    return [res.data.data];
+    return [mapAlert(res.data.data)];
   },
 
   // --- Audit Logs ---
   getAuditLogs: async () => {
-    const res = await apiClient.get('/audit-logs');
-    return res.data.data;
+    const res = await apiClient.get('/audit'); 
+    return (res.data.data || []).map(mapAudit);
+  },
+
+  // --- Users ---
+  getUsers: async () => {
+    const res = await apiClient.get('/users');
+    return (res.data.data || []).map(mapDefault);
+  },
+  updateUserRole: async (id, role) => {
+    const res = await apiClient.patch(`/users/${id}/role`, { role });
+    return mapDefault(res.data.data);
   },
 
   // --- Others (Mock if no backend exact match) ---
   getComplianceData: async () => {
-    // Return dummy since backend might not have complex analytics aggregated yet
-    return (await import('../data/dummyData')).complianceData;
+    const res = await apiClient.get('/regulatory/milestones');
+    return (res.data.data || []).map(m => ({
+      id: m._id,
+      req: m.title || m.requirement || 'Regulatory Milestone',
+      status: m.status || 'Pending',
+      date: new Date(m.targetDate || m.dueDate).toLocaleDateString('en-GB'),
+      days: m.daysRemaining || null,
+      authority: m.authority || 'Institutional Authority'
+    }));
   },
   getRecruitmentTrend: async () => {
-    return (await import('../data/dummyData')).recruitmentTrend;
+    return [
+      { month: 'Jan', target: 200, actual: 180 },
+      { month: 'Feb', target: 400, actual: 350 },
+      { month: 'Mar', target: 600, actual: 610 },
+      { month: 'Apr', target: 800, actual: 820 },
+      { month: 'May', target: 1000, actual: 950 },
+      { month: 'Jun', target: 1200, actual: 1240 }
+    ];
   },
   getReportsCatalog: async () => {
-    return (await import('../data/dummyData')).reportsCatalog;
+    return [
+      { id: 'RPT-001', name: 'Clinical Study Report (CSR)', category: 'Regulatory', format: 'PDF, Word', lastRun: '2 days ago' },
+      { id: 'RPT-002', name: 'Site Performance Metrics', category: 'Operational', format: 'Excel, PDF', lastRun: '5 hrs ago' },
+      { id: 'RPT-003', name: 'Adverse Event Line Listing', category: 'Safety', format: 'Excel, CSV', lastRun: '1 day ago' },
+      { id: 'RPT-004', name: 'Monitoring Visit Summary', category: 'Compliance', format: 'PDF', lastRun: '3 days ago' },
+      { id: 'RPT-005', name: 'Enrollment Cohort Trajectory', category: 'Recruitment', format: 'Excel, PPT', lastRun: '1 week ago' }
+    ];
   },
 
   resetData: () => {

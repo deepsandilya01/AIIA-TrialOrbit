@@ -1,18 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, UserPlus, Shield, Key, Edit, Trash2 } from 'lucide-react';
-import { userRolesList } from '../../data/dummyData';
+import api from '../../services/api';
 import Button from '../../components/common/Button';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 
 const Users = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [usersList, setUsersList] = useState([]);
   const { user, login } = useAuth();
   const { success } = useToast();
 
-  const filteredUsers = userRolesList.filter(u => 
-    u.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    u.role.toLowerCase().includes(searchTerm.toLowerCase())
+  useEffect(() => {
+    api.getUsers().then(setUsersList).catch(console.error);
+  }, []);
+
+  const filteredUsers = usersList.filter(u => 
+    u.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    u.role?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (

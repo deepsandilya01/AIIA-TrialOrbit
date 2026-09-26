@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Users, UserCheck, UserMinus, Download, AlertTriangle, ArrowRight, Sparkles } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { recruitmentTrend, sites } from '../../data/dummyData';
+import api from '../../services/api';
 import StatCard from '../../components/dashboard/StatCard';
 import Button from '../../components/common/Button';
 import DemoBadge from '../../components/common/DemoBadge';
@@ -11,12 +11,20 @@ import { useToast } from '../../context/ToastContext';
 const Recruitment = () => {
   const { t } = useTranslation();
   const { success } = useToast();
+  
+  const [recruitmentTrend, setRecruitmentTrend] = useState([]);
+  const [sites, setSites] = useState([]);
+
+  useEffect(() => {
+    api.getRecruitmentTrend().then(setRecruitmentTrend).catch(console.error);
+    api.getSites().then(setSites).catch(console.error);
+  }, []);
 
   const recruitmentBySite = sites.map(s => ({
-    name: s.id,
-    actual: s.enrolled,
-    target: s.target,
-    facility: s.name.split(',')[0]
+    name: s.id || s._id,
+    actual: s.enrolledCount || 0,
+    target: s.targetEnrollment || s.target || 100,
+    facility: s.name?.split(',')[0]
   }));
 
   const handleExport = () => {

@@ -32,6 +32,18 @@ export const SkeletonTable = ({ rows = 5, cols = 4, className = '' }) => (
   </div>
 );
 
+export const SkeletonForm = ({ rows = 4, className = '' }) => (
+  <div className={`card ${className}`} style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+    <div className="skeleton-pulse" style={{ width: '30%', height: '24px', marginBottom: '0.5rem' }} />
+    {Array.from({ length: rows }).map((_, r) => (
+      <div key={r} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        <div className="skeleton-pulse" style={{ width: '15%', height: '14px' }} />
+        <div className="skeleton-pulse" style={{ width: '100%', height: '40px', borderRadius: '4px' }} />
+      </div>
+    ))}
+  </div>
+);
+
 export default {
   Line: SkeletonLine,
   Card: SkeletonCard,

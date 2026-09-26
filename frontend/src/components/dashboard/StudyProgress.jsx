@@ -1,14 +1,19 @@
 import { useTranslation } from 'react-i18next';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AlertTriangle, ArrowRight } from 'lucide-react';
-import { studies } from '../../data/dummyData';
+import api from '../../services/api';
 import StatusBadge from '../common/StatusBadge';
 import './StudyProgress.css';
 
 const StudyProgress = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [studies, setStudies] = useState([]);
+
+  useEffect(() => {
+    api.getStudies().then(setStudies).catch(console.error);
+  }, []);
 
   return (
     <div className="card study-progress-card">

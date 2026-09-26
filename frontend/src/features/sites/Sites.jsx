@@ -1,20 +1,29 @@
 import { useTranslation } from 'react-i18next';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Plus, MapPin, Building2, Download, UserCheck } from 'lucide-react';
-import { sites as defaultSites } from '../../data/dummyData';
+import api from '../../services/api';
 import Button from '../../components/common/Button';
 import StatusBadge from '../../components/common/StatusBadge';
 import DemoBadge from '../../components/common/DemoBadge';
 import Modal from '../../components/common/Modal';
 import { useToast } from '../../context/ToastContext';
+import { SkeletonTable } from '../../components/common/LoadingSkeleton';
 
 const Sites = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { success } = useToast();
 
-  const [sitesList, setSitesList] = useState(defaultSites);
+  const [sitesList, setSitesList] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api.getSites().then(data => {
+      setSitesList(data);
+      setLoading(false);
+    }).catch(console.error);
+  }, []);
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [newSite, setNewSite] = useState({
@@ -99,7 +108,9 @@ const Sites = () => {
               </tr>
             </thead>
             <tbody>
-              {filtered.map(site => (
+              {loading ? (
+                <tr><td colSpan="7" style={{ padding: 0 }}><SkeletonTable rows={4} cols={7} /></td></tr>
+              ) : filtered.map(site => (
                 <tr key={site.id} className="clickable-row" onClick={() => navigate(`/sites/${site.id}`)}>
                   <td className="font-semibold text-primary">{site.id}</td>
                   <td className="font-medium">{site.name}</td>
@@ -111,10 +122,10 @@ const Sites = () => {
                   <td>{site.pi}</td>
                   <td>
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-primary">{site.enrolled}</span>
-                      <span className="text-muted text-xs">/ {site.target}</span>
+                      <span className="font-semibold text-primary">{site.enrolledCount || 0}</span>
+                      <span className="text-muted text-xs">/ {site.targetEnrollment || site.target || 100}</span>
                       <div style={{ width: '60px', height: '5px', backgroundColor: 'var(--bg-tertiary)', borderRadius: '3px', overflow: 'hidden' }}>
-                        <div style={{ width: `${Math.min(100, Math.round((site.enrolled / site.target) * 100))}%`, height: '100%', backgroundColor: 'var(--primary-color)' }}></div>
+                        <div style={{ width: `${Math.min(100, Math.round(((site.enrolledCount || 0) / (site.targetEnrollment || site.target || 100)) * 100))}%`, height: '100%', backgroundColor: 'var(--primary-color)' }}></div>
                       </div>
                     </div>
                   </td>

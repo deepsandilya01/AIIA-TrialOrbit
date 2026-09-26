@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { connectSocket, disconnectSocket } from '../services/socket';
 
 const AuthContext = createContext();
 
@@ -11,18 +12,23 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     try {
       const storedUser = sessionStorage.getItem('ctms_user');
-      if (storedUser) {
+      const token = localStorage.getItem('ctms_token');
+      if (storedUser && token) {
         setUser(JSON.parse(storedUser));
+        connectSocket(token);
+      } else {
+        sessionStorage.removeItem('ctms_user');
+        localStorage.removeItem('ctms_token');
       }
     } catch (e) {
       sessionStorage.removeItem('ctms_user');
+      localStorage.removeItem('ctms_token');
     }
     setLoading(false);
   }, []);
 
   const login = async (credentials) => {
     try {
-      // credentials might be simple dummy object in old UI, or real object now
       const res = await (await import('../services/api.js')).api.login(credentials);
       const token = res.data.token;
       const userData = res.data.user;
@@ -30,6 +36,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('ctms_token', token);
       sessionStorage.setItem('ctms_user', JSON.stringify(userData));
       setUser(userData);
+      connectSocket(token);
       return userData;
     } catch (err) {
       console.error('Login failed', err);
@@ -41,6 +48,7 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     localStorage.removeItem('ctms_token');
     sessionStorage.removeItem('ctms_user');
+    disconnectSocket();
   };
 
   return (

@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FileText, Download, BarChart2, CheckCircle, AlertCircle, Clock, ShieldCheck, Printer } from 'lucide-react';
-import { reportsCatalog, protocolDeviations, studies } from '../../data/dummyData';
+import api from '../../services/api';
 import Button from '../../components/common/Button';
 import Badge from '../../components/common/Badge';
 import StatusBadge from '../../components/common/StatusBadge';
@@ -12,6 +12,15 @@ const Reports = () => {
   const { t } = useTranslation();
   const { success } = useToast();
   const [selectedFormat, setSelectedFormat] = useState('PDF');
+  const [reportsCatalog, setReportsCatalog] = useState([]);
+  const [protocolDeviations, setProtocolDeviations] = useState([]);
+  const [studies, setStudies] = useState([]);
+
+  useEffect(() => {
+    api.getReportsCatalog().then(setReportsCatalog).catch(console.error);
+    api.getProtocolDeviations().then(setProtocolDeviations).catch(console.error);
+    api.getStudies().then(setStudies).catch(console.error);
+  }, []);
 
   const handleGenerateReport = (title) => {
     success(`Generated ${title} in ${selectedFormat} format. Download initiated.`);

@@ -1,14 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, FlaskConical, MapPin, Users, Award, ExternalLink } from 'lucide-react';
-import { studies } from '../data/dummyData';
+import api from '../services/api';
 import StatusBadge from '../components/common/StatusBadge';
 import DemoBadge from '../components/common/DemoBadge';
 import EmptyState from '../components/common/EmptyState';
 import './PublicPages.css';
+import { SkeletonForm } from '../components/common/LoadingSkeleton';
 
 const PublicStudies = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('All');
+  const [studies, setStudies] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api.getStudies().then(data => {
+      setStudies(data);
+      setLoading(false);
+    }).catch(console.error);
+  }, []);
 
   const filteredStudies = studies.filter(study => {
     const matchesSearch = 
@@ -53,7 +63,9 @@ const PublicStudies = () => {
       </div>
 
       <div className="public-studies-list" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-        {filteredStudies.length > 0 ? (
+        {loading ? (
+          <SkeletonForm rows={5} />
+        ) : filteredStudies.length > 0 ? (
           filteredStudies.map(study => (
             <div key={study.id} className="study-list-card card p-4">
               <div className="flex justify-between items-start mb-2 flex-wrap gap-2">

@@ -9,11 +9,11 @@ import { useToast } from '../../context/ToastContext';
 import './Login.css';
 
 const DEMO_PRESETS = [
-  { role: 'Principal Investigator', name: 'Dr. Anurag Sharma', email: 'dr.anurag@aiia.gov.in' },
-  { role: 'Study Coordinator', name: 'Dr. Sneha Verma', email: 'coord.sneha@aiia.gov.in' },
-  { role: 'Pharmacovigilance Officer', name: 'Dr. Priya Singh', email: 'pv.priya@aiia.gov.in' },
-  { role: 'Clinical Monitor (CRA)', name: 'R. K. Meena', email: 'cra.meena@aiia.gov.in' },
-  { role: 'System Admin', name: 'IT Admin AIIA', email: 'admin@aiia.gov.in' }
+  { role: 'PI', name: 'Dr. Anurag Sharma', email: 'pi1@aiia.gov.in' },
+  { role: 'COORDINATOR', name: 'Priya Patel', email: 'coord@aiia.gov.in' },
+  { role: 'PHARMACOVIGILANCE', name: 'Dr. Sneha Rao', email: 'pv@aiia.gov.in' },
+  { role: 'MONITOR', name: 'Rahul Singh', email: 'monitor@aiia.gov.in' },
+  { role: 'ADMIN', name: 'System Administrator', email: 'admin@aiia.gov.in' }
 ];
 
 const Login = () => {
@@ -23,25 +23,30 @@ const Login = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const [email, setEmail] = useState('dr.anurag@aiia.gov.in');
-  const [password, setPassword] = useState('••••••••••••');
-  const [role, setRole] = useState('Principal Investigator');
+  const [email, setEmail] = useState('pi1@aiia.gov.in');
+  const [password, setPassword] = useState('password123');
+  const [role, setRole] = useState('PI');
   const [name, setName] = useState('Dr. Anurag Sharma');
 
   const handleSelectPreset = (preset) => {
     setRole(preset.role);
     setName(preset.name);
     setEmail(preset.email);
-    setPassword('••••••••••••');
+    setPassword('password123');
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    login({ email, role, name });
-    success(`Signed in as ${name} (${role}). Control Room activated.`);
+    try {
+      await login({ email, password, role, name });
+      success(`Signed in as ${name} (${role}). Control Room activated.`);
 
-    const from = location.state?.from?.pathname || '/dashboard';
-    navigate(from, { replace: true });
+      const from = location.state?.from?.pathname || '/dashboard';
+      navigate(from, { replace: true });
+    } catch (err) {
+      console.error(err);
+      // Let it fail silently or show an error
+    }
   };
 
   return (

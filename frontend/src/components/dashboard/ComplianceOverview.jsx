@@ -1,14 +1,28 @@
 import { useTranslation } from 'react-i18next';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import StatusBadge from '../common/StatusBadge';
-import { complianceData } from '../../data/dummyData';
+import api from '../../services/api';
+import { useSocketEvent } from '../../hooks/useSocket';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
 import './ComplianceOverview.css';
 
 const ComplianceOverview = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [complianceData, setComplianceData] = useState([]);
+
+  const loadData = () => {
+    api.getComplianceData().then(setComplianceData).catch(console.error);
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  useSocketEvent('regulatory:created', loadData);
+  useSocketEvent('regulatory:updated', loadData);
+  useSocketEvent('regulatory:overdue', loadData);
 
   return (
     <div className="card compliance-card">

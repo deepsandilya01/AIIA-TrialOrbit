@@ -8,7 +8,6 @@ import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { userRolesList } from '../../data/dummyData';
 import { useToast } from '../../context/ToastContext';
 import api from '../../services/api';
 import './Header.css';
@@ -25,6 +24,7 @@ const Header = ({ onToggleSidebar }) => {
   const [showRoleMenu, setShowRoleMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeAlerts, setActiveAlerts] = useState([]);
+  const [usersList, setUsersList] = useState([]);
 
   const notifRef = useRef(null);
   const roleRef = useRef(null);
@@ -47,6 +47,9 @@ const Header = ({ onToggleSidebar }) => {
       setActiveAlerts(data.filter(a => !a.resolved));
     };
     loadAlerts();
+    
+    // Load users for role menu
+    api.getUsers().then(setUsersList).catch(console.error);
     // Refresh alerts periodically to simulate live updates
     const interval = setInterval(loadAlerts, 10000);
     
@@ -269,16 +272,16 @@ const Header = ({ onToggleSidebar }) => {
                   <div className="text-xs text-secondary mt-1">Switch view to demonstrate multi-stakeholder permissions:</div>
                 </div>
                 <div className="role-list">
-                  {userRolesList.map(r => (
+                  {usersList.map(r => (
                     <div
                       key={r.id}
-                      className={`role-item ${(user?.role || 'Principal Investigator') === r.role ? 'selected' : ''}`}
+                      className={`role-item ${(user?.role || 'PI') === r.role ? 'selected' : ''}`}
                       onClick={() => handleSwitchRole(r)}
                       role="menuitem"
                     >
                       <div className="font-semibold text-xs text-primary">{r.role}</div>
                       <div className="text-xs text-muted truncate">{r.name}</div>
-                      <div className="text-xs text-secondary mt-0.5" style={{ fontSize: '0.68rem' }}>{r.permissions}</div>
+                      <div className="text-xs text-secondary mt-0.5" style={{ fontSize: '0.68rem' }}>{r.email}</div>
                     </div>
                   ))}
                 </div>
