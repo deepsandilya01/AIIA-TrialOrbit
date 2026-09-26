@@ -19,6 +19,15 @@ test.describe('Dashboard Roles Test', () => {
       page.on('console', msg => {
         if (msg.type() === 'error') errors.push(msg.text());
       });
+      const failedRequests = [];
+      page.on('requestfailed', request => {
+        failedRequests.push(`${request.method()} ${request.url()} - ${request.failure()?.errorText}`);
+      });
+      page.on('response', response => {
+        if (!response.ok()) {
+           errors.push(`Response error: ${response.status()} ${response.url()}`);
+        }
+      });
 
       await page.goto('http://localhost:5174/login');
       
@@ -43,6 +52,7 @@ test.describe('Dashboard Roles Test', () => {
       expect(overflow, 'Horizontal overflow detected').toBeFalsy();
 
       // Ensure no errors occurred
+      expect(failedRequests.length, `Failed requests found: ${failedRequests.join(', ')}`).toBe(0);
       expect(errors.length, `Console errors found: ${errors.join(', ')}`).toBe(0);
 
       // Success if we reached here
