@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Filter, Download, UserPlus, Eye, Users } from 'lucide-react';
-import { api } from '../../services/api';
+import api from '../../services/api';
 import Button from '../../components/common/Button';
 import usePermissions from '../../hooks/usePermissions';
+import { useToast } from '../../context/ToastContext';
 
 const Participants = () => {
   const [participants, setParticipants] = useState([]);
@@ -12,7 +13,10 @@ const Participants = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [loading, setLoading] = useState(true);
+  const [exporting, setExporting] = useState(false);
+  const [isAddOpen, setIsAddOpen] = useState(false);
   const navigate = useNavigate();
+  const { success, error } = useToast();
   const { canDo } = usePermissions();
 
   useEffect(() => {
@@ -44,6 +48,36 @@ const Participants = () => {
     return matchesSearch && matchesStatus;
   });
 
+  const handleExport = async () => {
+    try {
+      setExporting(true);
+      const response = await api.exportParticipants();
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `trialorbit-participants-${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      success('Participants exported successfully');
+    } catch (err) {
+      error('Failed to export participants');
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handleAddParticipant = async (e) => {
+    e.preventDefault();
+    try {
+      // Stub for actual creation API, which requires form data handling
+      success('Participant registered successfully! (Demo mode)');
+      setIsAddOpen(false);
+    } catch (err) {
+      error('Failed to register participant');
+    }
+  };
+
   const getStatusBadgeClass = (status) => {
     switch (status) {
       case 'Active': return 'badge-success';
@@ -63,9 +97,11 @@ const Participants = () => {
           <p className="page-subtitle">Track participant screening, enrollment, and lifecycle status</p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" icon={<Download size={16} />}>Export Line Listing</Button>
+          <Button variant="outline" icon={<Download size={16} />} onClick={handleExport} disabled={exporting}>
+            {exporting ? 'Exporting...' : 'Export Line Listing'}
+          </Button>
           {canDo('createParticipant') && (
-            <Button icon={<UserPlus size={16} />}>Register Participant</Button>
+            <Button icon={<UserPlus size={16} />} onClick={() => setIsAddOpen(true)}>Register Participant</Button>
           )}
         </div>
       </div>
@@ -172,6 +208,30 @@ const Participants = () => {
           </table>
         </div>
       </div>
+      {isAddOpen && (
+        <div className="modal-backdrop">
+          <div className="modal-content card" style={{ maxWidth: '500px', padding: '1.5rem' }}>
+            <h2 className="text-xl font-bold mb-4">Register Participant</h2>
+            <form onSubmit={handleAddParticipant} className="flex flex-col gap-4">
+              <div>
+                <label className="block text-sm font-semibold mb-1">Participant Initials</label>
+                <input type="text" className="form-input" required placeholder="e.g. JD" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1">Study</label>
+                <select className="form-select" required>
+                  <option value="">Select Study</option>
+                  {studies.map(s => <option key={s.id} value={s.id}>{s.protocolId}</option>)}
+                </select>
+              </div>
+              <div className="flex gap-2 justify-end mt-4">
+                <Button variant="outline" type="button" onClick={() => setIsAddOpen(false)}>Cancel</Button>
+                <Button type="submit">Register</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

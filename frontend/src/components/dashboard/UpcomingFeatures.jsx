@@ -9,7 +9,7 @@ const UPCOMING_FEATURES = {
   ],
   PI: [
     { title: 'Enrollment Prediction', desc: 'AI-driven recruitment forecasting.', icon: <Cpu size={18} /> },
-    { title: 'Study Intelligence', desc: 'Advanced analytics for study milestones.', icon: <Lightbulb size={18} /> },
+    { title: 'Clinical Outcome AI', desc: 'Predictive modeling for patient endpoints.', icon: <Lightbulb size={18} /> },
     { title: 'Treatment-Arm Analytics', desc: 'Real-time comparisons of study arms.', icon: <Activity size={18} /> }
   ],
   COORDINATOR: [
@@ -42,7 +42,7 @@ const UPCOMING_FEATURES = {
 const DEFAULT_FEATURES = [
   { title: 'CRF / eCRF', desc: 'Structured digital case-report forms for standardized clinical data capture.', icon: <Code size={18} /> },
   { title: 'FHIR Interoperability', desc: 'Better interoperability with healthcare and research systems.', icon: <Activity size={18} /> },
-  { title: 'AI Trial Intelligence', desc: 'Risk and trend insights for study, site and safety monitoring.', icon: <Cpu size={18} /> }
+  { title: 'Advanced Predictive Analytics', desc: 'Predictive forecasting for enrollment and trial operations.', icon: <Cpu size={18} /> }
 ];
 
 const UpcomingFeatures = ({ role }) => {

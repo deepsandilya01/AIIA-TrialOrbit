@@ -94,23 +94,38 @@ const QuickActions = ({ role, canDo, can, navigate, setIsCreateStudyOpen, setIsR
   );
 };
 
-const AiInsight = ({ navigate, studies }) => {
+const AiInsight = ({ navigate, role }) => {
+  if (['ETHICS', 'REGULATOR'].includes(role)) return null;
+
+  const roleText = {
+    ADMIN: "Portfolio Risk Intelligence",
+    PI: "Study Risk Intelligence",
+    COORDINATOR: "Operational Risk Signals",
+    MONITOR: "Monitoring Priority",
+    PHARMACOVIGILANCE: "Safety Intelligence",
+  };
+
+  const text = roleText[role] || "AI Operational Intelligence";
+
   return (
-    <div className="ai-insight card" style={{ borderLeft: '4px solid var(--accent-color)' }}>
-      <div className="insight-header">
+    <div className="ai-insight card" style={{ borderLeft: '4px solid var(--primary-color)' }}>
+      <div className="insight-header mb-2">
         <div className="flex items-center gap-1.5">
-          <Sparkles size={14} className="text-warning" />
-          <span className="ai-badge">AI Decision Support</span>
+          <Sparkles size={14} className="text-primary" />
+          <span className="text-xs font-bold text-primary uppercase tracking-wider">AI Intelligence LIVE</span>
         </div>
-        <span className="text-xs text-muted">Recruitment Latency</span>
       </div>
-      <p className="insight-text">
-        "Recruitment trajectory for Study <strong>AIIA-003</strong> is 28% below projected curve
-        due to Site S-05 pending activation. Consider reallocating slots to high-performing Site S-03."
+      <p className="text-sm text-slate-600 mb-3">
+        View deterministic risk signals and AI-assisted operational explanations for your accessible studies.
       </p>
-      <button className="insight-link" onClick={() => navigate('/recruitment')}>
-        Analyze Recruitment Risk <ArrowRight size={13} />
-      </button>
+      <Button 
+        variant="outline" 
+        size="sm" 
+        onClick={() => navigate('/ai-intelligence')}
+        className="w-full text-xs text-primary border-primary-200 hover:bg-primary-50"
+      >
+        View {text} <ArrowRight size={14} className="ml-1" />
+      </Button>
     </div>
   );
 };
@@ -209,8 +224,8 @@ export const AdminDashboard = ({ kpis, loadingKpis, studies, ...props }) => (
                 <span className="font-bold text-success">{Math.round(kpis.siteActivationRate || 0)}%</span>
               </div>
               <div className="flex justify-between items-center pb-2">
-                <span className="text-sm font-medium">Monitoring Overdue</span>
-                <span className="font-bold text-warning">{kpis.monitoringOverdue || 0}</span>
+                <span className="text-sm font-medium">Sites in Monitoring</span>
+                <span className="font-bold text-warning">{kpis.sitesInMonitoring || 0}</span>
               </div>
             </div>
           </div>
@@ -223,7 +238,7 @@ export const AdminDashboard = ({ kpis, loadingKpis, studies, ...props }) => (
       <div className="layout-side">
         <QuickActions role="ADMIN" {...props} />
         <RecentAlerts />
-        <AiInsight {...props} studies={studies} />
+        <AiInsight {...props} role="ADMIN" />
       </div>
     </div>
   </>
@@ -253,7 +268,7 @@ export const PiDashboard = ({ kpis, loadingKpis, studies, ...props }) => (
       <div className="layout-side">
         <QuickActions role="PI" {...props} />
         <RecentAlerts />
-        <AiInsight {...props} studies={studies} />
+        <AiInsight {...props} role="PI" />
       </div>
     </div>
   </>
@@ -277,6 +292,7 @@ export const CoordinatorDashboard = ({ kpis, loadingKpis, ...props }) => (
       <div className="layout-side">
         <QuickActions role="COORDINATOR" {...props} />
         <RecentAlerts />
+        <AiInsight {...props} role="COORDINATOR" />
       </div>
     </div>
   </>
@@ -306,7 +322,7 @@ export const MonitorDashboard = ({ kpis, loadingKpis, ...props }) => (
       <div className="layout-side">
         <QuickActions role="MONITOR" {...props} />
         <RecentAlerts />
-        <AiInsight {...props} />
+        <AiInsight {...props} role="MONITOR" />
       </div>
     </div>
   </>
@@ -366,6 +382,7 @@ export const PvDashboard = ({ kpis, loadingKpis, ...props }) => (
       <div className="layout-side">
         <QuickActions role="PHARMACOVIGILANCE" {...props} />
         <RecentAlerts />
+        <AiInsight {...props} role="PHARMACOVIGILANCE" />
       </div>
     </div>
   </>

@@ -57,7 +57,7 @@ Left side me ek navigation Sidebar hai. Aapko yahan sirf wahi modules dikhenge j
 Dashboard par `Alerts` section me pending/overdue issues dikhte hain. Jab aap us alert ka underlying issue resolve kar dete hain, toh alert ki status automatically updated ho jati hai workflow ke zariye.
 
 ## 10. End-to-End Trial Flow
-Study ↓ Regulatory / Ethics ↓ Site ↓ Participant ↓ Consent ↓ Recruitment ↓ Visits ↓ Queries / Deviations ↓ AE / SAE ↓ Alerts ↓ Monitoring / Review ↓ Reports / Closeout
+Study ↓ Regulatory / Ethics ↓ Site ↓ Participant ↓ Consent ↓ Recruitment ↓ Visits ↓ Queries / Deviations ↓ AE / SAE ↓ Alerts ↓ Monitoring / Review / AI Intelligence ↓ Reports / Closeout
 
 ## 11. Role-specific Quick Start
 - **ADMIN:** Login → Dashboard → review system/study overview → manage users → review administrative information → logout.

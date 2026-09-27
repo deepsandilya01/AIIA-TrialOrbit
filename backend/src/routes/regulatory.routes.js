@@ -1,5 +1,5 @@
 import express from 'express';
-import { createMilestone, getMilestones, getMilestoneById, updateMilestone, completeMilestone } from '../controllers/regulatory.controller.js';
+import { createMilestone, getMilestones, getMilestoneById, updateMilestone, completeMilestone, exportMilestones } from '../controllers/regulatory.controller.js';
 import { protect } from '../middleware/auth.middleware.js';
 import { validate } from '../middleware/validate.middleware.js';
 import { regulatoryValidator } from '../validators/index.js';
@@ -11,6 +11,8 @@ router.use(protect);
 router.route('/milestones')
   .post(validate(regulatoryValidator.create), createMilestone)
   .get(getMilestones);
+
+router.get('/milestones/export', exportMilestones);
 
 router.route('/milestones/:id')
   .get(getMilestoneById)

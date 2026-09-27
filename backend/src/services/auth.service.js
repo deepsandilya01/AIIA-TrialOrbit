@@ -87,6 +87,28 @@ class AuthService {
     }
   }
 
+  async changePassword(userId, currentPassword, newPassword) {
+    if (!currentPassword || !newPassword) {
+      throw new Error('Current and new passwords are required');
+    }
+    
+    if (newPassword.length < 8) {
+      throw new Error('New password must be at least 8 characters');
+    }
+
+    const user = await userRepository.findByEmailWithPassword((await userRepository.findById(userId)).email);
+    if (!user) throw new Error('User not found');
+
+    const isMatch = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!isMatch) throw new Error('Invalid current password');
+
+    const salt = await bcrypt.genSalt(12);
+    const passwordHash = await bcrypt.hash(newPassword, salt);
+    
+    user.passwordHash = passwordHash;
+    await user.save();
+  }
+
   generateToken(user) {
     return jwt.sign(
       { sub: user._id, id: user._id, role: user.role, siteId: user.siteId },

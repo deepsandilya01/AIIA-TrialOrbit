@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FileCheck, UploadCloud, Download, Shield, Calendar, Clock, CheckCircle } from 'lucide-react';
 import api from '../../services/api';
 import { useSocketEvent } from '../../hooks/useSocket';
@@ -16,9 +16,14 @@ const Compliance = () => {
   const { canDo } = usePermissions();
 
   const [data, setData] = useState([]);
+  const [docs, setDocs] = useState([]);
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef(null);
 
   const loadData = () => {
     api.getComplianceData().then(setData).catch(console.error);
+    api.getComplianceDocs().then(setDocs).catch(console.error);
   };
 
   useEffect(() => {
@@ -28,25 +33,44 @@ const Compliance = () => {
   useSocketEvent('regulatory:created', loadData);
   useSocketEvent('regulatory:updated', loadData);
   useSocketEvent('regulatory:overdue', loadData);
-  const [isUploadOpen, setIsUploadOpen] = useState(false);
-  const [uploadForm, setUploadForm] = useState({
-    requirement: 'Annual Safety Report (ASR) to CDSCO',
-    documentName: '',
-    authority: 'CDSCO / Ayush Licensing Division'
-  });
 
-  const handleDownload = (req) => {
-    success(`Downloaded regulatory dossier for ${req}.`);
+  const handleUploadSubmit = async (e) => {
+    e.preventDefault();
+    const file = fileInputRef.current?.files[0];
+    if (!file) return error('Please select a file to upload');
+
+    try {
+      setUploading(true);
+      const formData = new FormData();
+      formData.append('document', file);
+      formData.append('title', document.getElementById('docTitle').value);
+      formData.append('type', document.getElementById('docType').value);
+
+      await api.uploadComplianceDoc(formData);
+      success('Document uploaded successfully');
+      setIsUploadOpen(false);
+      loadData();
+    } catch (err) {
+      error('Failed to upload document');
+    } finally {
+      setUploading(false);
+    }
   };
 
-  const handleUploadSubmit = (e) => {
-    e.preventDefault();
-    if (!uploadForm.documentName.trim()) {
-      error('Please select or specify a document filename.');
-      return;
+  const handleDownload = async (docId, filename) => {
+    try {
+      const response = await api.downloadComplianceDoc(docId);
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      success('Document downloaded');
+    } catch (err) {
+      error('Failed to download document');
     }
-    success(`Document "${uploadForm.documentName}" uploaded and queued for IEC/Regulatory verification.`);
-    setIsUploadOpen(false);
   };
 
   return (
@@ -59,11 +83,13 @@ const Compliance = () => {
           </div>
           <p className="page-subtitle">Track Institutional Ethics Committee (IEC), CTRI registration, and GCP monitoring checkpoints</p>
         </div>
-        {canDo('createMilestone') && (
-          <Button icon={<UploadCloud size={16} />} onClick={() => setIsUploadOpen(true)}>
-            Upload Compliance Filing
-          </Button>
-        )}
+        <div className="flex flex-wrap gap-2">
+          {canDo('manageRegulatory') && (
+            <Button icon={<Upload size={16} />} onClick={() => setIsUploadOpen(true)}>
+              Upload Document
+            </Button>
+          )}
+        </div>
       </div>
 
       <div className="card">
@@ -76,7 +102,6 @@ const Compliance = () => {
                 <th>Status</th>
                 <th>Due / Completed Date</th>
                 <th>Timeline Horizon</th>
-                <th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -104,11 +129,6 @@ const Compliance = () => {
                       </span>
                     )}
                   </td>
-                  <td>
-                    <Button variant="outline" size="sm" icon={<Download size={13} />} onClick={() => handleDownload(item.req)}>
-                      Download
-                    </Button>
-                  </td>
                 </tr>
               ))}
             </tbody>
@@ -116,52 +136,84 @@ const Compliance = () => {
         </div>
       </div>
 
-      {/* Upload Modal */}
-      {canDo('createMilestone') && (
-        <Modal
-          isOpen={isUploadOpen}
-          onClose={() => setIsUploadOpen(false)}
-          title="Upload Regulatory Compliance Filing"
-          subtitle="Submit signed approvals, ethics committee letters, or CTRI updates"
-        >
-          <form onSubmit={handleUploadSubmit} className="flex flex-col gap-4">
-            <div>
-              <label className="text-xs font-semibold text-secondary uppercase block mb-1">
-                Regulatory Requirement
-              </label>
-              <select
-                value={uploadForm.requirement}
-                onChange={(e) => setUploadForm({ ...uploadForm, requirement: e.target.value })}
-              >
-                <option value="Institutional Ethics Committee (IEC) Clearance">IEC Clearance Renewal</option>
-                <option value="CTRI Clinical Trial Registry Filing">CTRI Registration Certificate</option>
-                <option value="Annual Safety Report (ASR) to CDSCO">Annual Safety Report (CDSCO)</option>
-                <option value="Investigator Brochure v3.0">Investigator Brochure Revision</option>
-              </select>
-            </div>
+      <div className="card mt-4">
+        <div className="card-header">
+          <h3 className="card-title">Compliance Documents</h3>
+        </div>
+        <div className="table-responsive">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Type</th>
+                <th>File Size</th>
+                <th>Uploaded By</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {docs.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="text-center text-muted py-4">No documents found.</td>
+                </tr>
+              ) : (
+                docs.map(doc => (
+                  <tr key={doc._id}>
+                    <td className="font-medium">{doc.title}</td>
+                    <td><Badge>{doc.type}</Badge></td>
+                    <td className="text-muted text-xs">{(doc.size / 1024).toFixed(1)} KB</td>
+                    <td className="text-muted text-xs">{doc.uploadedBy?.name || 'Unknown'}</td>
+                    <td className="text-muted text-xs">{new Date(doc.createdAt).toLocaleDateString()}</td>
+                    <td>
+                      <Button variant="ghost" size="sm" icon={<Download size={14} />} onClick={() => handleDownload(doc._id, doc.originalName)} title="Download" />
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-            <div>
-              <label className="text-xs font-semibold text-secondary uppercase block mb-1">
-                Document File / Title <span className="text-danger">*</span>
-              </label>
-              <input
-                type="text"
-                placeholder="e.g., AIIA_IEC_Approval_Letter_2026.pdf"
-                value={uploadForm.documentName}
-                onChange={(e) => setUploadForm({ ...uploadForm, documentName: e.target.value })}
-              />
+      {isUploadOpen && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <div className="modal-header">
+              <h2>Upload Compliance Document</h2>
+              <button className="close-btn" onClick={() => setIsUploadOpen(false)}><X size={20} /></button>
             </div>
-
-            <div className="flex flex-wrap justify-end gap-2 mt-2 pt-3" style={{ borderTop: '1px solid var(--border-color)' }}>
-              <Button variant="ghost" onClick={() => setIsUploadOpen(false)}>
-                Cancel
-              </Button>
-              <Button type="submit" variant="primary" icon={<UploadCloud size={16} />}>
-                Submit Document
-              </Button>
+            <div className="modal-content">
+              <form onSubmit={handleUploadSubmit}>
+                <div className="form-group mb-3">
+                  <label>Document Title *</label>
+                  <input type="text" id="docTitle" className="form-control" required placeholder="e.g. Protocol Amendment 2" />
+                </div>
+                <div className="form-group mb-3">
+                  <label>Document Type</label>
+                  <select id="docType" className="form-control">
+                    <option value="PROTOCOL">Protocol</option>
+                    <option value="IB">Investigator Brochure</option>
+                    <option value="ICF">Informed Consent Form</option>
+                    <option value="GCP_CERT">GCP Certificate</option>
+                    <option value="ETHICS_APPROVAL">Ethics Approval</option>
+                    <option value="OTHER">Other</option>
+                  </select>
+                </div>
+                <div className="form-group mb-4">
+                  <label>Select File (PDF, CSV, Word) *</label>
+                  <input type="file" ref={fileInputRef} className="form-control" required />
+                </div>
+                <div className="flex gap-2 justify-end">
+                  <Button variant="outline" type="button" onClick={() => setIsUploadOpen(false)}>Cancel</Button>
+                  <Button type="submit" disabled={uploading}>
+                    {uploading ? 'Uploading...' : 'Upload'}
+                  </Button>
+                </div>
+              </form>
             </div>
-          </form>
-        </Modal>
+          </div>
+        </div>
       )}
     </div>
   );

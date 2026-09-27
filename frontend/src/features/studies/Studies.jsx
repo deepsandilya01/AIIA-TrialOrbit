@@ -52,7 +52,22 @@ const Studies = () => {
   };
 
   const handleExportList = () => {
-    success('Study portfolio roster exported to CSV successfully.');
+    if (studiesList.length === 0) { success('No studies to export.'); return; }
+    const headers = ['Study ID', 'Title', 'Phase', 'PI', 'Status', 'Target Participants', 'Enrolled', 'Progress %', 'Start Date'];
+    const rows = studiesList.map(s => [
+      s.id || '', s.title || '', s.phase || '', s.pi || '',
+      s.status || '', s.targetParticipants || '', s.participants || '',
+      s.progress || 0, s.startDate || ''
+    ]);
+    const csvContent = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `trialorbit-studies-${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    success(`Exported ${studiesList.length} studies to CSV.`);
   };
 
   const filteredStudies = studiesList.filter(s => {

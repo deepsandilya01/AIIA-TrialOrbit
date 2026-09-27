@@ -3,7 +3,9 @@ import { createSite,
   getSites, 
   getSiteById, 
   updateSite, 
-  updateStatus 
+  updateStatus,
+  exportSiteDossier,
+  exportSiteDirectory
  } from '../controllers/site.controller.js';
 import { protect } from '../middleware/auth.middleware.js';
 import { authorize } from '../middleware/rbac.middleware.js';
@@ -23,5 +25,8 @@ router.route('/:id')
   .patch(authorize('ADMIN', 'PI', 'COORDINATOR'), validate(siteValidator.update), updateSite);
 
 router.patch('/:id/status', validate(siteValidator.updateStatus), updateStatus);
+
+router.get('/export/directory', exportSiteDirectory);
+router.get('/:id/dossier', exportSiteDossier);
 
 export default router;

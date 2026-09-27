@@ -12,13 +12,14 @@ const LIVE_FEATURES = [
   { title: 'AE/SAE Safety Tracking', desc: 'Real-time safety events with 24-hour regulatory countdowns.' },
   { title: 'Real-Time Alerts & Socket.IO Updates', desc: 'Instant UI updates and live socket emissions.' },
   { title: 'Role-Based Dashboards', desc: 'Tailored KPIs and insights for 7 distinct user scopes.' },
-  { title: 'Responsive Web Experience', desc: 'Mobile-friendly UI down to 320px breakpoints.' }
+  { title: 'Responsive Web Experience', desc: 'Mobile-friendly UI down to 320px breakpoints.' },
+  { title: 'AI-Assisted Operational Risk Intelligence', desc: 'Data-driven operational risk signals across enrollment, sites, data quality, protocol deviations, safety and regulatory milestones.' },
+  { title: 'Mistral AI Explanation Layer', desc: 'Structured AI-assisted explanations generated from sanitized deterministic TrialOrbit risk data.' }
 ];
 
 const PARTIAL_FEATURES = [
   { title: 'CDISC Export & Mapping', desc: 'Foundational mapping for SDTM/ADaM, full certification pending.' },
-  { title: 'FHIR Interoperability', desc: 'Basic FHIR R4 JSON export engine implemented, live EHR sync pending.' },
-  { title: 'AI Risk Intelligence', desc: 'Deterministic analytics in place, generative AI features upcoming.' }
+  { title: 'FHIR Interoperability', desc: 'Basic FHIR R4 JSON export engine implemented, live EHR sync pending.' }
 ];
 
 const UPCOMING_FEATURES = [

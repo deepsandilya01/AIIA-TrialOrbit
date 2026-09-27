@@ -10,6 +10,8 @@ import { protect  } from '../middleware/auth.middleware.js';
 import { validate } from '../middleware/validate.middleware.js';
 import { participantValidator } from '../validators/index.js';
 
+import { exportParticipants } from '../controllers/participant.controller.js';
+
 const router = express.Router();
 
 router.use(protect);
@@ -17,6 +19,8 @@ router.use(protect);
 router.route('/')
   .post(validate(participantValidator.create), createParticipant)
   .get(getParticipants);
+
+router.get('/export', exportParticipants);
 
 router.route('/:id')
   .get(getParticipantById)

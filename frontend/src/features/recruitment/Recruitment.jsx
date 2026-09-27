@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import React, { useState, useEffect } from 'react';
-import { Users, UserCheck, UserMinus, Download, AlertTriangle, ArrowRight, Sparkles } from 'lucide-react';
+import { Users, UserCheck, UserMinus, Download, AlertTriangle, ArrowRight, Sparkles, Activity } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import api from '../../services/api';
 import { useSocketEvent } from '../../hooks/useSocket';
@@ -11,13 +11,15 @@ import { useToast } from '../../context/ToastContext';
 
 const Recruitment = () => {
   const { t } = useTranslation();
-  const { success } = useToast();
+  const { success, error } = useToast();
   
   const [recruitmentTrend, setRecruitmentTrend] = useState([]);
+  const [summary, setSummary] = useState(null);
   const [sites, setSites] = useState([]);
 
   const loadData = () => {
     api.getRecruitmentTrend().then(setRecruitmentTrend).catch(console.error);
+    api.getRecruitmentSummary().then(setSummary).catch(console.error);
     api.getSites().then(setSites).catch(console.error);
   };
 
@@ -37,11 +39,25 @@ const Recruitment = () => {
     target: s.targetEnrollment || s.target || 100,
     facility: s.name?.split(',')[0]
   }));
-
-  const handleExport = () => {
-    success('Recruitment velocity and screening curves exported to PDF.');
+  const [exporting, setExporting] = useState(false);
+  const handleExport = async () => {
+    try {
+      setExporting(true);
+      const response = await api.exportRecruitmentReport();
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `trialorbit-recruitment-${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      success('Recruitment report exported successfully');
+    } catch (err) {
+      error('Failed to export recruitment report');
+    } finally {
+      setExporting(false);
+    }
   };
-
   return (
     <div className="page-container">
       <div className="page-header">
@@ -52,39 +68,41 @@ const Recruitment = () => {
           </div>
           <p className="page-subtitle">Track multi-centre screening ratios, dropout rates, and AI-predicted cohort completion curves</p>
         </div>
-        <Button variant="outline" size="sm" icon={<Download size={14} />} onClick={handleExport}>
-          Export Recruitment Report
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" icon={exporting ? <Activity size={16} className="spin" /> : <Download size={16} />} onClick={handleExport} disabled={exporting}>
+            {exporting ? 'Exporting...' : 'Export Recruitment Report'}
+          </Button>
+        </div>
       </div>
 
       <div className="kpi-grid">
         <StatCard 
           title="Total Screened" 
-          value="1,850" 
-          subtitle="Screening to enrollment ratio 1.49:1"
-          trend={{ value: '+8.2%', isPositive: true }}
+          value={summary ? summary.totalScreened.toString() : "Loading..."} 
+          subtitle="Participants in Screened state"
+          trend={null}
           icon={<Users size={22} />}
         />
         <StatCard 
           title="Total Enrolled" 
-          value="1,240" 
-          subtitle="67% screening conversion"
-          trend={{ value: '+12.4%', isPositive: true }}
+          value={summary ? summary.totalEnrolled.toString() : "Loading..."} 
+          subtitle="Currently enrolled"
+          trend={null}
           icon={<UserCheck size={22} />}
         />
         <StatCard 
           title="Active in Protocol" 
-          value="1,195" 
-          subtitle="96.4% on-treatment retention"
-          status="Retention Optimal"
-          icon={<UserCheck size={22} className="text-success" />}
+          value={summary && summary.activeInProtocol !== null ? summary.activeInProtocol.toString() : "N/A"} 
+          subtitle="Metric not currently captured by schema"
+          status={summary && summary.activeInProtocol !== null ? "Optimal" : "Unavailable"}
+          icon={<UserCheck size={22} className={summary && summary.activeInProtocol !== null ? "text-success" : "text-muted"} />}
         />
         <StatCard 
           title="Lost to Follow-up" 
-          value="45" 
-          subtitle="3.6% cumulative attrition"
-          status="Requires CRA Follow-up"
-          icon={<UserMinus size={22} className="text-danger" />}
+          value={summary ? summary.lostToFollowUp.toString() : "Loading..."} 
+          subtitle="Participants officially lost to follow-up"
+          status={summary && summary.lostToFollowUp > 0 ? "Requires Review" : "Optimal"}
+          icon={<UserMinus size={22} className={summary && summary.lostToFollowUp > 0 ? "text-danger" : "text-success"} />}
         />
       </div>
 

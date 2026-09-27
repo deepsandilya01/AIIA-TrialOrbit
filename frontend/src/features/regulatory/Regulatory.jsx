@@ -12,7 +12,9 @@ const Regulatory = () => {
   const [statusFilter, setStatusFilter] = useState('All');
   const [typeFilter, setTypeFilter] = useState('All');
   const [loading, setLoading] = useState(true);
-  const { success } = useToast();
+  const [exporting, setExporting] = useState(false);
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const { success, error } = useToast();
   const { canDo } = usePermissions();
   const location = useLocation();
 
@@ -55,6 +57,35 @@ const Regulatory = () => {
     return matchSearch && matchStatus && matchType;
   });
 
+  const handleExport = async () => {
+    try {
+      setExporting(true);
+      const response = await api.exportMilestones();
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `trialorbit-milestones-${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      success('Regulatory milestones exported successfully');
+    } catch (err) {
+      error('Failed to export milestones');
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handleAddMilestone = async (e) => {
+    e.preventDefault();
+    try {
+      success('Regulatory milestone created successfully! (Demo mode)');
+      setIsAddOpen(false);
+    } catch (err) {
+      error('Failed to create milestone');
+    }
+  };
+
   const getStatusBadge = (status) => {
     switch(status) {
       case 'Completed': return 'badge-success';
@@ -73,9 +104,11 @@ const Regulatory = () => {
           <p className="page-subtitle">Track IEC approvals, CTRI registrations, and critical governance timelines</p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" icon={<Download size={16} />}>Export Timeline</Button>
+          <Button variant="outline" icon={<Download size={16} />} onClick={handleExport} disabled={exporting}>
+            {exporting ? 'Exporting...' : 'Export Timeline'}
+          </Button>
           {canDo('createMilestone') && (
-            <Button icon={<Plus size={16} />}>New Milestone</Button>
+            <Button icon={<Plus size={16} />} onClick={() => setIsAddOpen(true)}>New Milestone</Button>
           )}
         </div>
       </div>
@@ -207,6 +240,36 @@ const Regulatory = () => {
           </table>
         </div>
       </div>
+      {isAddOpen && (
+        <div className="modal-backdrop">
+          <div className="modal-content card" style={{ maxWidth: '500px', padding: '1.5rem' }}>
+            <h2 className="text-xl font-bold mb-4">New Regulatory Milestone</h2>
+            <form onSubmit={handleAddMilestone} className="flex flex-col gap-4">
+              <div>
+                <label className="block text-sm font-semibold mb-1">Study ID</label>
+                <input type="text" className="form-input" required placeholder="e.g. STU-101" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1">Type</label>
+                <select className="form-select" required>
+                  <option value="IEC Approval">IEC Approval</option>
+                  <option value="CTRI Registration">CTRI Registration</option>
+                  <option value="DCGI Submission">DCGI Submission</option>
+                  <option value="Site Initiation">Site Initiation</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1">Due Date</label>
+                <input type="date" className="form-input" required />
+              </div>
+              <div className="flex gap-2 justify-end mt-4">
+                <Button variant="outline" type="button" onClick={() => setIsAddOpen(false)}>Cancel</Button>
+                <Button type="submit">Create Milestone</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

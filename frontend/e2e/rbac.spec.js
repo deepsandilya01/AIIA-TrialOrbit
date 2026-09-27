@@ -38,7 +38,9 @@ test.describe('AIIA TrialOrbit RBAC & Responsive E2E Suite', () => {
       if (role === 'REGULATOR') {
         expect(sidebarText).not.toContain('Users');
         
-        await page.click('a[href="/studies"]');
+        const studiesLink = page.locator('a[href="/studies"]').first();
+        await studiesLink.scrollIntoViewIfNeeded();
+        await studiesLink.click({ force: true });
         await page.waitForSelector('.studies-page');
         const initializeStudyButton = page.locator('text="Initialize Study"');
         await expect(initializeStudyButton).toHaveCount(0); 

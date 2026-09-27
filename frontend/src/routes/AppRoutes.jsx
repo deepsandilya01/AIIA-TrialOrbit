@@ -21,7 +21,7 @@ import FHIRIntegration from '../features/integration/FHIRIntegration';
 import CDISC from '../features/integration/CDISC';
 import Exports from '../features/integration/Exports';
 import Users from '../features/admin/Users';
-import AIAssistant from '../features/ai/AIAssistant';
+import Roles from '../features/admin/Roles';
 import Regulatory from '../features/regulatory/Regulatory';
 import Compliance from '../features/compliance/Compliance';
 import AESAE from '../features/safety/AESAE';
@@ -32,6 +32,8 @@ import AuditTrail from '../features/audit/AuditTrail';
 import Login from '../features/auth/Login';
 import Register from '../features/auth/Register';
 import NotFound from '../pages/NotFound';
+import AIIntelligencePage from '../features/ai/AIIntelligencePage';
+import Profile from '../features/profile/Profile';
 
 import ProtectedRoute from '../components/layout/ProtectedRoute';
 
@@ -83,13 +85,13 @@ const AppRoutes = () => {
       <Route path="/cdisc" element={<Layout><ProtectedRoute><CDISC /></ProtectedRoute></Layout>} />
       <Route path="/exports" element={<Layout><ProtectedRoute><Exports /></ProtectedRoute></Layout>} />
       
-      <Route path="/ai-assistant" element={<Layout><ProtectedRoute><AIAssistant /></ProtectedRoute></Layout>} />
-      <Route path="/insights" element={<Layout><ProtectedRoute><AIAssistant /></ProtectedRoute></Layout>} />
+      <Route path="/ai-intelligence" element={<Layout><ProtectedRoute><AIIntelligencePage /></ProtectedRoute></Layout>} />
       
       <Route path="/users" element={<Layout><ProtectedRoute allowedRoles={['ADMIN']}><Users /></ProtectedRoute></Layout>} />
-      <Route path="/roles" element={<Layout><ProtectedRoute allowedRoles={['ADMIN']}><Users /></ProtectedRoute></Layout>} />
-      <Route path="/permissions" element={<Layout><ProtectedRoute allowedRoles={['ADMIN']}><Users /></ProtectedRoute></Layout>} />
+      <Route path="/roles" element={<Layout><ProtectedRoute allowedRoles={['ADMIN']}><Roles /></ProtectedRoute></Layout>} />
+      <Route path="/permissions" element={<Layout><ProtectedRoute allowedRoles={['ADMIN']}><Roles /></ProtectedRoute></Layout>} />
       <Route path="/reports" element={<Layout><ProtectedRoute><Reports /></ProtectedRoute></Layout>} />
+      <Route path="/profile" element={<Layout><ProtectedRoute><Profile /></ProtectedRoute></Layout>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

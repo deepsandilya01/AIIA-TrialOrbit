@@ -11,7 +11,9 @@ const Visits = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [loading, setLoading] = useState(true);
-  const { success } = useToast();
+  const [exporting, setExporting] = useState(false);
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const { success, error } = useToast();
   const { canDo } = usePermissions();
 
   const loadVisits = async () => {
@@ -47,6 +49,36 @@ const Visits = () => {
     return searchMatch && statusMatch;
   });
 
+  const handleExport = async () => {
+    try {
+      setExporting(true);
+      const response = await api.exportVisits();
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `trialorbit-visits-${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      success('Visit schedule exported successfully');
+    } catch (err) {
+      error('Failed to export visit schedule');
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handleAddVisit = async (e) => {
+    e.preventDefault();
+    try {
+      // Stub for creation
+      success('Visit scheduled successfully! (Demo mode)');
+      setIsAddOpen(false);
+    } catch (err) {
+      error('Failed to schedule visit');
+    }
+  };
+
   const getStatusBadge = (status) => {
     if (status.includes('Completed')) return 'badge-success';
     if (status === 'Overdue') return 'badge-danger';
@@ -62,9 +94,11 @@ const Visits = () => {
           <p className="page-subtitle">Track upcoming, due, and completed participant visits across all sites</p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" icon={<Download size={16} />}>Export Schedule</Button>
+          <Button variant="outline" icon={<Download size={16} />} onClick={handleExport} disabled={exporting}>
+            {exporting ? 'Exporting...' : 'Export Schedule'}
+          </Button>
           {canDo('createVisit') && (
-            <Button icon={<CalendarCheck size={16} />}>Schedule Visit</Button>
+            <Button icon={<CalendarCheck size={16} />} onClick={() => setIsAddOpen(true)}>Schedule Visit</Button>
           )}
         </div>
       </div>
@@ -199,6 +233,37 @@ const Visits = () => {
           </table>
         </div>
       </div>
+      {isAddOpen && (
+        <div className="modal-backdrop">
+          <div className="modal-content card" style={{ maxWidth: '500px', padding: '1.5rem' }}>
+            <h2 className="text-xl font-bold mb-4">Schedule Visit</h2>
+            <form onSubmit={handleAddVisit} className="flex flex-col gap-4">
+              <div>
+                <label className="block text-sm font-semibold mb-1">Participant ID</label>
+                <input type="text" className="form-input" required placeholder="e.g. SUB-001" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1">Visit Type</label>
+                <select className="form-select" required>
+                  <option value="">Select Type</option>
+                  <option value="Screening">Screening</option>
+                  <option value="Baseline">Baseline</option>
+                  <option value="Follow-up">Follow-up</option>
+                  <option value="End of Study">End of Study</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1">Scheduled Date</label>
+                <input type="date" className="form-input" required />
+              </div>
+              <div className="flex gap-2 justify-end mt-4">
+                <Button variant="outline" type="button" onClick={() => setIsAddOpen(false)}>Cancel</Button>
+                <Button type="submit">Schedule</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

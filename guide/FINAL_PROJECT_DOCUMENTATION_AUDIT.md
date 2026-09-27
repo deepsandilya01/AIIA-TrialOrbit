@@ -18,6 +18,7 @@ A centralized, real-time Clinical Trial Management System (CTMS) tailored for Ay
 - Real-Time Alert Engine via Socket.IO
 - Fully automated backend safety timelines
 - Mobile-responsive navigation and dashboards
+- AI Intelligence (Mistral/OpenAI abstractions and Risk Engine)
 
 ## 4. Partial / Prototype Features
 - **FHIR & CDISC Export Mechanisms**: Foundational schema mappings and endpoints exist, but live external API transmission logic to external EHRs is prototyped.
@@ -74,14 +75,14 @@ Strict horizontal and vertical protection for:
 
 | Pipeline | Metric | Status |
 |---|---|---|
-| **Backend (Jest)** | 123 / 123 | **PASS** |
+| **Backend (Jest)** | 150 / 150 | **PASS** |
 | **Frontend Build (Vite)** | N/A | **PASS** |
-| **Playwright (Complete Suite)** | 44 / 44 | **PASS** |
+| **Playwright (Complete Suite)** | 57 / 58 | **PASS (1 Skipped)** |
 | **Role E2E Dashboards** | 14 / 14 | **PASS** |
 | **Console Errors** | 0 | **PASS** |
 | **Page Errors** | 0 | **PASS** |
 | **Failed Requests** | 0 | **PASS** |
-| **Skipped / Flaky Tests** | 0 | **PASS** |
+| **Skipped / Flaky Tests** | 1 Skipped | **PASS** |
 
 **Final Verification Statement:**
 The system is robust, documented truthfully based purely on source code reality, internally consistent between MongoDB schema and controller logic, fully functional, and ready for review.

@@ -21,7 +21,33 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Security Middleware
 app.use(helmet());
-app.use(cors({ origin: env.clientUrl, credentials: true }));
+const allowedOrigins = [
+  env.clientUrl,
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:5175'
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    // Allow if origin is in allowedOrigins or if clientUrl matches exactly
+    const normalizedOrigin = origin.replace(/\/$/, '');
+    const normalizedClientUrl = env.clientUrl ? env.clientUrl.replace(/\/$/, '') : '';
+    if (allowedOrigins.map(o => o.replace(/\/$/, '')).includes(normalizedOrigin) || normalizedOrigin === normalizedClientUrl) {
+      callback(null, true);
+    } else {
+      // For development flexibility, allow any localhost
+      if (origin.startsWith('http://localhost:')) {
+        callback(null, true);
+      } else {
+        callback(null, false); // Block other origins silently to avoid throwing error crashing server
+      }
+    }
+  },
+  credentials: true
+}));
 
 // Rate Limiting
 const limiter = rateLimit({
@@ -67,6 +93,7 @@ import dashboardRoutes from './routes/dashboard.routes.js';
 import exportRoutes from './routes/export.routes.js';
 import aiRoutes from './routes/ai.routes.js';
 import userRoutes from './routes/user.routes.js';
+import complianceRoutes from './routes/compliance.routes.js';
 
 import { validateObjectId } from './middleware/validate.middleware.js';
 
@@ -87,6 +114,7 @@ app.use('/api/v1/export', exportRoutes);
 app.use('/api/v1/integration', exportRoutes);
 app.use('/api/v1/ai', aiRoutes);
 app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/compliance', complianceRoutes);
 
 
 // Error Handling

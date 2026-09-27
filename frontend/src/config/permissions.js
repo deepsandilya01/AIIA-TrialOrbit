@@ -100,6 +100,7 @@ export const ROLE_PERMISSIONS = {
     PERMISSIONS.DEVIATION_VIEW, PERMISSIONS.DEVIATION_CREATE, PERMISSIONS.DEVIATION_UPDATE,
     PERMISSIONS.ALERT_VIEW, PERMISSIONS.ALERT_ACKNOWLEDGE,
     PERMISSIONS.SAFETY_VIEW, PERMISSIONS.SAFETY_CREATE,
+    PERMISSIONS.AI_VIEW,
   ],
 
   MONITOR: [
@@ -113,7 +114,6 @@ export const ROLE_PERMISSIONS = {
     PERMISSIONS.SAFETY_VIEW,
     PERMISSIONS.ALERT_VIEW,
     PERMISSIONS.REPORT_VIEW,
-    PERMISSIONS.AI_VIEW,
   ],
 
   ETHICS: [
@@ -135,7 +135,6 @@ export const ROLE_PERMISSIONS = {
     PERMISSIONS.ALERT_VIEW,
     PERMISSIONS.REPORT_VIEW,
     PERMISSIONS.EXPORT_FHIR,
-    PERMISSIONS.AI_VIEW,
   ],
 
   REGULATOR: [
@@ -180,7 +179,7 @@ import {
   MessageSquareWarning, AlertCircle, ShieldCheck, FileSignature, Flag,
   AlertTriangle, Pill, Activity, Bell, LineChart,
   History, Network, Database, DownloadCloud,
-  Sparkles, Radar, UserCog, Shield, Lock, ClipboardList, TrendingUp
+  Sparkles, Radar, UserCog, Shield, Lock, ClipboardList, TrendingUp, BrainCircuit
 } from 'lucide-react';
 
 export const NAV_CONFIG = [
@@ -357,16 +356,10 @@ export const NAV_CONFIG = [
     group: 'AI INTELLIGENCE',
     items: [
       {
-        path: '/ai-assistant',
-        icon: Sparkles,
-        label: 'KPI Assistant',
-        roles: ['ADMIN', 'PI', 'MONITOR'],
-      },
-      {
-        path: '/insights',
-        icon: Radar,
-        label: 'Risk Insights',
-        roles: ['ADMIN', 'PI', 'MONITOR'],
+        path: '/ai-intelligence',
+        icon: BrainCircuit,
+        label: 'AI Intelligence',
+        roles: ['ADMIN', 'PI', 'COORDINATOR', 'MONITOR', 'ETHICS', 'PHARMACOVIGILANCE', 'REGULATOR'],
       },
     ],
   },
@@ -448,11 +441,10 @@ export const ROUTE_PERMISSIONS = {
   '/fhir': PERMISSIONS.EXPORT_FHIR,
   '/cdisc': PERMISSIONS.EXPORT_CDISC,
   '/exports': PERMISSIONS.REPORT_VIEW,
-  '/ai-assistant': PERMISSIONS.AI_VIEW,
-  '/insights': PERMISSIONS.AI_VIEW,
   '/users': PERMISSIONS.USER_VIEW,
   '/roles': PERMISSIONS.USER_VIEW,
   '/permissions': PERMISSIONS.USER_VIEW,
+  '/ai-intelligence': PERMISSIONS.AI_VIEW,
 };
 
 /**

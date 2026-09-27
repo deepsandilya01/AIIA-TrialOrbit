@@ -21,8 +21,8 @@ The approved MVP-1 scope covers:
 
 ## 5. MVP-1 Verification Results
 A rigorous end-to-end verification confirms that the MVP-1 scope is successfully implemented:
-- **Backend Testing:** 123/123 (100% Pass)
-- **Frontend Playwright E2E:** 44/44 (100% Pass)
+- **Backend Testing:** 150/150 (100% Pass)
+- **Frontend Playwright E2E:** 57 passed, 1 skipped (100% Pass of executed tests)
 - **Direct Route Security:** Authorized roles are correctly bounded. Regulator remains fully read-only.
 - **Database Consistency:** Schema validation and relationships intact.
 
@@ -44,7 +44,7 @@ A rigorous end-to-end verification confirms that the MVP-1 scope is successfully
 🟡 **PARTIAL (Foundation Built)**
 - CDISC Export (SDTM/ADaM mappings exist as prototypes)
 - FHIR Interoperability (R4 resource mapping active, live-push pending)
-- AI Intelligence (Deterministic fallback models implemented)
+- AI Intelligence (LLM abstractions for Mistral/OpenAI built, along with deterministic rule-engine)
 
 ## 7. 7-Role RBAC Verification
 The 7 specific roles were tested via frontend E2E and backend direct API simulation:
@@ -88,7 +88,7 @@ The 7 specific roles were tested via frontend E2E and backend direct API simulat
 | FHIR R4 | Export Service (Prototype) | PARTIAL | MVP-2 | P2 | Interoperability Hub |
 | Define-XML | Not implemented | MISSING | Future | P3 | Implementation |
 | Role-based access | JWT/Middleware | IMPLEMENTED | MVP-1 | P0 | Maintain |
-| AI Analytics | Simple math / Rules | PARTIAL | MVP-2 | P1 | LLM Integration |
+| AI Analytics | Mistral/OpenAI provider & Rules | IMPLEMENTED | MVP-1 | P0 | Maintain / Expand Prompts |
 | CRF / eCRF | Not fully structured | MISSING | MVP-2 | P1 | High-Priority Feature |
 
 ## 13. Implemented Features
@@ -148,6 +148,6 @@ The frontend is built, and the backend passes all test suites. System requires v
 The core logic is intact, testing is robust, and the feature boundaries are properly delineated.
 
 ## 27. Verification Evidence
-- 123 Backend Unit/Integration Tests.
-- 44 Playwright E2E E2E Tests.
+- 150 Backend Unit/Integration Tests.
+- 58 Playwright E2E Tests.
 - Zero known direct-route authorization leaks.

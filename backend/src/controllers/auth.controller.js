@@ -1,4 +1,5 @@
 import authService from '../services/auth.service.js';
+import auditService from '../services/audit.service.js';
 
 export const register = async (req, res, next) => {
   try {
@@ -58,6 +59,29 @@ export const logout = async (req, res, next) => {
       message: 'Logged out successfully'
     });
   } catch (error) {
+    next(error);
+  }
+};
+
+export const changePassword = async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    await authService.changePassword(req.user._id, currentPassword, newPassword);
+
+    await auditService.log({
+      action: 'UPDATE',
+      entity: 'PASSWORD',
+      entityId: req.user._id,
+      user: req.user._id,
+      details: 'User password changed'
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Password changed successfully'
+    });
+  } catch (error) {
+    if (error.message.includes('password') || error.message.includes('Current and new')) return res.status(400).json({ success: false, message: error.message });
     next(error);
   }
 };

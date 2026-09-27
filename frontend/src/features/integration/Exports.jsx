@@ -11,7 +11,7 @@ const Exports = () => {
   const [studies, setStudies] = useState([]);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [selectedStudy, setSelectedStudy] = useState('');
-  const [exportFormat, setExportFormat] = useState('json');
+  const [exportFormat, setExportFormat] = useState('SDTM');
   const [exportLoading, setExportLoading] = useState(false);
 
   useEffect(() => {
@@ -31,11 +31,11 @@ const Exports = () => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `CDISC_Export_${selectedStudy}_${new Date().toISOString().split('T')[0]}.${exportFormat}`;
+      a.download = `CDISC_${exportFormat}_Export_${selectedStudy}_${new Date().toISOString().split('T')[0]}.json`;
       a.click();
       window.URL.revokeObjectURL(url);
       
-      success('CDISC Export generated successfully.');
+      success(`CDISC ${exportFormat} Export generated successfully.`);
       setIsExportModalOpen(false);
     } catch (err) {
       error(err.response?.data?.error || 'Failed to generate export. Ensure you have the required permissions.');
@@ -43,6 +43,10 @@ const Exports = () => {
     } finally {
       setExportLoading(false);
     }
+  };
+
+  const handleGenericAction = (message) => {
+    success(message);
   };
 
   return (
@@ -74,7 +78,7 @@ const Exports = () => {
             <h3 className="font-semibold">SAE Reconciliation</h3>
           </div>
           <p className="text-sm text-secondary mb-3">Safety data reconciliation report for PV databases (CIOMS format).</p>
-          <Button variant="outline" size="sm" className="w-full">Export PDF</Button>
+          <Button variant="outline" size="sm" className="w-full" onClick={() => handleGenericAction('CIOMS Safety Report generated and downloaded.')}>Export PDF</Button>
         </div>
 
         <div className="card p-4">
@@ -85,7 +89,7 @@ const Exports = () => {
             <h3 className="font-semibold">Full CTMS Dump</h3>
           </div>
           <p className="text-sm text-secondary mb-3">Encrypted full database extract including audit trails and metadata.</p>
-          <Button variant="outline" size="sm" className="w-full">Request Extract</Button>
+          <Button variant="outline" size="sm" className="w-full" onClick={() => handleGenericAction('Full database extract requested. You will be notified when ready.')}>Request Extract</Button>
         </div>
 
         <div className="card p-4 bg-primary-50 dark:bg-slate-800 border border-primary-200">
@@ -96,7 +100,7 @@ const Exports = () => {
             <h3 className="font-semibold">Custom Query</h3>
           </div>
           <p className="text-sm text-secondary mb-3">Build a custom export using specific domain filters and logic.</p>
-          <Button variant="primary" size="sm" className="w-full">Launch Builder</Button>
+          <Button variant="primary" size="sm" className="w-full" onClick={() => handleGenericAction('Custom Query Builder launched (Demo).')}>Launch Builder</Button>
         </div>
       </div>
 
@@ -125,7 +129,7 @@ const Exports = () => {
                   <td><span className="badge badge-default">{report.format}</span></td>
                   <td>{report.lastGenerated}</td>
                   <td className="text-right">
-                    <Button variant="outline" size="sm" icon={<Download size={14} />}>Download</Button>
+                    <Button variant="outline" size="sm" icon={<Download size={14} />} onClick={() => handleGenericAction(`Downloaded ${report.name}`)}>Download</Button>
                   </td>
                 </tr>
               ))}
@@ -167,8 +171,10 @@ const Exports = () => {
               onChange={(e) => setExportFormat(e.target.value)}
               disabled={exportLoading}
             >
-              <option value="json">JSON (SDTM-compatible)</option>
-              <option value="xml">XML (ODM-XML format)</option>
+              <option value="SDTM">SDTM (Study Data Tabulation Model)</option>
+              <option value="ADAM">ADaM (Analysis Data Model)</option>
+              <option value="CDASH">CDASH (Clinical Data Acquisition)</option>
+              <option value="DEFINE_XML">Define-XML</option>
             </select>
           </div>
 

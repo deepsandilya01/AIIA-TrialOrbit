@@ -27,9 +27,30 @@ const SiteDetails = () => {
     ]).then(([s, st]) => {
       setSite(s);
       setStudies(st);
+      setSite(s);
       setLoading(false);
     }).catch(console.error);
   }, [id]);
+
+  const [exporting, setExporting] = useState(false);
+  const handleExport = async () => {
+    try {
+      setExporting(true);
+      const response = await api.exportSiteDossier(id);
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `trialorbit-site-${id}-dossier.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      success('Site dossier exported successfully');
+    } catch (err) {
+      error('Failed to export site dossier');
+    } finally {
+      setExporting(false);
+    }
+  };
 
   if (loading) return <div className="page-container"><SkeletonForm rows={5} /></div>;
   if (!site) return <div className="page-container">Site not found.</div>;
@@ -57,8 +78,8 @@ const SiteDetails = () => {
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <StatusBadge status={site.status} pulse />
-              <Button variant="outline" size="sm" icon={<Download size={14} />} onClick={() => success(`Exported audit dossier for ${site.name}.`)}>
-                Site Dossier
+              <Button variant="outline" size="sm" icon={exporting ? <Activity size={14} className="spin" /> : <Download size={14} />} onClick={handleExport} disabled={exporting}>
+                {exporting ? 'Exporting...' : 'Export Audit Dossier'}
               </Button>
             </div>
           </div>

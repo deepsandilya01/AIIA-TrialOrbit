@@ -1,5 +1,5 @@
 import express from 'express';
-import { register, login, getMe, logout  } from '../controllers/auth.controller.js';
+import { register, login, getMe, logout, changePassword } from '../controllers/auth.controller.js';
 import { protect  } from '../middleware/auth.middleware.js';
 import { validate } from '../middleware/validate.middleware.js';
 import { authValidator } from '../validators/index.js';
@@ -23,5 +23,6 @@ router.post('/register', validate(authValidator.register), register);
 router.post('/login', loginLimiter, validate(authValidator.login), login);
 router.get('/me', protect, getMe);
 router.post('/logout', protect, logout);
+router.post('/change-password', protect, changePassword);
 
 export default router;

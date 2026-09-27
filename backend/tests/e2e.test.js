@@ -171,7 +171,7 @@ describe('E2E Clinical Trial Management System Flow', () => {
 
   it('10. CREATE QUERY', async () => {
     const res = await request(app)
-      .post('/api/v1/queries')
+      .post('/api/v1/data-quality/queries')
       .set('Authorization', `Bearer ${token}`)
       .send({
         studyId,
@@ -189,7 +189,7 @@ describe('E2E Clinical Trial Management System Flow', () => {
 
   it('11. RESOLVE QUERY', async () => {
     const res = await request(app)
-      .patch(`/api/v1/queries/${queryId}/resolve`)
+      .patch(`/api/v1/data-quality/queries/${queryId}/resolve`)
       .set('Authorization', `Bearer ${token}`);
     
     expect(res.status).toBe(200);

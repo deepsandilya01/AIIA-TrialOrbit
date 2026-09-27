@@ -319,7 +319,15 @@ const Header = ({ onToggleSidebar }) => {
                   <div className="text-xs font-semibold uppercase text-muted">User Profile</div>
                   <div className="text-xs font-semibold text-primary mt-1">{user?.name}</div>
                   <div className="text-xs text-secondary">{user?.email}</div>
-                  <div className="text-xs text-secondary mt-1">Role: {user?.role}</div>
+                  <div className="text-xs text-secondary mt-1 mb-2">Role: {user?.role}</div>
+                  <Link 
+                    to="/profile" 
+                    className="btn btn-outline btn-sm w-full" 
+                    style={{ display: 'flex', justifyContent: 'center', gap: '8px', padding: '6px' }}
+                    onClick={() => setShowRoleMenu(false)}
+                  >
+                    Edit Profile
+                  </Link>
                 </div>
                 <div className="role-dropdown-footer">
                   <button

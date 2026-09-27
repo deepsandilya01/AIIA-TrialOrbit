@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Plus, MapPin, Building2, Download, UserCheck } from 'lucide-react';
+import { Search, Plus, MapPin, Building2, Download, UserCheck, Activity } from 'lucide-react';
 import api from '../../services/api';
 import { useSocketEvent } from '../../hooks/useSocket';
 import Button from '../../components/common/Button';
@@ -15,7 +15,7 @@ import usePermissions from '../../hooks/usePermissions';
 const Sites = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { success } = useToast();
+  const { success, error } = useToast();
   const { canDo } = usePermissions();
 
   const [sitesList, setSitesList] = useState([]);
@@ -65,6 +65,26 @@ const Sites = () => {
     setNewSite({ name: '', location: '', pi: '', target: 100 });
   };
 
+  const [exporting, setExporting] = useState(false);
+  const handleExport = async () => {
+    try {
+      setExporting(true);
+      const response = await api.exportSiteDirectory();
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `trialorbit-sites-directory-${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      success('Site directory exported successfully');
+    } catch (err) {
+      error('Failed to export directory');
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const filtered = sitesList.filter(s =>
     (s.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
     (s.location || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -83,8 +103,8 @@ const Sites = () => {
           <p className="page-subtitle">Governance, activation readiness, and recruitment progress across multi-centre research sites</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" size="sm" icon={<Download size={14} />} onClick={() => success('Exported site network directory.')}>
-            Export Directory
+          <Button variant="outline" icon={exporting ? <Activity size={16} className="spin" /> : <Download size={16} />} onClick={handleExport} disabled={exporting}>
+            {exporting ? 'Exporting...' : 'Export Directory'}
           </Button>
           {canDo('createSite') && (
             <Button icon={<Plus size={16} />} onClick={() => setIsAddOpen(true)}>

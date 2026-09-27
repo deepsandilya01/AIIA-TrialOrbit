@@ -22,8 +22,38 @@ const Reports = () => {
     api.getStudies().then(setStudies).catch(console.error);
   }, []);
 
-  const handleGenerateReport = (title) => {
-    success(`Generated ${title} in ${selectedFormat} format. Download initiated.`);
+  const handleGenerateReport = async (title) => {
+    try {
+      const response = await api.exportGenericReport(title, selectedFormat);
+      
+      if (selectedFormat === 'PDF' || selectedFormat === 'CSV') {
+        const blob = new Blob([response.data], { 
+          type: selectedFormat === 'PDF' ? 'application/pdf' : 'text/csv' 
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `TrialOrbit_Report_${title.replace(/\s+/g, '_')}_${new Date().getTime()}.${selectedFormat.toLowerCase()}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } else {
+        // XML / ODM -> fallback to download as JSON/XML text
+        const blob = new Blob([JSON.stringify(response.data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `TrialOrbit_Report_${title.replace(/\s+/g, '_')}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+      
+      success(`Generated ${title} in ${selectedFormat} format. Download initiated.`);
+    } catch (err) {
+      console.error(err);
+      error(`Failed to generate ${title}.`);
+    }
   };
 
   return (
@@ -60,13 +90,13 @@ const Reports = () => {
                 <Badge variant="primary">{report.id}</Badge>
                 <span className="text-xs text-muted">{report.format}</span>
               </div>
-              <h3 style={{ fontSize: '0.95rem', marginBottom: '0.4rem', color: 'var(--text-primary)' }}>{report.title}</h3>
+              <h3 style={{ fontSize: '0.95rem', marginBottom: '0.4rem', color: 'var(--text-primary)' }}>{report.name}</h3>
               <p className="text-xs text-secondary mb-3">{report.description}</p>
             </div>
             <div className="flex justify-between items-center pt-2 border-t" style={{ borderColor: 'var(--border-subtle)' }}>
               <span className="text-xs text-muted">Updated: {report.lastGenerated}</span>
-              <Button variant="outline" size="sm" icon={<Download size={13} />} onClick={() => handleGenerateReport(report.title)}>
-                Generate
+              <Button variant="outline" size="sm" icon={<Download size={13} />} onClick={() => handleGenerateReport(report.name)} disabled={report.disabled}>
+                {report.disabled ? 'Unavailable' : 'Generate'}
               </Button>
             </div>
           </div>

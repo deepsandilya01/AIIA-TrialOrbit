@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { AlertTriangle, Plus, ShieldCheck, Download, Search } from 'lucide-react';
+import { AlertTriangle, Plus, ShieldCheck, Download, Search, Activity } from 'lucide-react';
 import api from '../../services/api';
 import Button from '../../components/common/Button';
 import Badge from '../../components/common/Badge';
@@ -15,7 +15,7 @@ import usePermissions from '../../hooks/usePermissions';
 
 const AESAE = () => {
   const { t } = useTranslation();
-  const { success } = useToast();
+  const { success, error } = useToast();
   const { canDo } = usePermissions();
 
   const [eventsList, setEventsList] = useState([]);
@@ -54,13 +54,34 @@ const AESAE = () => {
     setEventsList(prev => [created, ...prev]);
   };
 
-  const handleReviewEvent = (eventId) => {
-    setEventsList(prev => prev.map(e => e.id === eventId ? { ...e, status: 'Resolved' } : e));
-    success(`Event ${eventId} medical review completed and archived.`);
+  const handleReviewEvent = async (eventId) => {
+    try {
+      await api.updateSAEStatus(eventId, 'Resolved');
+      loadEvents();
+      success(`Event ${eventId} medical review completed and archived.`);
+    } catch (e) {
+      error('Failed to review event');
+    }
   };
 
-  const handleExportCIOMS = () => {
-    success('Safety line listings (CIOMS-I template) exported to PDF.');
+  const [exportingId, setExportingId] = useState(null);
+  const handleExportCIOMS = async (eventId) => {
+    try {
+      setExportingId(eventId);
+      const response = await api.exportSafetyReport(eventId);
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `trialorbit-safety-event-${eventId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      success('TrialOrbit MVP Safety Event Report exported successfully');
+    } catch (err) {
+      error('Failed to export safety report');
+    } finally {
+      setExportingId(null);
+    }
   };
 
   const filtered = eventsList.filter(e => {
@@ -91,9 +112,7 @@ const AESAE = () => {
           <p className="page-subtitle">Real-time Adverse Event (AE) and Serious Adverse Event (SAE) surveillance under CDSCO & GCP guidelines</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" size="sm" icon={<Download size={14} />} onClick={handleExportCIOMS}>
-            CIOMS Line Listing
-          </Button>
+
           {canDo('reportSAE') && (
             <Button variant="danger" icon={<AlertTriangle size={16} />} onClick={() => setIsReportOpen(true)}>
               Expedited SAE Report (24h)
@@ -185,7 +204,7 @@ const AESAE = () => {
                     <td>
                       <StatusBadge status={event.status} />
                     </td>
-                    <td>
+                    <td className="flex gap-2">
                       {event.status === 'Resolved' ? (
                         <span className="text-xs text-muted">Archived</span>
                       ) : (
@@ -195,6 +214,8 @@ const AESAE = () => {
                           </Button>
                         ) : null
                       )}
+                      <Button variant="ghost" size="sm" icon={exportingId === event.id ? <Activity size={14} className="spin" /> : <Download size={14} />} onClick={() => handleExportCIOMS(event._id || event.id)} disabled={exportingId === event.id} title="Export CIOMS MVP Report">
+                      </Button>
                     </td>
                   </tr>
                 ))}

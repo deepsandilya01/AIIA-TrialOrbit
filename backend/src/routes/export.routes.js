@@ -3,7 +3,8 @@ import {
   getFHIRPatient, 
   getFHIRResearchStudy, 
   getFHIREncounter, 
-  getCDISCExport 
+  getCDISCExport,
+  getReportExport
 } from '../controllers/export.controller.js';
 import { protect } from '../middleware/auth.middleware.js';
 import { rbacMiddleware } from '../middleware/rbac.middleware.js';
@@ -23,5 +24,8 @@ router.get('/fhir/encounter/:visitId', rbacMiddleware('fhir:read'), getFHIREncou
 // CDISC Routes
 router.get('/cdisc/studies/:studyId/export', rbacMiddleware('cdisc:export'), getCDISCExport);
 router.post('/cdisc/studies/:studyId/export', rbacMiddleware('cdisc:export'), validate(exportValidator.cdiscExport), getCDISCExport);
+
+// Generic Reports
+router.get('/report', getReportExport);
 
 export default router;

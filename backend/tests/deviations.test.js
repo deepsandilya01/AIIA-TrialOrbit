@@ -43,7 +43,7 @@ describe('Protocol Deviations Validation', () => {
 
   it('should reject missing required fields', async () => {
     const res = await request(app)
-      .post('/api/v1/deviations')
+      .post('/api/v1/data-quality/deviations')
       .set('Authorization', `Bearer ${token}`)
       .send({ studyId }); // Missing siteId, category, description
     expect(res.status).toBe(400);
@@ -52,7 +52,7 @@ describe('Protocol Deviations Validation', () => {
 
   it('should create a valid deviation', async () => {
     const res = await request(app)
-      .post('/api/v1/deviations')
+      .post('/api/v1/data-quality/deviations')
       .set('Authorization', `Bearer ${token}`)
       .send({ studyId, siteId, participantId, category: 'Visit out of window', description: 'Patient visited 5 days after allowed window', severity: 'Minor' });
     expect(res.status).toBe(201);
@@ -60,7 +60,7 @@ describe('Protocol Deviations Validation', () => {
   });
 
   it('should GET all deviations', async () => {
-    const res = await request(app).get('/api/v1/deviations').set('Authorization', `Bearer ${token}`);
+    const res = await request(app).get('/api/v1/data-quality/deviations').set('Authorization', `Bearer ${token}`);
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body.data)).toBe(true);
   });

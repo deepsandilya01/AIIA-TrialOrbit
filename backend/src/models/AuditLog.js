@@ -9,14 +9,18 @@ const auditLogSchema = new mongoose.Schema({
   action: {
     type: String,
     required: true,
-    enum: ['CREATE', 'UPDATE', 'DELETE', 'LOGIN', 'LOGOUT', 'EXPORT', 'APPROVE', 'RESOLVE']
+    enum: ['CREATE', 'UPDATE', 'DELETE', 'LOGIN', 'LOGOUT', 'EXPORT', 'APPROVE', 'RESOLVE', 'AI_QUERY', 'AI_ASK']
+  },
+  actorRole: {
+    type: String,
+    default: null
   },
   entityType: {
     type: String,
     required: true
   },
   entityId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     required: true
   },
   oldValue: {

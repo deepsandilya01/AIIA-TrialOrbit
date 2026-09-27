@@ -13,6 +13,7 @@ import DemoBadge from '../../components/common/DemoBadge';
 import { useToast } from '../../context/ToastContext';
 import './StudyDetails.css';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import AIIntelligenceWidget from '../ai/AIIntelligenceWidget';
 
 const StudyDetails = () => {
   const { t } = useTranslation();
@@ -48,8 +49,24 @@ const StudyDetails = () => {
     setLoading(false);
   };
 
-  const handleExportSummary = () => {
-    success(`Study ${id} summary dossier exported in PDF format.`);
+  const [exporting, setExporting] = useState(false);
+  const handleExportSummary = async () => {
+    try {
+      setExporting(true);
+      const response = await api.exportStudyDossier(id);
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `trialorbit-study-${id}-dossier.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      success('Study dossier exported successfully');
+    } catch (err) {
+      error('Failed to export dossier');
+    } finally {
+      setExporting(false);
+    }
   };
 
   if (loading || !data) {
@@ -84,8 +101,8 @@ const StudyDetails = () => {
           </div>
           <div className="study-actions">
             <StatusBadge status={study.status} pulse />
-            <Button variant="outline" size="sm" icon={<Download size={14} />} onClick={handleExportSummary}>
-              Export Dossier
+            <Button variant="outline" size="sm" icon={exporting ? <Activity size={14} className="spin" /> : <Download size={14} />} onClick={handleExportSummary} disabled={exporting}>
+              {exporting ? 'Exporting...' : 'Export Dossier'}
             </Button>
           </div>
         </div>
@@ -170,12 +187,14 @@ const StudyDetails = () => {
       </div>
       
       {activeTab === 'overview' && (
-        <div className="study-content-grid">
-          <div className="main-col">
-            <div className="card mb-4">
-              <div className="card-header">
-                <h3 className="card-title"><Activity size={18} /> Study Lifecycle</h3>
-              </div>
+        <>
+          <AIIntelligenceWidget studyId={id} />
+          <div className="study-content-grid">
+            <div className="main-col">
+              <div className="card mb-4">
+                <div className="card-header">
+                  <h3 className="card-title"><Activity size={18} /> Study Lifecycle</h3>
+                </div>
               <div className="card-body">
                 <div className="flex justify-between items-center relative py-4 overflow-x-auto">
                   {/* Progress Line */}
@@ -309,6 +328,7 @@ const StudyDetails = () => {
             </div>
           </div>
         </div>
+        </>
       )}
 
       {activeTab === 'sites' && (

@@ -3,13 +3,23 @@ import jwt from 'jsonwebtoken';
 import env from '../config/env.js';
 import { getRedisClient } from '../config/redis.js';
 import userRepository from '../repositories/user.repository.js';
+import { assertSiteAccess } from '../middleware/scope.middleware.js';
 
 let io;
 
 export const initSocket = (server) => {
   io = new Server(server, {
     cors: {
-      origin: env.clientUrl || 'http://localhost:5173',
+      origin: function (origin, callback) {
+        if (!origin) return callback(null, true);
+        const normalizedOrigin = origin.replace(/\/$/, '');
+        const normalizedClientUrl = env.clientUrl ? env.clientUrl.replace(/\/$/, '') : '';
+        if (normalizedOrigin === normalizedClientUrl || origin.startsWith('http://localhost:')) {
+          callback(null, true);
+        } else {
+          callback(null, false);
+        }
+      },
       methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
       credentials: true
     }
@@ -57,10 +67,26 @@ export const initSocket = (server) => {
       socket.join(`study:${socket.user.studyId}`);
     }
 
-    // Allow clients (especially ADMIN/MONITOR) to subscribe to specific studies
-    socket.on('join-study', (studyId) => {
-      // In a real app we might verify if they have access to this study
-      socket.join(`study:${studyId}`);
+    // Allow clients to subscribe to specific studies with strict IDOR verification
+    socket.on('join-study', async (studyId, callback) => {
+      if (!studyId) {
+        if (typeof callback === 'function') callback({ success: false, error: 'Study ID required' });
+        return;
+      }
+
+      try {
+        const hasAccess = await assertSiteAccess(socket.user, null, studyId);
+        if (hasAccess) {
+          socket.join(`study:${studyId}`);
+          if (typeof callback === 'function') callback({ success: true });
+        } else {
+          if (typeof callback === 'function') callback({ success: false, error: 'Unauthorized study access' });
+          socket.emit('error', 'Unauthorized study access');
+        }
+      } catch (err) {
+        if (typeof callback === 'function') callback({ success: false, error: 'Internal error validating access' });
+        socket.emit('error', 'Internal error validating access');
+      }
     });
 
     socket.on('disconnect', () => {

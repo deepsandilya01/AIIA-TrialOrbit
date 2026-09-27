@@ -42,19 +42,22 @@ const rolePermissions = {
     'kpi:read',
     'alerts:read',
     'safety:read',
-    'audit:read'
+    'audit:read',
+    'ai:query'
   ],
   ETHICS: [
     'studies:read',
     'regulatory:read', 'regulatory:update', 'regulatory:complete',
-    'safety:read'
+    'safety:read',
+    'ai:query'
   ],
   PHARMACOVIGILANCE: [
     'studies:read',
     'safety:read', 'safety:update',
     'pv:read', 'pv:update', 'pv:code',
     'alerts:read', 'alerts:acknowledge', 'alerts:resolve',
-    'kpi:read'
+    'kpi:read',
+    'ai:query'
   ],
   REGULATOR: [
     'studies:read',
@@ -68,7 +71,8 @@ const rolePermissions = {
     'pv:read',
     'audit:read',
     'kpi:read',
-    'alerts:read'
+    'alerts:read',
+    'ai:query'
   ]
 };
 

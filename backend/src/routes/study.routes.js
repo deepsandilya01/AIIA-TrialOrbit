@@ -3,7 +3,9 @@ import { createStudy,
   getStudies, 
   getStudyById, 
   updateStudy, 
-  updateLifecycle 
+  updateLifecycle,
+  exportStudyDossier,
+  exportRecruitmentReport
  } from '../controllers/study.controller.js';
 import { protect  } from '../middleware/auth.middleware.js';
 import { authorize  } from '../middleware/rbac.middleware.js';
@@ -25,5 +27,8 @@ router.route('/:id')
   .patch(authorize('PI', 'ADMIN'), validate(studyValidator.update), updateStudy);
 
 router.post('/:id/lifecycle', authorize('PI', 'ADMIN'), validate(studyValidator.lifecycle), updateLifecycle);
+
+router.get('/:id/dossier', exportStudyDossier);
+router.get('/reports/recruitment', exportRecruitmentReport);
 
 export default router;

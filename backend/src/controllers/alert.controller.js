@@ -9,7 +9,7 @@ export const getActiveAlerts = async (req, res, next) => {
 
 export const getAllAlerts = async (req, res, next) => {
   try {
-    const result = await alertService.getAllAlerts(req.query);
+    const result = await alertService.getAllAlerts(req.user, req.query);
     res.status(200).json({ success: true, data: result.alerts, pagination: result.pagination });
   } catch (error) { next(error); }
 };

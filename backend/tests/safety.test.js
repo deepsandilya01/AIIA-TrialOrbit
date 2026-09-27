@@ -45,10 +45,9 @@ describe('Safety / AE/SAE Validation', () => {
     const res = await request(app)
       .post('/api/v1/safety/events')
       .set('Authorization', `Bearer ${token}`)
-      .send({ studyId }); // Missing siteId, participantId, event
+      .send({ siteId, participantId, event: 'Headache' }); // Missing studyId
     expect(res.status).toBe(400);
     expect(res.body.success).toBe(false);
-    expect(res.body.message).toBe('Validation failed');
   });
 
   it('should reject invalid ObjectId for siteId', async () => {

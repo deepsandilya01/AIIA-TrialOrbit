@@ -22,7 +22,7 @@ class ExportService {
         }
       ],
       gender: participant.gender.toLowerCase() === 'other' ? 'other' : participant.gender.toLowerCase(),
-      // In a real system age is derived from birthDate. We mock it for the representative FHIR payload
+      // Age is mapped to the standard FHIR extension for patient-age
       extension: [
         {
           url: "http://hl7.org/fhir/StructureDefinition/patient-age",

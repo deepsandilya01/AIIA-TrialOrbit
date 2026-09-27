@@ -158,11 +158,11 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: var(--bg-card);
   backdrop-filter: blur(8px);
   padding: 12px 18px;
   border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow-md);
   border-left: 4px solid var(--primary-color);
   animation: float 4s ease-in-out infinite;
 }

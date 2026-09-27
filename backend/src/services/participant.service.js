@@ -1,10 +1,15 @@
 import participantRepository from '../repositories/participant.repository.js';
 import { serializeParticipant } from '../utils/serializers.js';
+import { assertSiteAccess } from '../middleware/scope.middleware.js';
 
 class ParticipantService {
   async createParticipant(data, user) {
     if (user.role === 'MONITOR' || user.role === 'REGULATOR') {
       throw new Error('Unauthorized to create participants');
+    }
+
+    if (!(await assertSiteAccess(user, data.siteId, data.studyId))) {
+      throw new Error('Forbidden: unauthorized site scope');
     }
     
     // Auto-generate Participant Code if not provided
@@ -23,7 +28,7 @@ class ParticipantService {
     return participant;
   }
 
-  async getParticipants(query) {
+  async getParticipants(query, user) {
     const page = parseInt(query.page, 10) || 1;
     const limit = parseInt(query.limit, 10) || 20;
     const skip = (page - 1) * limit;
@@ -34,6 +39,14 @@ class ParticipantService {
     if (query.status) filters.status = query.status;
     if (query.search) {
       filters.participantCode = { $regex: query.search, $options: 'i' };
+    }
+
+    if (user && (user.role === 'COORDINATOR' || user.role === 'MONITOR')) {
+      if (!user.siteId) return { participants: [], pagination: { total: 0, page, pages: 0 } };
+      filters.siteId = user.siteId; // hard scope
+    } else if (user && user.role === 'PI') {
+      const studies = await (await import('../models/Study.js')).default.find({ pi_id: user.id });
+      filters.studyId = { $in: studies.map(s => s._id) };
     }
 
     const participants = await participantRepository.findMany(filters, { skip, limit });
@@ -50,15 +63,27 @@ class ParticipantService {
     };
   }
 
-  async getParticipantById(id) {
+  async getParticipantById(id, user) {
     const participant = await participantRepository.findById(id);
     if (!participant) throw new Error('Participant not found');
+
+    if (user && !(await assertSiteAccess(user, participant.siteId, participant.studyId))) {
+      throw new Error('Forbidden: unauthorized site scope');
+    }
+
     return participant;
   }
 
   async updateParticipant(id, data, user) {
     if (user.role === 'MONITOR' || user.role === 'REGULATOR') {
       throw new Error('Unauthorized to update participants');
+    }
+
+    const existing = await participantRepository.findById(id);
+    if (!existing) throw new Error('Participant not found');
+
+    if (!(await assertSiteAccess(user, existing.siteId, existing.studyId))) {
+      throw new Error('Forbidden: unauthorized site scope');
     }
 
     const participant = await participantRepository.updateById(id, data);

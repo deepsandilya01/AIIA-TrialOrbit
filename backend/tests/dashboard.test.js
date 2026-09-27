@@ -46,6 +46,20 @@ describe('Dashboard KPIs', () => {
     expect(data.totalStudies).toBeGreaterThanOrEqual(1);
   });
 
+  it('should explicitly count sites in Monitoring status for sitesInMonitoring metric', async () => {
+    const Site = (await import('../src/models/Site.js')).default;
+    const pi = await User.findOne({ role: 'PI' });
+    await Site.create({ studyId, code: 'MON-001', name: 'Monitoring Site A', location: 'New York', pi_id: pi._id, status: 'Monitoring' });
+    
+    const res = await request(app)
+      .get('/api/v1/dashboard/kpis')
+      .set('Authorization', `Bearer ${adminToken}`);
+      
+    expect(res.status).toBe(200);
+    expect(res.body.data.sitesInMonitoring).toBeGreaterThanOrEqual(1);
+    expect(res.body.data.monitoringOverdue).toBeUndefined(); // Verify the mock metric was removed
+  });
+
   it('should reject dashboard KPI request without auth', async () => {
     const res = await request(app).get('/api/v1/dashboard/kpis');
     expect(res.status).toBe(401);

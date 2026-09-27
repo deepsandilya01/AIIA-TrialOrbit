@@ -40,7 +40,7 @@ const Home = () => {
         .from('.hero-title', { opacity: 0, y: 25, duration: 0.7 }, '-=0.3')
         .from('.hero-subtitle', { opacity: 0, y: 20, duration: 0.6 }, '-=0.4')
         .from('.hero-actions', { opacity: 0, y: 15, duration: 0.5 }, '-=0.3')
-        .from('.hero-visual', { opacity: 0, y: 40, duration: 0.8 }, '-=0.3');
+        .from('.hero-image-wrapper', { opacity: 0, y: 40, duration: 0.8 }, '-=0.3');
 
       // Stats Count-Up / Reveal
       gsap.from('.stat-card-item', {

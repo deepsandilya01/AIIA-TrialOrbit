@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
 
-const apiClient = axios.create({
+export const apiClient = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
@@ -35,13 +35,13 @@ const mapStudy = (s) => ({
   protocolId: s.protocolId,
   title: s.title,
   phase: s.phase,
-  pi: s.pi_id?.name || 'Dr. Anurag Sharma', // Mocking PI name if not populated
+  pi: s.pi_id?.name || 'Unknown PI',
   status: s.status,
   targetParticipants: s.targetParticipants,
   participants: s.enrolledCount || 0,
   progress: s.targetParticipants ? Math.round(((s.enrolledCount || 0) / s.targetParticipants) * 100) : 0,
   sites: s.siteCount || 1,
-  dataQualityScore: 98, // Mocked as backend doesn't aggregate it yet
+  dataQualityScore: null, // computed on backend when available
   startDate: s.startDate ? new Date(s.startDate).toISOString().split('T')[0] : ''
 });
 
@@ -126,6 +126,12 @@ export const api = {
     const res = await apiClient.patch(`/studies/${id}`, { status });
     return mapStudy(res.data.data);
   },
+  exportStudyDossier: async (id) => {
+    return apiClient.get(`/studies/${id}/dossier`, { responseType: 'blob' });
+  },
+  exportRecruitmentReport: async () => {
+    return apiClient.get('/studies/reports/recruitment', { responseType: 'blob' });
+  },
 
   // --- Sites ---
   getSites: async () => {
@@ -135,6 +141,12 @@ export const api = {
   getSiteById: async (id) => {
     const res = await apiClient.get(`/sites/${id}`);
     return mapDefault(res.data.data);
+  },
+  exportSiteDirectory: async () => {
+    return apiClient.get('/sites/export/directory', { responseType: 'blob' });
+  },
+  exportSiteDossier: async (id) => {
+    return apiClient.get(`/sites/${id}/dossier`, { responseType: 'blob' });
   },
 
   // --- Participants ---
@@ -150,6 +162,9 @@ export const api = {
     const res = await apiClient.patch(`/participants/${id}/status`, { status });
     return mapDefault(res.data.data);
   },
+  exportParticipants: async () => {
+    return apiClient.get('/participants/export', { responseType: 'blob' });
+  },
 
   // --- Visits ---
   getVisits: async () => {
@@ -160,11 +175,17 @@ export const api = {
     const res = await apiClient.patch(`/visits/${id}/complete`, { status: 'Completed', completedDate: new Date().toISOString() });
     return [mapDefault(res.data.data)];
   },
+  exportVisits: async () => {
+    return apiClient.get('/visits/export', { responseType: 'blob' });
+  },
 
   // --- Data Queries ---
   getDataQueries: async () => {
     const res = await apiClient.get('/data-quality/queries');
     return (res.data.data || []).map(mapDefault);
+  },
+  exportDataQueries: async () => {
+    return apiClient.get('/data-quality/queries/export', { responseType: 'blob' });
   },
   resolveQuery: async (id) => {
     const res = await apiClient.patch(`/data-quality/queries/${id}/resolve`, { resolutionData: 'Resolved from UI' });
@@ -176,6 +197,9 @@ export const api = {
     const res = await apiClient.get('/data-quality/deviations');
     return (res.data.data || []).map(mapDefault);
   },
+  exportDeviations: async () => {
+    return apiClient.get('/data-quality/deviations/export', { responseType: 'blob' });
+  },
   updateDeviationStatus: async (id, status) => {
     const res = await apiClient.patch(`/data-quality/deviations/${id}`, { status });
     return [mapDefault(res.data.data)];
@@ -185,6 +209,9 @@ export const api = {
   getMilestones: async () => {
     const res = await apiClient.get('/regulatory/milestones');
     return (res.data.data || []).map(mapDefault);
+  },
+  exportMilestones: async () => {
+    return apiClient.get('/regulatory/milestones/export', { responseType: 'blob' });
   },
   completeMilestone: async (id) => {
     const res = await apiClient.patch(`/regulatory/milestones/${id}`, { status: 'Completed', actualDate: new Date().toISOString() });
@@ -233,33 +260,24 @@ export const api = {
 
   // --- Others (Mock if no backend exact match) ---
   getComplianceData: async () => {
-    const res = await apiClient.get('/regulatory/milestones');
-    return (res.data.data || []).map(m => ({
-      id: m._id,
-      req: m.title || m.requirement || 'Regulatory Milestone',
-      status: m.status || 'Pending',
-      date: new Date(m.targetDate || m.dueDate).toLocaleDateString('en-GB'),
-      days: m.daysRemaining || null,
-      authority: m.authority || 'Institutional Authority'
-    }));
+    const res = await apiClient.get('/dashboard/compliance-summary');
+    return res.data.data || [];
+  },
+  getRecruitmentSummary: async () => {
+    const res = await apiClient.get('/dashboard/recruitment-summary');
+    return res.data.data || null;
   },
   getRecruitmentTrend: async () => {
-    return [
-      { month: 'Jan', target: 200, actual: 180 },
-      { month: 'Feb', target: 400, actual: 350 },
-      { month: 'Mar', target: 600, actual: 610 },
-      { month: 'Apr', target: 800, actual: 820 },
-      { month: 'May', target: 1000, actual: 950 },
-      { month: 'Jun', target: 1200, actual: 1240 }
-    ];
+    const res = await apiClient.get('/dashboard/recruitment-trend');
+    return res.data.data || [];
   },
   getReportsCatalog: async () => {
     return [
-      { id: 'RPT-001', name: 'Clinical Study Report (CSR)', category: 'Regulatory', format: 'PDF, Word', lastRun: '2 days ago' },
-      { id: 'RPT-002', name: 'Site Performance Metrics', category: 'Operational', format: 'Excel, PDF', lastRun: '5 hrs ago' },
-      { id: 'RPT-003', name: 'Adverse Event Line Listing', category: 'Safety', format: 'Excel, CSV', lastRun: '1 day ago' },
-      { id: 'RPT-004', name: 'Monitoring Visit Summary', category: 'Compliance', format: 'PDF', lastRun: '3 days ago' },
-      { id: 'RPT-005', name: 'Enrollment Cohort Trajectory', category: 'Recruitment', format: 'Excel, PPT', lastRun: '1 week ago' }
+      { id: 'RPT-001', name: 'Clinical Study Report (CSR)', category: 'Regulatory', format: 'PDF', lastGenerated: '-', description: 'Not available in current MVP', disabled: true },
+      { id: 'RPT-002', name: 'Site Performance Metrics', category: 'Operational', format: 'CSV', lastGenerated: 'Live Data', description: 'Enrollment and site status.', disabled: false },
+      { id: 'RPT-003', name: 'Adverse Event Line Listing', category: 'Safety', format: 'CSV', lastGenerated: 'Live Data', description: 'All AEs/SAEs with causality and severity.', disabled: false },
+      { id: 'RPT-004', name: 'Monitoring Visit Summary', category: 'Compliance', format: 'PDF', lastGenerated: '-', description: 'Not available in current MVP', disabled: true },
+      { id: 'RPT-005', name: 'Enrollment Cohort Trajectory', category: 'Recruitment', format: 'Excel', lastGenerated: '-', description: 'Not available in current MVP', disabled: true }
     ];
   },
 
@@ -270,10 +288,48 @@ export const api = {
     return res.data;
   },
 
+  // --- Reports Export ---
+  exportGenericReport: async (title, format) => {
+    return await apiClient.get('/export/report', {
+      params: { title, format },
+      responseType: format === 'PDF' || format === 'CSV' ? 'blob' : 'json'
+    });
+  },
+
   resetData: () => {
     localStorage.clear();
     sessionStorage.clear();
     window.location.reload();
+  },
+
+  // --- Auth & Users ---
+  updateProfile: async (data) => {
+    const res = await apiClient.put('/users/profile', data);
+    return res.data;
+  },
+  changePassword: async (data) => {
+    const res = await apiClient.post('/auth/change-password', data);
+    return res.data;
+  },
+
+  // --- Compliance ---
+  uploadComplianceDoc: async (formData) => {
+    const res = await apiClient.post('/compliance/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return res.data;
+  },
+  getComplianceDocs: async (params) => {
+    const res = await apiClient.get('/compliance', { params });
+    return res.data.data;
+  },
+  downloadComplianceDoc: async (id) => {
+    return apiClient.get(`/compliance/${id}/download`, { responseType: 'blob' });
+  },
+  
+  // --- Safety Export ---
+  exportSafetyReport: async (id) => {
+    return apiClient.get(`/safety/events/${id}/export`, { responseType: 'blob' });
   }
 };
 

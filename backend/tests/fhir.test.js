@@ -40,6 +40,17 @@ describe('FHIR Export', () => {
     expect(res.status).toBe(200);
     expect(res.body.resourceType).toBe('Patient');
     expect(res.body.id).toBeDefined();
+    
+    // Check demographic determinism
+    const extension = res.body.extension.find(ext => ext.url === 'http://hl7.org/fhir/StructureDefinition/patient-age');
+    expect(extension.valueInteger).toBe(40); // As seeded: age: 40
+    
+    // Repeated export should be identical
+    const res2 = await request(app)
+      .get(`/api/v1/export/fhir/patient/${participantId}`)
+      .set('Authorization', `Bearer ${token}`);
+    
+    expect(res2.body.extension).toEqual(res.body.extension);
   });
 
   it('should reject invalid participantId', async () => {

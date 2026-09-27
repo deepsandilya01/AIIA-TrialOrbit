@@ -18,13 +18,13 @@ class AlertService {
     return await alertRepository.findActiveForUser(user.id, user.role);
   }
 
-  async getAllAlerts(query) {
+  async getAllAlerts(user, query) {
     const page = parseInt(query.page, 10) || 1;
     const limit = parseInt(query.limit, 10) || 20;
     const skip = (page - 1) * limit;
 
-    const alerts = await alertRepository.findMany({}, { skip, limit });
-    const total = await alertRepository.countActive(); // approximation
+    const alerts = await alertRepository.findManyForUser(user.id, user.role, {}, { skip, limit });
+    const total = await alertRepository.countForUser(user.id, user.role);
 
     return { alerts, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } };
   }

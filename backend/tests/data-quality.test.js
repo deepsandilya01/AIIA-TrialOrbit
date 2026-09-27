@@ -43,7 +43,7 @@ describe('Data Quality Validation', () => {
 
   it('should reject query creation with missing required fields', async () => {
     const res = await request(app)
-      .post('/api/v1/queries')
+      .post('/api/v1/data-quality/queries')
       .set('Authorization', `Bearer ${token}`)
       .send({ studyId }); // Missing siteId, category, description
     expect(res.status).toBe(400);
@@ -52,7 +52,7 @@ describe('Data Quality Validation', () => {
 
   it('should reject query creation with short description', async () => {
     const res = await request(app)
-      .post('/api/v1/queries')
+      .post('/api/v1/data-quality/queries')
       .set('Authorization', `Bearer ${token}`)
       .send({ studyId, siteId, category: 'Missing Data', description: 'A' }); // Too short
     expect(res.status).toBe(400);
@@ -60,7 +60,7 @@ describe('Data Quality Validation', () => {
 
   it('should create a valid query', async () => {
     const res = await request(app)
-      .post('/api/v1/queries')
+      .post('/api/v1/data-quality/queries')
       .set('Authorization', `Bearer ${token}`)
       .send({ studyId, siteId, participantId, category: 'Missing Data', description: 'Blood pressure data is missing for this visit' });
     expect(res.status).toBe(201);
@@ -68,7 +68,7 @@ describe('Data Quality Validation', () => {
   });
 
   it('should GET all queries', async () => {
-    const res = await request(app).get('/api/v1/queries').set('Authorization', `Bearer ${token}`);
+    const res = await request(app).get('/api/v1/data-quality/queries').set('Authorization', `Bearer ${token}`);
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body.data)).toBe(true);
   });
@@ -76,7 +76,7 @@ describe('Data Quality Validation', () => {
   it('should resolve a query', async () => {
     if (!queryId) return;
     const res = await request(app)
-      .patch(`/api/v1/queries/${queryId}/resolve`)
+      .patch(`/api/v1/data-quality/queries/${queryId}/resolve`)
       .set('Authorization', `Bearer ${token}`);
     expect(res.status).toBe(200);
     expect(res.body.data.status).toBe('RESOLVED');

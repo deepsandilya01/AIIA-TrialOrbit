@@ -11,24 +11,30 @@ class AlertRepository {
   }
 
   async findActiveForUser(userId, role) {
-    return await Alert.find({
-      status: 'OPEN',
-      $or: [
-        { userId: userId },
-        { role: role }
-      ]
-    }).sort({ severity: -1, createdAt: -1 });
+    const query = { status: 'OPEN' };
+    if (role !== 'ADMIN' && role !== 'REGULATOR') {
+      query.$or = [{ userId: userId }, { role: role }, { userId: null, role: null }];
+    }
+    return await Alert.find(query).sort({ severity: -1, createdAt: -1 });
   }
 
-  async findMany(filters = {}, options = { skip: 0, limit: 20, sort: { createdAt: -1 } }) {
-    return await Alert.find(filters)
+  async findManyForUser(userId, role, filters = {}, options = { skip: 0, limit: 20, sort: { createdAt: -1 } }) {
+    const query = { ...filters };
+    if (role !== 'ADMIN' && role !== 'REGULATOR') {
+      query.$or = [{ userId: userId }, { role: role }, { userId: null, role: null }];
+    }
+    return await Alert.find(query)
       .skip(options.skip)
       .limit(options.limit)
       .sort(options.sort);
   }
 
-  async count(filters = {}) {
-    return await Alert.countDocuments(filters);
+  async countForUser(userId, role, filters = {}) {
+    const query = { ...filters };
+    if (role !== 'ADMIN' && role !== 'REGULATOR') {
+      query.$or = [{ userId: userId }, { role: role }, { userId: null, role: null }];
+    }
+    return await Alert.countDocuments(query);
   }
 
   async countActive() {
@@ -36,10 +42,11 @@ class AlertRepository {
   }
 
   async acknowledge(id, userId, role) {
-    const alert = await Alert.findOne({
-      _id: id,
-      $or: [{ userId }, { role }]
-    });
+    const query = { _id: id };
+    if (role !== 'ADMIN') {
+      query.$or = [{ userId: userId }, { role: role }, { userId: null, role: null }];
+    }
+    const alert = await Alert.findOne(query);
     
     if (!alert) return null;
 

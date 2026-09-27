@@ -8,6 +8,7 @@ import { createVisit,
 import { protect  } from '../middleware/auth.middleware.js';
 import { validate } from '../middleware/validate.middleware.js';
 import { visitValidator } from '../validators/index.js';
+import { exportVisits } from '../controllers/visit.controller.js';
 
 const router = express.Router();
 
@@ -16,6 +17,8 @@ router.use(protect);
 router.route('/')
   .post(validate(visitValidator.create), createVisit)
   .get(getVisits);
+
+router.get('/export', exportVisits);
 
 router.route('/:id')
   .get(getVisitById)

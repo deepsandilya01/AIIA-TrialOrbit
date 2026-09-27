@@ -244,6 +244,17 @@ Dashboard ek single page summary hai jahan important clinical trial data graphs 
 **What happens after the action?** The system compiles the requested data securely.
 **Important:** CDISC and FHIR functionality is currently **Partial / Prototype / Currently Implemented Scope**.
 
+### AI Intelligence (TrialOrbit AI)
+**What is it?** Automated study risk analysis and explanatory intelligence.
+**Why is it used?** To rapidly identify trial delays, recruitment lags, safety signals, and provide natural language explanations.
+**Who can use it?** PI, Admin, and other authorized roles.
+**How to use it:**
+1. Open a Study details page.
+2. Click on the `Intelligence` or `TrialOrbit AI` tab.
+3. Review the deterministic risk scores and LLM-generated explanations.
+**What happens after the action?** The backend Risk Engine and AI provider (Mistral/OpenAI) evaluate the study's live metrics and return an analysis safely without exposing PII.
+**Important:** AI is an advisory tool. It does not diagnose patients.
+
 ### Users/Admin Functionality
 **What is it?** User administration.
 **Why is it used?** To assign staff to specific roles and sites.
@@ -287,7 +298,7 @@ AE / SAE (Safety issues logged)
 ↓
 Alerts (Deadlines flagged)
 ↓
-Monitoring / Review (Oversight happens)
+Monitoring / Review / AI Intelligence (Oversight happens)
 ↓
 Reports / Closeout (Data exported)
 

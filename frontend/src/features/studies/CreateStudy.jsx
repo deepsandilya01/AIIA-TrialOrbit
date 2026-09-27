@@ -11,7 +11,7 @@ const CreateStudy = ({ isOpen, onClose, onStudyCreated }) => {
     protocolId: '',
     phase: 'Phase II',
     therapeuticArea: 'Metabolic & Lifestyle Disorders',
-    pi: 'Dr. Anurag Sharma',
+    pi: 'Unknown PI',
     sponsor: 'Ministry of Ayush',
     targetParticipants: 100,
     sites: 3,

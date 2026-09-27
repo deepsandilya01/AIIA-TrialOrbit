@@ -24,6 +24,22 @@ const userSchema = new mongoose.Schema({
     enum: ['PI', 'COORDINATOR', 'MONITOR', 'PHARMACOVIGILANCE', 'ETHICS', 'ADMIN', 'REGULATOR'],
     required: [true, 'Role is required']
   },
+  phone: {
+    type: String,
+    trim: true
+  },
+  institution: {
+    type: String,
+    trim: true
+  },
+  department: {
+    type: String,
+    trim: true
+  },
+  designation: {
+    type: String,
+    trim: true
+  },
   siteId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Site',

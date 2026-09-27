@@ -89,8 +89,8 @@ class DashboardService {
       dueDate: { $lt: new Date() }
     });
 
-    // Monitoring Overdue (Mock metric derived from sites lacking recent monitoring)
-    const monitoringOverdue = await siteRepository.count({ ...siteFilter, status: 'Monitoring' /* Ideally checks date */ });
+    // Semantic fix: explicitly count sites in 'Monitoring' status instead of pretending it's 'overdue'
+    const sitesInMonitoring = await siteRepository.count({ ...siteFilter, status: 'Monitoring' });
 
     return {
       totalStudies,
@@ -105,7 +105,7 @@ class DashboardService {
       openDeviations,
       pendingRegulatory,
       overdueRegulatoryCount,
-      monitoringOverdue,
+      sitesInMonitoring,
       aeCount,
       saeCount,
       overdueSaeCount,
@@ -113,6 +113,141 @@ class DashboardService {
       targetParticipants,
       enrolledParticipants: actualEnrolled
     };
+  }
+
+  // --- NEW: Recruitment Trend & Compliance Data Aggregations ---
+
+  async getRecruitmentSummary(user) {
+    let studyFilter = {};
+    let participantFilter = {};
+    if (user && user.role !== 'ADMIN') {
+      if (user.role === 'PI') {
+        const studies = await studyRepository.findMany({ pi_id: user.id });
+        const studyIds = studies.map(s => s._id);
+        studyFilter = { _id: { $in: studyIds } };
+        participantFilter = { studyId: { $in: studyIds } };
+      } else if (user.role === 'COORDINATOR' || user.role === 'MONITOR') {
+        if (!user.siteId) return null;
+        const site = await siteRepository.findById(user.siteId);
+        if (!site) return null;
+        studyFilter = { _id: site.studyId };
+        participantFilter = { siteId: user.siteId };
+      }
+    }
+
+    const ParticipantModel = (await import('../models/Participant.js')).default;
+    
+    // Total screened (explicitly participants in Screened status)
+    const totalScreened = await ParticipantModel.countDocuments({ ...participantFilter, status: 'Screened' });
+    
+    // Total enrolled
+    const totalEnrolled = await ParticipantModel.countDocuments({ ...participantFilter, status: 'Enrolled' });
+    
+    // Lost to follow up
+    const lostToFollowUp = await ParticipantModel.countDocuments({ ...participantFilter, status: 'Lost-to-follow-up' });
+    
+    // Withdrawn
+    const withdrawn = await ParticipantModel.countDocuments({ ...participantFilter, status: 'Withdrawn' });
+    
+    // Completed
+    const completed = await ParticipantModel.countDocuments({ ...participantFilter, status: 'Completed' });
+
+    // Active in protocol - schema has no unified active flag, return null
+    const activeInProtocol = null;
+    
+    // Recruitment Lag - no explicit timeline/business rule defined for this, return null
+    const recruitmentLag = null;
+
+    return {
+      totalScreened,
+      totalEnrolled,
+      lostToFollowUp,
+      withdrawn,
+      completed,
+      activeInProtocol,
+      recruitmentLag
+    };
+  }
+
+
+  async getRecruitmentTrend(user) {
+    let studyFilter = {};
+    let participantFilter = {};
+    if (user && user.role !== 'ADMIN') {
+      if (user.role === 'PI') {
+        const studies = await studyRepository.findMany({ pi_id: user.id });
+        const studyIds = studies.map(s => s._id);
+        studyFilter = { _id: { $in: studyIds } };
+        participantFilter = { studyId: { $in: studyIds } };
+      } else if (user.role === 'COORDINATOR' || user.role === 'MONITOR') {
+        if (!user.siteId) return [];
+        const site = await siteRepository.findById(user.siteId);
+        if (!site) return [];
+        studyFilter = { _id: site.studyId };
+        participantFilter = { siteId: user.siteId };
+      }
+    }
+
+    const targetAgg = await (await import('../models/Study.js')).default.aggregate([
+      { $match: studyFilter },
+      { $group: { _id: null, total: { $sum: '$targetParticipants' } } }
+    ]);
+    const target = targetAgg.length > 0 ? targetAgg[0].total : 0;
+
+    const ParticipantModel = (await import('../models/Participant.js')).default;
+    
+    // Aggregate enrolled participants by month based on createdAt
+    const trendAgg = await ParticipantModel.aggregate([
+      { $match: { ...participantFilter, status: 'Enrolled' } },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" }
+          },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { "_id.year": 1, "_id.month": 1 } }
+    ]);
+
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    let cumulative = 0;
+    
+    return trendAgg.map(item => {
+      cumulative += item.count;
+      return {
+        month: `${months[item._id.month - 1]} ${item._id.year}`,
+        target: target,
+        actual: cumulative
+      };
+    });
+  }
+
+  async getComplianceSummary(user) {
+    let studyFilter = {};
+    if (user && user.role !== 'ADMIN') {
+      if (user.role === 'PI') {
+        const studies = await studyRepository.findMany({ pi_id: user.id });
+        const studyIds = studies.map(s => s._id);
+        studyFilter = { studyId: { $in: studyIds } };
+      } else if (user.role === 'COORDINATOR' || user.role === 'MONITOR') {
+        if (!user.siteId) return [];
+        const site = await siteRepository.findById(user.siteId);
+        if (!site) return [];
+        studyFilter = { studyId: site.studyId };
+      }
+    }
+
+    const milestones = await regulatoryRepository.findMany(studyFilter);
+    return milestones.map(m => ({
+      id: m._id,
+      req: m.title || m.requirement || 'Regulatory Milestone',
+      status: m.status || 'Pending',
+      date: new Date(m.targetDate || m.dueDate || m.createdAt).toLocaleDateString('en-GB'),
+      days: m.daysRemaining || null,
+      authority: m.authority || 'Institutional Authority'
+    }));
   }
 }
 

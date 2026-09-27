@@ -1,5 +1,5 @@
 import express from 'express';
-import { createEvent, getEvents, getEventById, updateEvent, pvReview } from '../controllers/safety.controller.js';
+import { createEvent, getEvents, getEventById, updateEvent, pvReview, exportSafetyReport } from '../controllers/safety.controller.js';
 import { protect } from '../middleware/auth.middleware.js';
 import { validate } from '../middleware/validate.middleware.js';
 import { safetyValidator } from '../validators/index.js';
@@ -17,5 +17,6 @@ router.route('/events/:id')
   .patch(validate(safetyValidator.update), updateEvent);
 
 router.patch('/events/:id/pv-review', validate(safetyValidator.pvReview), pvReview);
+router.get('/events/:id/export', exportSafetyReport);
 
 export default router;

@@ -11,7 +11,9 @@ const DataQueries = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [loading, setLoading] = useState(true);
-  const { success } = useToast();
+  const [exporting, setExporting] = useState(false);
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const { success, error } = useToast();
   const { canDo } = usePermissions();
 
   const loadQueries = async () => {
@@ -45,6 +47,35 @@ const DataQueries = () => {
     const statusMatch = statusFilter === 'All' || q.status === statusFilter;
     return searchMatch && statusMatch;
   });
+
+  const handleExport = async () => {
+    try {
+      setExporting(true);
+      const response = await api.exportDataQueries();
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `trialorbit-queries-${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      success('Data queries exported successfully');
+    } catch (err) {
+      error('Failed to export data queries');
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handleAddQuery = async (e) => {
+    e.preventDefault();
+    try {
+      success('Query raised successfully! (Demo mode)');
+      setIsAddOpen(false);
+    } catch (err) {
+      error('Failed to raise query');
+    }
+  };
 
   const getPriorityBadge = (priority) => {
     switch(priority) {
@@ -94,9 +125,11 @@ const DataQueries = () => {
           <p className="page-subtitle">Manage eCRF data queries, discrepancy notes, and resolution aging</p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" icon={<Download size={16} />}>Export Log</Button>
+          <Button variant="outline" icon={<Download size={16} />} onClick={handleExport} disabled={exporting}>
+            {exporting ? 'Exporting...' : 'Export Log'}
+          </Button>
           {canDo('createQuery') && (
-            <Button icon={<Plus size={16} />}>Raise Manual Query</Button>
+            <Button icon={<Plus size={16} />} onClick={() => setIsAddOpen(true)}>Raise Manual Query</Button>
           )}
         </div>
       </div>
@@ -239,6 +272,35 @@ const DataQueries = () => {
           </table>
         </div>
       </div>
+      {isAddOpen && (
+        <div className="modal-backdrop">
+          <div className="modal-content card" style={{ maxWidth: '500px', padding: '1.5rem' }}>
+            <h2 className="text-xl font-bold mb-4">Raise Manual Query</h2>
+            <form onSubmit={handleAddQuery} className="flex flex-col gap-4">
+              <div>
+                <label className="block text-sm font-semibold mb-1">Participant ID</label>
+                <input type="text" className="form-input" required placeholder="e.g. SUB-001" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1">Discrepancy Note</label>
+                <textarea className="form-input" required rows="3" placeholder="Describe the discrepancy..."></textarea>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1">Priority</label>
+                <select className="form-select" required>
+                  <option value="High">High</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Low">Low</option>
+                </select>
+              </div>
+              <div className="flex gap-2 justify-end mt-4">
+                <Button variant="outline" type="button" onClick={() => setIsAddOpen(false)}>Cancel</Button>
+                <Button type="submit">Submit Query</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

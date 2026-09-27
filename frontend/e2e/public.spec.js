@@ -96,5 +96,8 @@ test.describe('Public Website E2E Suite', () => {
     await page.goto('/studies');
     // The protected route redirects unauthenticated users back to login
     await expect(page).toHaveURL(/.*\/login/);
+    
+    // Explicitly close the page to prevent teardown timeouts from lingering network connections
+    await page.close();
   });
 });

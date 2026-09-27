@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllUsers, getUserById, createUser, updateUser, updateRole, updateStatus } from '../controllers/user.controller.js';
+import { getAllUsers, getUserById, createUser, updateUser, updateRole, updateStatus, updateProfile } from '../controllers/user.controller.js';
 import { protect } from '../middleware/auth.middleware.js';
 import { authorize } from '../middleware/rbac.middleware.js';
 import { validate } from '../middleware/validate.middleware.js';
@@ -7,8 +7,12 @@ import { userValidator } from '../validators/index.js';
 
 const router = express.Router();
 
-// All user management routes are ADMIN-only
-router.use(protect, authorize('ADMIN'));
+router.use(protect);
+
+router.put('/profile', updateProfile);
+
+// Rest of user management routes are ADMIN-only
+router.use(authorize('ADMIN'));
 
 router.route('/')
   .get(getAllUsers)

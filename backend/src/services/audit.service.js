@@ -1,7 +1,7 @@
 import auditRepository from '../repositories/audit.repository.js';
 
 class AuditService {
-  async logEvent(data) {
+  async log(data) {
     // This method is generally called internally by other services
     return await auditRepository.create(data);
   }
