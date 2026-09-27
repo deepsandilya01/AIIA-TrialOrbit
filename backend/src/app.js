@@ -22,6 +22,7 @@ if (fs.existsSync(swaggerPath)) {
 }
 
 const app = express();
+app.set('trust proxy', 1);
 
 if (swaggerDocument) {
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));

@@ -53,7 +53,19 @@ const Login = () => {
       navigate(from, { replace: true });
     } catch (err) {
       console.error(err);
-      error(err.response?.data?.message || err.response?.data?.error?.message || 'Invalid credentials or inactive account.');
+      if (!err.response) {
+        error('Unable to connect to the TrialOrbit server.');
+      } else if (err.response.status === 401) {
+        error('Invalid email or password.');
+      } else if (err.response.status === 403) {
+        error('Account is inactive or you do not have permission.');
+      } else if (err.response.status === 429) {
+        error('Too many login attempts. Please try again later.');
+      } else if (err.response.status >= 500) {
+        error('TrialOrbit server is temporarily unavailable.');
+      } else {
+        error(err.response?.data?.message || err.response?.data?.error?.message || 'Login failed.');
+      }
     } finally {
       setLoading(false);
     }
