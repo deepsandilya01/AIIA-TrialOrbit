@@ -1,6 +1,7 @@
 import env from '../config/env.js';
 import mistralProvider from './providers/mistral.provider.js';
 import openaiProvider from './providers/openai.provider.js';
+import geminiProvider from './providers/gemini.provider.js';
 
 class AIProviderFactory {
   constructor() {
@@ -9,6 +10,8 @@ class AIProviderFactory {
 
   getProvider() {
     switch (this.providerName.toLowerCase()) {
+      case 'gemini':
+        return geminiProvider;
       case 'mistral':
         return mistralProvider;
       case 'openai':
@@ -22,11 +25,18 @@ class AIProviderFactory {
   async generateExplanationWithFallback(systemPrompt, userPrompt) {
     let lastError;
     const primary = this.providerName.toLowerCase();
-    const secondary = primary === 'mistral' ? 'openai' : 'mistral';
+    const secondary = primary === 'mistral' ? 'gemini' : (primary === 'gemini' ? 'mistral' : 'gemini');
+
+    const getProviderInstance = (name) => {
+      if (name === 'gemini') return geminiProvider;
+      if (name === 'mistral') return mistralProvider;
+      if (name === 'openai') return openaiProvider;
+      return null;
+    };
 
     const providersToTry = [
-      { name: primary, instance: primary === 'mistral' ? mistralProvider : openaiProvider },
-      { name: secondary, instance: secondary === 'mistral' ? mistralProvider : openaiProvider }
+      { name: primary, instance: getProviderInstance(primary) },
+      { name: secondary, instance: getProviderInstance(secondary) }
     ];
 
     for (const p of providersToTry) {
