@@ -22,9 +22,9 @@ const PublicHeader = () => {
     { to: '/', label: t('general.home', 'Home') },
     { to: '/#capabilities', label: t('header.platform', 'Platform') },
     { to: '/#lifecycle', label: t('header.lifecycle', 'Lifecycle') },
-    { to: '/public-studies', label: t('general.studies', 'Studies') },
-    { to: '/about', label: t('header.about', 'About') },
-    { to: '/contact', label: t('header.contact', 'Contact') },
+    { to: '/roadmap', label: t('general.roadmap', 'Roadmap') },
+    { to: '/#about', label: t('header.about', 'About') },
+    { to: '/#contact', label: t('header.contact', 'Contact') },
   ];
 
   const handleNavClick = (e, link) => {

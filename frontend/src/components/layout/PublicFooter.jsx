@@ -26,7 +26,7 @@ const PublicFooter = () => {
           <h4>Platform Modules</h4>
           <ul>
             <li><Link to="/login">Protocol Lifecycle Workspace</Link></li>
-            <li><Link to="/public-studies">Multi-Centre Site Directory</Link></li>
+            <li><Link to="/roadmap">Product Roadmap</Link></li>
             <li><Link to="/login">Recruitment Velocity Analytics</Link></li>
             <li><Link to="/login">Safety & Pharmacovigilance (AE/SAE)</Link></li>
             <li><Link to="/login">Institutional Ethics & CTRI Milestones</Link></li>
@@ -38,7 +38,7 @@ const PublicFooter = () => {
           <h4>Institutional Links</h4>
           <ul>
             <li><Link to="/">Home Overview</Link></li>
-            <li><Link to="/public-studies">Public Research Registry</Link></li>
+            <li><Link to="/roadmap">Product Roadmap</Link></li>
             <li><Link to="/about">About AIIA CTMS</Link></li>
             <li><Link to="/contact">Support & Investigator Helpdesk</Link></li>
             <li><Link to="/register">Investigator Registration</Link></li>

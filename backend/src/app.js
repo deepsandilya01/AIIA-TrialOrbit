@@ -77,7 +77,7 @@ app.use('/api/v1/studies', studyRoutes);
 app.use('/api/v1/sites', siteRoutes);
 app.use('/api/v1/participants', participantRoutes);
 app.use('/api/v1/visits', visitRoutes);
-app.use('/api/v1', dataQualityRoutes);
+app.use('/api/v1/data-quality', dataQualityRoutes);
 app.use('/api/v1/regulatory', regulatoryRoutes);
 app.use('/api/v1/safety', safetyRoutes);
 app.use('/api/v1/audit-logs', auditRoutes);

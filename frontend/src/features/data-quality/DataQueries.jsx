@@ -150,6 +150,8 @@ const DataQueries = () => {
             <Search size={16} className="text-muted" />
             <input 
               type="text" 
+              id="query-search"
+              name="query-search"
               placeholder="Search by Query ID or Participant..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -194,8 +196,8 @@ const DataQueries = () => {
                   <tr key={q.id}>
                     <td><span className="font-bold text-primary">{q.id}</span></td>
                     <td>
-                      <div className="text-sm font-semibold">{typeof q.studyId === 'object' ? q.studyId.protocolId || q.studyId._id : q.studyId}</div>
-                      <div className="text-xs text-secondary">{typeof q.siteId === 'object' ? q.siteId.name || q.siteId.siteName || q.siteId._id : q.siteId} | {typeof q.participantId === 'object' ? q.participantId.participantCode || q.participantId._id : q.participantId}</div>
+                      <div className="text-sm font-semibold">{q.studyId && typeof q.studyId === 'object' ? q.studyId.protocolId || q.studyId._id : (q.studyId || 'Unknown Protocol')}</div>
+                      <div className="text-xs text-secondary">{q.siteId && typeof q.siteId === 'object' ? q.siteId.name || q.siteId.siteName || q.siteId._id : (q.siteId || 'Unknown Site')} | {q.participantId && typeof q.participantId === 'object' ? q.participantId.participantCode || q.participantId._id : (q.participantId || 'Unknown Participant')}</div>
                     </td>
                     <td>
                       <div className="text-sm font-medium">{q.entity}</div>

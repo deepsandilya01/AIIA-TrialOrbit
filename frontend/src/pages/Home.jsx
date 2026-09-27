@@ -40,7 +40,7 @@ const Home = () => {
         .from('.hero-title', { opacity: 0, y: 25, duration: 0.7 }, '-=0.3')
         .from('.hero-subtitle', { opacity: 0, y: 20, duration: 0.6 }, '-=0.4')
         .from('.hero-actions', { opacity: 0, y: 15, duration: 0.5 }, '-=0.3')
-        .from('.hero-mockup-wrapper', { opacity: 0, y: 40, duration: 0.8 }, '-=0.3');
+        .from('.hero-visual', { opacity: 0, y: 40, duration: 0.8 }, '-=0.3');
 
       // Stats Count-Up / Reveal
       gsap.from('.stat-card-item', {
@@ -93,108 +93,69 @@ const Home = () => {
       {/* 1. HERO SECTION */}
       <section className="hero-section" ref={heroRef}>
         <div className="hero-content">
-          <div className="hero-eyebrow">
-            <img 
-              src="/logo.png" 
-              alt="AIIA TrialOrbit" 
-              style={{ 
-                width: '46px', 
-                height: '46px', 
-                objectFit: 'contain', 
-                borderRadius: '50%', 
-                backgroundColor: '#ffffff', 
-                padding: '2px', 
-                boxShadow: '0 3px 10px rgba(13,61,52,0.18)' 
-              }} 
-            />
-            <span className="eyebrow-badge">
-              <span>AIIA TrialOrbit • SIH 2026</span>
-            </span>
-            <span className="eyebrow-inst">Ministry of Ayush • Govt. of India</span>
+          <div className="hero-text-column">
+            <div className="hero-eyebrow">
+              <img 
+                src="/logo.png" 
+                alt="AIIA TrialOrbit" 
+                style={{ 
+                  width: '28px', 
+                  height: '28px', 
+                  objectFit: 'contain', 
+                  borderRadius: '50%', 
+                  backgroundColor: '#ffffff', 
+                  padding: '2px', 
+                }} 
+              />
+              <span className="eyebrow-badge">
+                <span>AIIA TrialOrbit • SIH 2026</span>
+              </span>
+              <span className="eyebrow-inst">Ministry of Ayush</span>
+            </div>
+
+            <h1 className="hero-title">
+              A Real-Time Control Room for Clinical Trials
+            </h1>
+
+            <p className="hero-subtitle">
+              From study protocol setup to safety surveillance & regulatory monitoring — one centralized, institutional CTMS for evidence-based Ayurvedic research.
+            </p>
+
+            <div className="hero-actions">
+              <Link to="/login" className="btn btn-primary btn-lg">
+                Explore Dashboard &rarr;
+              </Link>
+              <a href="#how-it-works" className="btn btn-outline btn-lg" style={{ color: 'white', borderColor: 'rgba(255,255,255,0.4)', backgroundColor: 'rgba(255,255,255,0.1)' }}>
+                View How It Works
+              </a>
+            </div>
           </div>
 
-          <h1 className="hero-title">
-            A Real-Time Control Room for Clinical Trials
-          </h1>
-
-          <p className="hero-subtitle">
-            From study protocol setup to safety surveillance & regulatory monitoring — one centralized, institutional CTMS for evidence-based Ayurvedic research.
-          </p>
-
-          <div className="hero-actions">
-            <Link to="/login" className="btn btn-primary btn-lg">
-              Explore Dashboard &rarr;
-            </Link>
-            <a href="#how-it-works" className="btn btn-outline btn-lg">
-              View How It Works
-            </a>
-          </div>
-
-          {/* Interactive CTMS Control Room Mockup Preview */}
-          <div className="hero-mockup-wrapper" ref={mockupRef}>
-            <div className="mockup-frame card">
-              <div className="mockup-topbar">
-                <div className="mockup-dots">
-                  <span className="dot red"></span>
-                  <span className="dot yellow"></span>
-                  <span className="dot green"></span>
-                </div>
-                <div className="mockup-address" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <img src="/logo.png" alt="AIIA" style={{ width: '18px', height: '18px', objectFit: 'contain', borderRadius: '50%', backgroundColor: '#fff' }} />
-                  <span>trialorbit.aiia.gov.in/control-room</span>
-                </div>
-                <div className="mockup-status">
-                  <span className="pulse-indicator"></span>
-                  <span>LIVE SURVEILLANCE</span>
-                </div>
-              </div>
-
-              <div className="mockup-body">
-                <div className="mockup-kpis">
-                  <div className="mini-kpi">
-                    <span className="label">ACTIVE STUDIES</span>
-                    <span className="val">18 Protocols</span>
-                    <span className="trend positive">↑ 100% IEC Cleared</span>
-                  </div>
-                  <div className="mini-kpi">
-                    <span className="label">RESEARCH SITES</span>
-                    <span className="val">42 Centres</span>
-                    <span className="trend positive">All-India Network</span>
-                  </div>
-                  <div className="mini-kpi">
-                    <span className="label">COHORT ENROLLED</span>
-                    <span className="val">1,240 Subjects</span>
-                    <span className="trend positive">67% Screening Ratio</span>
-                  </div>
-                  <div className="mini-kpi">
-                    <span className="label">SAFETY REVIEWS</span>
-                    <span className="val">2 Expedited</span>
-                    <span className="trend alert">24h CDSCO Rule</span>
+          <div className="hero-image-column">
+            <div className="hero-image-wrapper">
+              <div className="hero-image-glow"></div>
+              <img src="/clinical-ayurveda.jpg" alt="Clinical Ayurveda Research" className="hero-main-img" />
+              
+              <div className="hero-floating-pills">
+                <div className="floating-pill card">
+                  <span className="pill-icon text-primary"><CheckCircle2 size={18} /></span>
+                  <div className="pill-content">
+                    <strong>Evidence-Based</strong>
+                    <span>Ayurvedic Research</span>
                   </div>
                 </div>
-
-                <div className="mockup-preview-row">
-                  <div className="mockup-chart-box">
-                    <div className="mockup-box-title">Recruitment Trajectory vs Target Protocol</div>
-                    <div className="mockup-fake-chart">
-                      <div className="fake-bar" style={{ height: '35%' }}><span>Jan</span></div>
-                      <div className="fake-bar" style={{ height: '48%' }}><span>Feb</span></div>
-                      <div className="fake-bar" style={{ height: '62%' }}><span>Mar</span></div>
-                      <div className="fake-bar" style={{ height: '75%' }}><span>Apr</span></div>
-                      <div className="fake-bar active" style={{ height: '90%' }}><span>May</span></div>
-                    </div>
+                <div className="floating-pill card" style={{ animationDelay: '0.2s', marginLeft: '-20px' }}>
+                  <span className="pill-icon text-primary"><ShieldCheck size={18} /></span>
+                  <div className="pill-content">
+                    <strong>Regulatory Compliant</strong>
+                    <span>CDSCO & GCP Standards</span>
                   </div>
-
-                  <div className="mockup-alerts-box">
-                    <div className="mockup-box-title">Surveillance Signals</div>
-                    <div className="fake-alert-item danger">
-                      <span className="alert-badge">SAE-204</span>
-                      <span className="alert-text">Hospitalization reported; 24h PV review triggered</span>
-                    </div>
-                    <div className="fake-alert-item warning">
-                      <span className="alert-badge">CTRI-005</span>
-                      <span className="alert-text">6-Month trial progress report due in 4 days</span>
-                    </div>
+                </div>
+                <div className="floating-pill card" style={{ animationDelay: '0.4s', marginLeft: '-40px' }}>
+                  <span className="pill-icon text-primary"><Activity size={18} /></span>
+                  <div className="pill-content">
+                    <strong>Real-Time Monitoring</strong>
+                    <span>Live Subject Surveillance</span>
                   </div>
                 </div>
               </div>
@@ -202,6 +163,77 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* Interactive CTMS Control Room Mockup Preview */}
+      <div className="hero-mockup-wrapper">
+        <div className="mockup-frame card" style={{ maxWidth: '1000px', margin: '0 auto', backgroundColor: '#fff', borderRadius: '12px', boxShadow: '0 20px 40px rgba(13,61,52,0.15)', overflow: 'hidden', border: '1px solid rgba(13,61,52,0.1)' }}>
+          <div className="mockup-topbar">
+            <div className="mockup-dots">
+              <span className="dot red"></span>
+              <span className="dot yellow"></span>
+              <span className="dot green"></span>
+            </div>
+            <div className="mockup-address" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <img src="/logo.png" alt="AIIA" style={{ width: '18px', height: '18px', objectFit: 'contain', borderRadius: '50%', backgroundColor: '#fff' }} />
+              <span>trialorbit.aiia.gov.in/control-room</span>
+            </div>
+            <div className="mockup-status">
+              <span className="pulse-indicator"></span>
+              <span>LIVE SURVEILLANCE</span>
+            </div>
+          </div>
+
+          <div className="mockup-body">
+            <div className="mockup-kpis">
+              <div className="mini-kpi">
+                <span className="label">ACTIVE STUDIES</span>
+                <span className="val">18 Protocols</span>
+                <span className="trend positive">↑ 100% IEC Cleared</span>
+              </div>
+              <div className="mini-kpi">
+                <span className="label">RESEARCH SITES</span>
+                <span className="val">42 Centres</span>
+                <span className="trend positive">All-India Network</span>
+              </div>
+              <div className="mini-kpi">
+                <span className="label">COHORT ENROLLED</span>
+                <span className="val">1,240 Subjects</span>
+                <span className="trend positive">67% Screening Ratio</span>
+              </div>
+              <div className="mini-kpi">
+                <span className="label">SAFETY REVIEWS</span>
+                <span className="val">2 Expedited</span>
+                <span className="trend alert">24h CDSCO Rule</span>
+              </div>
+            </div>
+
+            <div className="mockup-preview-row">
+              <div className="mockup-chart-box">
+                <div className="mockup-box-title">Recruitment Trajectory vs Target Protocol</div>
+                <div className="mockup-fake-chart">
+                  <div className="fake-bar" style={{ height: '35%' }}><span>Jan</span></div>
+                  <div className="fake-bar" style={{ height: '48%' }}><span>Feb</span></div>
+                  <div className="fake-bar" style={{ height: '62%' }}><span>Mar</span></div>
+                  <div className="fake-bar" style={{ height: '75%' }}><span>Apr</span></div>
+                  <div className="fake-bar active" style={{ height: '90%' }}><span>May</span></div>
+                </div>
+              </div>
+
+              <div className="mockup-alerts-box">
+                <div className="mockup-box-title">Surveillance Signals</div>
+                <div className="fake-alert-item danger">
+                  <span className="alert-badge">SAE-204</span>
+                  <span className="alert-text">Hospitalization reported; 24h PV review triggered</span>
+                </div>
+                <div className="fake-alert-item warning">
+                  <span className="alert-badge">CTRI-005</span>
+                  <span className="alert-text">6-Month trial progress report due in 4 days</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* 2. REAL-TIME STATS SECTION */}
       <section className="stats-section" ref={statsRef}>
@@ -361,7 +393,7 @@ const Home = () => {
       </section>
 
       {/* 5. MONITOR -> IDENTIFY -> ACT SURVEILLANCE ENGINE */}
-      <section className="monitoring-engine-section">
+      <section className="monitoring-engine-section" id="how-it-works">
         <div className="engine-container card">
           <div className="engine-header">
             <div>
@@ -440,83 +472,42 @@ const Home = () => {
         <div className="rbac-grid">
           <div className="rbac-card card">
             <div className="rbac-role-title">Principal Investigator (PI)</div>
-            <p className="rbac-role-desc">Protocol design, medical eligibility decisions, AE medical reviews, and final clinical study sign-off.</p>
-            <div className="rbac-perms">Medical Review • Protocol Oversight • Safety Approval</div>
+            <p className="rbac-role-desc">Study and clinical oversight.</p>
+            <div className="rbac-perms">Study oversight • Recruitment monitoring • Query/deviation review • Safety review</div>
           </div>
           <div className="rbac-card card">
-            <div className="rbac-role-title">Study Coordinator (CRC)</div>
-            <p className="rbac-role-desc">Subject screening, visit scheduling, eCRF data entry, and source document organization.</p>
-            <div className="rbac-perms">Visit Logs • CRF Entry • Participant Care</div>
+            <div className="rbac-role-title">Study Coordinator</div>
+            <p className="rbac-role-desc">Day-to-day study operations.</p>
+            <div className="rbac-perms">Participant management • Consent tracking • Visit management • Query resolution</div>
           </div>
           <div className="rbac-card card">
             <div className="rbac-role-title">Clinical Monitor (CRA)</div>
-            <p className="rbac-role-desc">On-site and remote source data verification (SDV), protocol deviation recording, and GCP compliance audit.</p>
-            <div className="rbac-perms">SDV Verification • Deviation Logs • Monitoring Reports</div>
+            <p className="rbac-role-desc">Monitoring and data-quality oversight.</p>
+            <div className="rbac-perms">Data queries • Protocol deviations • Site monitoring info</div>
           </div>
           <div className="rbac-card card">
             <div className="rbac-role-title">Pharmacovigilance Officer</div>
-            <p className="rbac-role-desc">Dedicated expedited 24h SAE processing, MedDRA coding, and causality assessment for regulatory submission.</p>
-            <div className="rbac-perms">Expedited SAE • CIOMS Dossiers • Causality Scoring</div>
+            <p className="rbac-role-desc">Safety oversight.</p>
+            <div className="rbac-perms">AE/SAE management • Reporting deadline tracking</div>
+          </div>
+          <div className="rbac-card card">
+            <div className="rbac-role-title">Ethics Committee</div>
+            <p className="rbac-role-desc">Ethics and regulatory oversight.</p>
+            <div className="rbac-perms">Ethics/regulatory information • Milestone review • Compliance visibility</div>
+          </div>
+          <div className="rbac-card card">
+            <div className="rbac-role-title">Administration (ADMIN)</div>
+            <p className="rbac-role-desc">Institutional/system administration.</p>
+            <div className="rbac-perms">User administration • System-level oversight • Access management</div>
+          </div>
+          <div className="rbac-card card">
+            <div className="rbac-role-title">Regulator</div>
+            <p className="rbac-role-desc">Read-only regulatory oversight. Regulator access is read-only.</p>
+            <div className="rbac-perms">Compliance visibility • Regulatory milestones • Audit information</div>
           </div>
         </div>
       </section>
 
-      {/* 8. PUBLIC STUDIES PREVIEW */}
-      <section className="studies-preview-section">
-        <div className="section-header">
-          <div>
-            <h2 className="section-title" style={{ textAlign: 'left', marginBottom: '4px' }}>Active Clinical Research Studies</h2>
-            <p className="text-secondary text-sm">Public research registry preview (de-identified)</p>
-          </div>
-          <Link to="/public-studies" className="view-all-link flex items-center gap-1 font-semibold">
-            View All Studies <ArrowRight size={14} />
-          </Link>
-        </div>
-
-        <div className="studies-preview-grid">
-          <div className="study-preview-card card">
-            <div className="flex justify-between items-start mb-2">
-              <span className="study-id">AIIA-001</span>
-              <StatusBadge status="Ongoing" />
-            </div>
-            <h3>Effectiveness of Ayurvedic Formulation X in Metabolic Health</h3>
-            <p className="text-xs text-secondary mb-3">Multi-centre interventional trial evaluating glycemic and lipid biomarkers across 5 accredited centres.</p>
-            <div className="study-meta">
-              <span className="phase-badge">Phase II</span>
-              <span className="text-xs text-muted">5 Sites • 124 Enrolled</span>
-            </div>
-            <Link to="/public-studies" className="btn btn-outline btn-sm mt-3 w-full">View Public Summary</Link>
-          </div>
-
-          <div className="study-preview-card card">
-            <div className="flex justify-between items-start mb-2">
-              <span className="study-id">AIIA-002</span>
-              <StatusBadge status="Ongoing" />
-            </div>
-            <h3>Management of Type 2 Diabetes with Classical Protocols</h3>
-            <p className="text-xs text-secondary mb-3">Longitudinal multi-site observational study evaluating HbA1c reduction and safety profiles.</p>
-            <div className="study-meta">
-              <span className="phase-badge">Phase III</span>
-              <span className="text-xs text-muted">8 Sites • 250 Enrolled</span>
-            </div>
-            <Link to="/public-studies" className="btn btn-outline btn-sm mt-3 w-full">View Public Summary</Link>
-          </div>
-
-          <div className="study-preview-card card">
-            <div className="flex justify-between items-start mb-2">
-              <span className="study-id">AIIA-003</span>
-              <StatusBadge status="Recruiting" pulse />
-            </div>
-            <h3>Immunomodulatory Effects of Standardized Formulations</h3>
-            <p className="text-xs text-secondary mb-3">Randomized double-blind evaluation of geriatric immune markers and cellular response.</p>
-            <div className="study-meta">
-              <span className="phase-badge">Phase IIb</span>
-              <span className="text-xs text-muted">3 Sites • 45 Enrolled</span>
-            </div>
-            <Link to="/public-studies" className="btn btn-outline btn-sm mt-3 w-full">View Public Summary</Link>
-          </div>
-        </div>
-      </section>
 
       {/* 9. FINAL CALL TO ACTION BANNER */}
       <section className="cta-banner-section">

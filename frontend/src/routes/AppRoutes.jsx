@@ -7,6 +7,7 @@ import About from '../pages/About';
 import PublicStudies from '../pages/PublicStudies';
 import Contact from '../pages/Contact';
 import Dashboard from '../pages/Dashboard';
+import Roadmap from '../pages/Roadmap';
 import Studies from '../features/studies/Studies';
 import StudyDetails from '../features/studies/StudyDetails';
 import Sites from '../features/sites/Sites';
@@ -43,6 +44,7 @@ const AppRoutes = () => {
       {/* Public Routes */}
       <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
       <Route path="/about" element={<PublicLayout><About /></PublicLayout>} />
+      <Route path="/roadmap" element={<PublicLayout><Roadmap /></PublicLayout>} />
       <Route path="/public-studies" element={<PublicLayout><PublicStudies /></PublicLayout>} />
       <Route path="/contact" element={<PublicLayout><Contact /></PublicLayout>} />
       <Route path="/login" element={<Login />} />

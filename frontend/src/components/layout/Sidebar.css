@@ -1,6 +1,10 @@
 .sidebar {
   width: 250px;
   background-color: var(--sidebar-bg);
+  background-image: url('/leaf-pattern.svg');
+  background-position: bottom -50px left -20px;
+  background-repeat: no-repeat;
+  background-size: 130% auto;
   color: #ffffff;
   display: flex;
   flex-direction: column;

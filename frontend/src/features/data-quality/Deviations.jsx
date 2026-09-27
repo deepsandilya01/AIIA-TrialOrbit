@@ -117,6 +117,8 @@ const Deviations = () => {
             <Search size={16} className="text-muted" />
             <input 
               type="text" 
+              id="deviation-search"
+              name="deviation-search"
               placeholder="Search by Deviation ID or Participant..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}

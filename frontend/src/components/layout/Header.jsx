@@ -200,6 +200,8 @@ const Header = ({ onToggleSidebar }) => {
             <Search size={15} className="search-icon" />
             <input
               type="text"
+              id="global-search"
+              name="global-search"
               className="global-search-input"
               placeholder="Search studies, sites, AEs, protocols (press Enter)..."
               value={searchQuery}

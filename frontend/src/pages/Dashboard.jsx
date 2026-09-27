@@ -9,6 +9,7 @@ import {
   AdminDashboard, PiDashboard, CoordinatorDashboard, MonitorDashboard,
   EthicsDashboard, PvDashboard, RegulatorDashboard
 } from '../components/dashboard/RoleDashboards';
+import UpcomingFeatures from '../components/dashboard/UpcomingFeatures';
 import { useToast } from '../context/ToastContext';
 import { api } from '../services/api';
 import { useSocketEvent } from '../hooks/useSocket';
@@ -130,6 +131,9 @@ const Dashboard = () => {
       {role === 'ETHICS' && <EthicsDashboard {...dashboardProps} />}
       {role === 'PHARMACOVIGILANCE' && <PvDashboard {...dashboardProps} />}
       {role === 'REGULATOR' && <RegulatorDashboard {...dashboardProps} />}
+
+      {/* Upcoming Features Section */}
+      <UpcomingFeatures role={role} />
 
       {/* Modals — only shown when user has permission */}
       {canDo('createStudy') && (

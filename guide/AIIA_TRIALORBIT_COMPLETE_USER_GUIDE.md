@@ -357,6 +357,17 @@ Because the Regulator role is intended for oversight/review and should not mutat
 - **Data Query:** A question raised on doubtful data.
 - **CDISC / FHIR:** Data standardization protocols.
 
+## 15. Product Roadmap
+
+The application's feature availability is actively categorized to ensure transparent communication regarding current capabilities and future enhancements.
+
+- **🟢 LIVE:** Features that are verified and active in the current release. Examples include 7-Role RBAC, Study Management, Site Management, Safety Tracking, Dashboards, and Real-Time Alerts.
+- **🟡 PARTIAL:** Functionality where core foundations exist, but full implementation or compliance certification is pending. Examples include CDISC export mappings and foundational FHIR interoperability.
+- **🔵 COMING SOON:** Planned high-priority features scheduled for MVP-2. Examples include structured CRF/eCRF, laboratory data capture, MedDRA / WHO Drug dictionary integration, and visit window validation.
+- **⚪ FUTURE:** Long-term enhancements planned for future releases. Examples include ADaM exports, Define-XML generation, advanced safety signal detection, and ABDM integration.
+
+To see the complete, up-to-date roadmap and what is planned for upcoming releases, please navigate to the public **[Product Roadmap](/roadmap)** page accessible from the application.
+
 ---
 
 ### Documentation Verification

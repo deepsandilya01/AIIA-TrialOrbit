@@ -21,6 +21,34 @@
   padding: 8px 1.5rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   font-size: 0.75rem;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.institutional-header::before,
+.institutional-header::after {
+  content: "";
+  position: absolute;
+  top: -20px;
+  bottom: -20px;
+  width: 200px;
+  background-image: url('/leaf-pattern.svg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.institutional-header::before {
+  left: 0;
+}
+
+.institutional-header::after {
+  right: 0;
+  transform: scaleX(-1);
 }
 
 .inst-left {

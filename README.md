@@ -44,7 +44,7 @@ Clinical research tracking typically relies on disconnected legacy systems, flat
 TrialOrbit solves this by providing a unified CTMS workflow with strict 7-role Role-Based Access Control (RBAC), real-time data synchronization via Socket.IO, and built-in regulatory countdown timers for Pharmacovigilance (e.g., automated 24-hour SAE deadlines). It acts as a single pane of glass for clinical oversight.
 
 ## 5. Current Implementation Scope
-The current repository represents the functional prototype and architectural foundation for SIH 2026. The core CTMS workflow, real-time alerts, safety monitoring, and dashboard features are **fully implemented** in the code. Interoperability features (CDISC/FHIR/AI) exist as foundational prototypes/data mapping endpoints.
+The current repository represents the functional prototype and architectural foundation for SIH 2026. The core CTMS workflow, real-time alerts, safety monitoring, and dashboard features are **verified and active** in the code. Interoperability features (CDISC/FHIR/AI) exist as foundational prototypes/data mapping endpoints.
 
 ## 6. User Roles
 The system rigidly enforces 7 hierarchical roles at the Express API layer via JWT/RBAC middleware:
@@ -79,7 +79,7 @@ Role-specific React dashboards are implemented and hydrated by the `dashboard.se
 Widgets dynamically render based on the authenticated user's exact scope (e.g., PI sees their study, Coordinator sees their site).
 
 ## 9. Clinical Safety & Regulatory Workflow
-**Fully Implemented:**
+**Verified and Active:**
 - Adverse Event (AE) Logging
 - Serious Adverse Event (SAE) Logging
 - Automated 24-Hour Reporting Due Date generation for SERIOUS events (`safety.service.js`).
@@ -124,7 +124,7 @@ The prototype incorporates principles from GCP-ASU and NDCT Rules 2019 natively 
 
 ## 16. CDISC Status
 ⚠️ **PROTOTYPE / ARCHITECTURAL FOUNDATION**
-The `export.service.js` module provides a foundational prototype mapping MongoDB documents into representative JSON arrays mimicking SDTM (DM, DS, AE, SV) and ADaM (ADSL) structures. It is not currently a fully certified CDISC ODM/Define-XML compliance engine.
+The `export.service.js` module provides a foundational prototype mapping MongoDB documents into representative JSON arrays mimicking SDTM (DM, DS, AE, SV) and ADaM (ADSL) structures. CDISC — Partial / Foundational.
 
 ## 17. FHIR Status
 ⚠️ **PROTOTYPE / ARCHITECTURAL FOUNDATION**
@@ -132,7 +132,7 @@ The system implements a prototype FHIR R4 export mapping inside `export.service.
 
 ## 18. AI/Intelligence Status
 🟡 **ARCHITECTURAL FOUNDATION**
-The `ai.service.js` module currently returns deterministic analytics fallback data (KPI calculations, recruitment risk math, zero-recruitment site anomaly detection). True LLM/Generative inference execution is not implemented in the current codebase.
+The `ai.service.js` module currently returns fallback analytics data (KPI calculations, recruitment risk math, zero-recruitment site anomaly detection). True LLM/Generative inference execution is not implemented in the current codebase.
 
 ## 19. Testing
 Testing verified against current source code execution:

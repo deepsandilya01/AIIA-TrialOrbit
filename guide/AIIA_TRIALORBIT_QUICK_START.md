@@ -74,6 +74,15 @@ Top right profile menu se `Logout` par click karein taki aapka secure session sa
 ## 13. Read Complete User Guide
 Detailed step-by-step instructions ke liye, kripya `AIIA_TRIALORBIT_COMPLETE_USER_GUIDE.md` padhein.
 
+## 14. Product Roadmap
+The application's feature availability is categorized into the following statuses:
+- **🟢 LIVE:** Features that are verified and active (e.g. 7-Role RBAC, Study Management, Safety Tracking, Dashboards).
+- **🟡 PARTIAL:** Features with foundational implementation pending full compliance/certification (e.g. CDISC Export, FHIR Interoperability).
+- **🔵 COMING SOON:** Planned high-priority features for MVP-2 (e.g. CRF/eCRF, Structured Vitals, MedDRA integration).
+- **⚪ FUTURE:** Long-term enhancements for MVP-3 and beyond (e.g. ADaM, ABDM Interoperability).
+
+For a complete breakdown, please visit the public [Product Roadmap](/roadmap) page in the application.
+
 ---
 
 ### Documentation Verification

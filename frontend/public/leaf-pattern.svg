@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 400" width="100%" height="100%" preserveAspectRatio="xMinYMax slice">
+  <defs>
+    <!-- Gradients for the leaves -->
+    <linearGradient id="leafGrad1" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#156658" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#238f7e" stop-opacity="0.0"/>
+    </linearGradient>
+    <linearGradient id="leafGrad2" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#1b7a6b" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#156658" stop-opacity="0.0"/>
+    </linearGradient>
+    <linearGradient id="leafGrad3" x1="100%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#0f4c3a" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#156658" stop-opacity="0.0"/>
+    </linearGradient>
+    <linearGradient id="leafGrad4" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2da18e" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#238f7e" stop-opacity="0.0"/>
+    </linearGradient>
+  </defs>
+
+  <g transform="translate(-40, 200) scale(1.4)">
+    <!-- Back Leaf 1 (Left) -->
+    <path d="M100,200 C60,160 10,120 0,40 C50,60 90,120 100,200 Z" fill="url(#leafGrad3)"/>
+    <path d="M100,200 C40,150 10,80 0,40 C70,50 90,140 100,200 Z" fill="rgba(255,255,255,0.03)"/>
+    <path d="M100,200 Q50,120 0,40" fill="none" stroke="#1b7a6b" stroke-width="1.5" stroke-opacity="0.2"/>
+
+    <!-- Back Leaf 2 (Right) -->
+    <path d="M100,200 C150,150 200,100 220,20 C180,60 130,130 100,200 Z" fill="url(#leafGrad3)"/>
+    <path d="M100,200 C170,140 210,60 220,20 C160,80 120,150 100,200 Z" fill="rgba(255,255,255,0.03)"/>
+    <path d="M100,200 Q160,110 220,20" fill="none" stroke="#1b7a6b" stroke-width="1.5" stroke-opacity="0.2"/>
+
+    <!-- Main Central Leaf -->
+    <path d="M100,200 C130,120 160,50 120,-30 C80,30 90,120 100,200 Z" fill="url(#leafGrad2)"/>
+    <path d="M100,200 C150,100 140,0 120,-30 C100,20 110,110 100,200 Z" fill="rgba(255,255,255,0.04)"/>
+    <path d="M100,200 Q125,85 120,-30" fill="none" stroke="#238f7e" stroke-width="2" stroke-opacity="0.3"/>
+    
+    <!-- Foreground Leaf Left -->
+    <path d="M100,200 C60,170 30,110 10,50 C40,90 80,150 100,200 Z" fill="url(#leafGrad1)"/>
+    <path d="M100,200 Q55,125 10,50" fill="none" stroke="#238f7e" stroke-width="1.5" stroke-opacity="0.3"/>
+
+    <!-- Foreground Leaf Right -->
+    <path d="M100,200 C130,170 180,120 200,60 C160,110 120,160 100,200 Z" fill="url(#leafGrad4)"/>
+    <path d="M100,200 Q150,130 200,60" fill="none" stroke="#2da18e" stroke-width="1.5" stroke-opacity="0.3"/>
+
+    <!-- Small Accent Leaf Bottom Right -->
+    <path d="M100,200 C140,190 190,170 230,130 C180,160 130,180 100,200 Z" fill="url(#leafGrad1)"/>
+  </g>
+</svg>
