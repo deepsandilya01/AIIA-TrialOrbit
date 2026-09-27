@@ -47,7 +47,8 @@ class AuthService {
       throw new Error('Please provide email and password');
     }
 
-    const user = await userRepository.findByEmailWithPassword(email);
+    const normalizedEmail = email.trim().toLowerCase();
+    const user = await userRepository.findByEmailWithPassword(normalizedEmail);
     if (!user || !user.isActive) {
       throw new Error('Invalid credentials or inactive account');
     }
