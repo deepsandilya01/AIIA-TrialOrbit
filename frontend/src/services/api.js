@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL_1;
 
 export const apiClient = axios.create({
   baseURL: API_URL,
@@ -326,7 +326,7 @@ export const api = {
   downloadComplianceDoc: async (id) => {
     return apiClient.get(`/compliance/${id}/download`, { responseType: 'blob' });
   },
-  
+
   // --- Safety Export ---
   exportSafetyReport: async (id) => {
     return apiClient.get(`/safety/events/${id}/export`, { responseType: 'blob' });

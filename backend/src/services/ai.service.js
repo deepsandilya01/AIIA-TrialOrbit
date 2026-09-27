@@ -31,7 +31,7 @@ class AIService {
     await this._checkIDOR(studyId, user);
     // Deterministic intelligence analysis
     const deterministicAnalysis = await riskEngine.calculateOverallStudyRisk(studyId);
-    
+
     await this._logAIAudit(user, 'AI_QUERY', studyId, 'deterministic');
 
     return deterministicAnalysis;
@@ -41,7 +41,7 @@ class AIService {
     await this._checkIDOR(studyId, user);
     // 1. Gather the deterministic facts first
     const analysis = await riskEngine.calculateOverallStudyRisk(studyId);
-    
+
     // 2. Log that an explanation was requested
     await this._logAIAudit(user, 'AI_QUERY', studyId, 'llm');
 
@@ -64,7 +64,7 @@ class AIService {
       const result = await aiProviderFactory.generateExplanationWithFallback(systemPrompt, prompt);
       const explanation = result.explanation;
       const provider = result.provider;
-      
+
       // Basic validation of structured output
       if (!explanation || !explanation.summary) {
         throw new Error("Invalid structured output from AI provider");
@@ -80,7 +80,7 @@ class AIService {
       };
     } catch (error) {
       console.warn("[AIService] All configured AI providers failed. Using deterministic fallback.", error.message);
-      
+
       const riskLevel = analysis.overallRiskScore < 40 ? "Low" : analysis.overallRiskScore < 70 ? "Medium" : "High";
       const topDrivers = analysis.topDrivers.join(', ') || "None";
 
@@ -120,14 +120,16 @@ class AIService {
       // For now, let's keep it simple or implement chat fallback directly.
       const answer = await aiProviderFactory.chat(systemPrompt, question);
       console.log('[askAI] Got response from AI provider.');
+
+
       return { answer };
     } catch (error) {
       const msg = error.message || '';
       console.error('[askAI] AI Provider Chat Error:', msg);
-      
+
       const riskLevel = analysis.overallRiskScore < 40 ? "Low" : analysis.overallRiskScore < 70 ? "Medium" : "High";
       const topDrivers = analysis.topDrivers.join(', ') || "None";
-      
+
       return {
         answer: `I am currently operating in deterministic mode due to provider unavailability. Based on the operational metrics, the study is classified as ${riskLevel} risk. The primary contributing factors are ${topDrivers}. Please review the dashboard metrics for further details.`
       };
@@ -190,7 +192,10 @@ ${studyContext}
 5. Never claim regulatory approval on behalf of the system
 6. If unsure, say so clearly and recommend consulting the appropriate authority
 7. Keep responses concise — max 4–5 sentences unless the user asks for detail
-8. Always respond in plain English (not JSON, not markdown)
+8. CRITICAL FORMATTING RULE: You MUST respond in plain conversational sentences ONLY. Do NOT use markdown. Do NOT use headers (no #, ##, ###). Do NOT use bullet points (no -, *, •). Do NOT use bold (**text**) or italic (*text*). Do NOT use numbered lists. Do NOT use section labels like "Summary:", "Key Drivers:", "Limitations:". Write as if you are speaking to the user directly in a chat message.
+
+Good example: "Yes, there are 5 open protocol deviations in this study, none of which are major. The overall risk remains low at 17/100."
+Bad example: "## Summary\n- 5 open deviations\n- Risk: LOW"
 
 You are helpful, professional, and operationally focused. Respond directly to what was asked.`;
   }

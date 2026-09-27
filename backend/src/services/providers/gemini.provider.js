@@ -46,7 +46,19 @@ class GeminiProvider {
       });
 
       const result = await model.generateContent(userPrompt);
-      return result.response.text();
+      const rawText = result.response.text();
+
+      // Strip any markdown that the model may still output despite instructions
+      const plainText = rawText
+        .replace(/^#{1,6}\s+/gm, '')           // Remove headers (## Summary, etc.)
+        .replace(/\*\*([^*]+)\*\*/g, '$1')     // Remove bold **text**
+        .replace(/\*([^*]+)\*/g, '$1')         // Remove italic *text*
+        .replace(/^[-*\u2022]\s+/gm, '')        // Remove bullet points
+        .replace(/^\d+\.\s+/gm, '')            // Remove numbered lists
+        .replace(/\n{3,}/g, '\n\n')            // Collapse excess blank lines
+        .trim();
+
+      return plainText;
     } catch (error) {
       console.error('[GeminiProvider] chat Error:', error.message);
       throw error;
