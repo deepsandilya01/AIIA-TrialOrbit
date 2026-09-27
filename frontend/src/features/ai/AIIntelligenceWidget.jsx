@@ -222,7 +222,11 @@ const AIIntelligenceWidget = ({ studyId }) => {
                 <p className="ai-disclaimer">AI-generated operational insight. Verify against source records before acting.</p>
               </div>
             ) : (
-              <p style={{ color: 'var(--warning)', fontSize: '0.85rem' }}>AI explanation temporarily unavailable. Risk analysis remains active.</p>
+              <p style={{ color: 'var(--warning)', fontSize: '0.85rem' }}>
+                {explanation.explanationStatus === 'RATE_LIMITED'
+                  ? 'Mistral AI is currently rate-limited (free tier quota). Please wait 30–60 seconds and try again. The risk analysis data above is accurate and always available.'
+                  : 'AI explanation temporarily unavailable. Risk analysis remains active.'}
+              </p>
             )}
           </div>
         ) : expError ? (

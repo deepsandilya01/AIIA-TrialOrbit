@@ -76,9 +76,12 @@ class AIService {
       };
     } catch (error) {
       console.error("AI Provider Error:", error.message);
+      const msg = error.message || '';
+      const isRateLimit = msg.includes('429') || msg.includes('rate_limited') || msg.includes('Rate limit') || error.status === 429;
+      
       return {
         aiAvailable: false,
-        explanationStatus: "UNAVAILABLE",
+        explanationStatus: isRateLimit ? "RATE_LIMITED" : "UNAVAILABLE",
         deterministicAnalysis: analysis,
         explanation: null
       };

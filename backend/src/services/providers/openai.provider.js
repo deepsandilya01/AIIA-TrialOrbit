@@ -30,7 +30,9 @@ class OpenAIProvider {
       });
 
       if (!response.ok) {
-        throw new Error(`OpenAI API error: ${response.statusText}`);
+        const err = new Error(`OpenAI API error: ${response.statusText}`);
+        err.status = response.status;
+        throw err;
       }
 
       const data = await response.json();
@@ -38,7 +40,9 @@ class OpenAIProvider {
       return JSON.parse(content);
     } catch (error) {
       console.error('OpenAI API Error:', error.message);
-      throw new Error(`OpenAI API Error: ${error.message}`);
+      const newErr = new Error(`OpenAI API Error: ${error.message}`);
+      if (error.status) newErr.status = error.status;
+      throw newErr;
     }
   }
 }

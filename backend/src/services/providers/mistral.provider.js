@@ -47,17 +47,18 @@ class MistralProvider {
         return await fn();
       } catch (err) {
         const msg = err.message || '';
-        const isRetryable =
-          msg.includes('429') ||
-          msg.includes('rate_limited') ||
-          msg.includes('Rate limit') ||
-          msg.includes('503') ||
-          msg.includes('overloaded');
+        const isRateLimit = msg.includes('429') || msg.includes('rate_limited') || msg.includes('Rate limit') || err.status === 429;
+        const isServerErr = msg.includes('503') || msg.includes('overloaded') || err.status === 503;
 
-        if (isRetryable && attempt < maxRetries) {
-          // 5s → 10s → 20s
-          const delay = 5000 * Math.pow(2, attempt - 1);
-          console.warn(`[Mistral] Rate limited (attempt ${attempt}/${maxRetries}). Retrying in ${delay / 1000}s…`);
+        if (isRateLimit) {
+           // Immediately fallback for rate limits, don't stall the UI
+           console.warn(`[Mistral] Rate limited (429). Bypassing retry to use deterministic fallback.`);
+           throw err;
+        }
+
+        if (isServerErr && attempt < maxRetries) {
+          const delay = 1500 * Math.pow(2, attempt - 1);
+          console.warn(`[Mistral] Provider overloaded (503). Retrying in ${delay / 1000}s…`);
           await sleep(delay);
           lastError = err;
         } else {
