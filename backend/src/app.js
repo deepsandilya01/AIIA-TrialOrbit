@@ -11,13 +11,21 @@ import yaml from 'yamljs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+import fs from 'fs';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const swaggerDocument = yaml.load(path.join(__dirname, '../docs/swagger.yaml'));
+const swaggerPath = path.join(__dirname, '../docs/swagger.yaml');
+let swaggerDocument = null;
+if (fs.existsSync(swaggerPath)) {
+  swaggerDocument = yaml.load(swaggerPath);
+}
 
 const app = express();
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+if (swaggerDocument) {
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+}
 
 // Security Middleware
 app.use(helmet());
