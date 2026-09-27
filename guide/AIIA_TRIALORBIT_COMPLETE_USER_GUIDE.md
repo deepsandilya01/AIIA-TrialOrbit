@@ -377,7 +377,7 @@ The application's feature availability is actively categorized to ensure transpa
 - **🔵 COMING SOON:** Planned high-priority features scheduled for MVP-2. Examples include structured CRF/eCRF, laboratory data capture, MedDRA / WHO Drug dictionary integration, and visit window validation.
 - **⚪ FUTURE:** Long-term enhancements planned for future releases. Examples include ADaM exports, Define-XML generation, advanced safety signal detection, and ABDM integration.
 
-To see the complete, up-to-date roadmap and what is planned for upcoming releases, please navigate to the public **[Product Roadmap](/roadmap)** page accessible from the application.
+To see the complete, up-to-date roadmap and what is planned for upcoming releases, please navigate to the public **[Product Roadmap](https://aiia-trialorbit.vercel.app/roadmap)** page accessible from the application.
 
 ---
 
