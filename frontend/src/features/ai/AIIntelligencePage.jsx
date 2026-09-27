@@ -160,7 +160,7 @@ const AIIntelligencePage = () => {
                 <p className="ai-chat-header-title">Ask Trial AI</p>
                 <p className="ai-chat-header-sub">
                   <span className="ai-online-dot" />
-                  Powered by Mistral AI · Grounded in trial data
+                  Powered by TrialOrbit AI · Grounded in trial data
                 </p>
               </div>
             </div>

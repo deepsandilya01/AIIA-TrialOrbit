@@ -59,9 +59,11 @@ class AIService {
     const prompt = this._buildPrompt(analysis);
     const systemPrompt = this._getSystemPrompt();
 
-    // 5. Call LLM Provider
+    // 5. Call LLM Provider with Fallback
     try {
-      const explanation = await aiProviderFactory.generateExplanation(systemPrompt, prompt);
+      const result = await aiProviderFactory.generateExplanationWithFallback(systemPrompt, prompt);
+      const explanation = result.explanation;
+      const provider = result.provider;
       
       // Basic validation of structured output
       if (!explanation || !explanation.summary) {
@@ -70,20 +72,31 @@ class AIService {
 
       return {
         aiAvailable: true,
-        explanationStatus: "SUCCESS",
+        explanationStatus: "AI_GENERATED",
+        provider,
         explanation,
+        deterministicAnalysis: analysis,
         promptVersion: this.promptVersion
       };
     } catch (error) {
-      console.error("AI Provider Error:", error.message);
-      const msg = error.message || '';
-      const isRateLimit = msg.includes('429') || msg.includes('rate_limited') || msg.includes('Rate limit') || error.status === 429;
+      console.warn("[AIService] All configured AI providers failed. Using deterministic fallback.", error.message);
       
+      const riskLevel = analysis.overallRiskScore < 40 ? "Low" : analysis.overallRiskScore < 70 ? "Medium" : "High";
+      const topDrivers = analysis.topDrivers.join(', ') || "None";
+
+      const deterministicExplanation = {
+        summary: `Based on current operational metrics, the study is classified as ${riskLevel} risk. The primary contributing factors are ${topDrivers}.`,
+        key_factors: analysis.topDrivers.map(d => `The ${d} area contributes heavily to the overall risk profile due to critical deviations or poor site performance.`),
+        limitations: ["This is a deterministic operational analysis, not an AI-generated explanation."]
+      };
+
       return {
-        aiAvailable: false,
-        explanationStatus: isRateLimit ? "RATE_LIMITED" : "UNAVAILABLE",
+        aiAvailable: false, // Indicates LLM failed
+        explanationStatus: "DETERMINISTIC_FALLBACK",
+        provider: "deterministic",
         deterministicAnalysis: analysis,
-        explanation: null
+        explanation: deterministicExplanation,
+        promptVersion: this.promptVersion
       };
     }
   }
@@ -103,17 +116,20 @@ class AIService {
     const systemPrompt = this._getChatSystemPrompt(context, user.role);
 
     try {
+      // If we implemented chat fallback we could use it here. 
+      // For now, let's keep it simple or implement chat fallback directly.
       const answer = await aiProviderFactory.chat(systemPrompt, question);
       console.log('[askAI] Got response from AI provider.');
       return { answer };
     } catch (error) {
       const msg = error.message || '';
       console.error('[askAI] AI Provider Chat Error:', msg);
-      const isRateLimit = msg.includes('429') || msg.includes('rate_limited') || msg.includes('Rate limit');
+      
+      const riskLevel = analysis.overallRiskScore < 40 ? "Low" : analysis.overallRiskScore < 70 ? "Medium" : "High";
+      const topDrivers = analysis.topDrivers.join(', ') || "None";
+      
       return {
-        answer: isRateLimit
-          ? 'Mistral AI is currently rate-limited (free tier quota). Please wait 30–60 seconds and try again. The risk analysis data above is accurate and always available.'
-          : 'I am temporarily unavailable due to an AI provider issue. Please try again in a moment.'
+        answer: `I am currently operating in deterministic mode due to provider unavailability. Based on the operational metrics, the study is classified as ${riskLevel} risk. The primary contributing factors are ${topDrivers}. Please review the dashboard metrics for further details.`
       };
     }
   }

@@ -19,9 +19,28 @@ class AIProviderFactory {
     }
   }
 
-  async generateExplanation(systemPrompt, userPrompt) {
-    const provider = this.getProvider();
-    return await provider.generateExplanation(systemPrompt, userPrompt);
+  async generateExplanationWithFallback(systemPrompt, userPrompt) {
+    let lastError;
+    const primary = this.providerName.toLowerCase();
+    const secondary = primary === 'mistral' ? 'openai' : 'mistral';
+
+    const providersToTry = [
+      { name: primary, instance: primary === 'mistral' ? mistralProvider : openaiProvider },
+      { name: secondary, instance: secondary === 'mistral' ? mistralProvider : openaiProvider }
+    ];
+
+    for (const p of providersToTry) {
+      if (!p.instance) continue;
+      try {
+        // If API key is empty, the provider usually throws instantly
+        const explanation = await p.instance.generateExplanation(systemPrompt, userPrompt);
+        return { explanation, provider: p.name };
+      } catch (error) {
+        console.warn(`[AIProviderFactory] ${p.name} failed: ${error.message}`);
+        lastError = error;
+      }
+    }
+    throw lastError;
   }
 
   async chat(systemPrompt, userPrompt) {

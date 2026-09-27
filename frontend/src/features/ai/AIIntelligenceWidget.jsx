@@ -188,9 +188,9 @@ const AIIntelligenceWidget = ({ studyId }) => {
         {explanation ? (
           <div className="ai-explanation-box">
             <div className="ai-explanation-header">
-              <Sparkles size={14} /> AI-Assisted Explanation
+              <Sparkles size={14} /> {explanation.explanationStatus === 'DETERMINISTIC_FALLBACK' ? 'Operational Analysis' : 'AI-Assisted Explanation'}
             </div>
-            {explanation.aiAvailable ? (
+            {['SUCCESS', 'AI_GENERATED', 'DETERMINISTIC_FALLBACK'].includes(explanation.explanationStatus) ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {explanation.explanation?.summary && (
                   <div>
@@ -203,6 +203,14 @@ const AIIntelligenceWidget = ({ studyId }) => {
                     <p className="ai-explanation-section-label">Key Drivers</p>
                     <ul className="ai-explanation-list">
                       {explanation.explanation.keyDrivers.map((d, i) => <li key={i}>{d}</li>)}
+                    </ul>
+                  </div>
+                )}
+                {explanation.explanation?.key_factors?.length > 0 && (
+                  <div>
+                    <p className="ai-explanation-section-label">Key Factors</p>
+                    <ul className="ai-explanation-list">
+                      {explanation.explanation.key_factors.map((d, i) => <li key={i}>{d}</li>)}
                     </ul>
                   </div>
                 )}
@@ -219,13 +227,15 @@ const AIIntelligenceWidget = ({ studyId }) => {
                     <strong>Limitations:</strong> {explanation.explanation.limitations.join(' ')}
                   </div>
                 )}
-                <p className="ai-disclaimer">AI-generated operational insight. Verify against source records before acting.</p>
+                <p className="ai-disclaimer">
+                  {explanation.explanationStatus === 'DETERMINISTIC_FALLBACK'
+                    ? 'Deterministic operational insight. Verify against source records before acting.'
+                    : 'AI-generated operational insight. Verify against source records before acting.'}
+                </p>
               </div>
             ) : (
               <p style={{ color: 'var(--warning)', fontSize: '0.85rem' }}>
-                {explanation.explanationStatus === 'RATE_LIMITED'
-                  ? 'Mistral AI is currently rate-limited (free tier quota). Please wait 30–60 seconds and try again. The risk analysis data above is accurate and always available.'
-                  : 'AI explanation temporarily unavailable. Risk analysis remains active.'}
+                Operational explanation temporarily unavailable. Risk analysis remains active.
               </p>
             )}
           </div>
