@@ -9,14 +9,14 @@ dns.setDefaultResultOrder("ipv4first");
 import { initRedis } from './src/config/redis.js';
 
 // Connect to MongoDB and Redis
-connectDB();
-initRedis();
+await connectDB();
+await initRedis();
 
 const PORT = env.port;
 
 import { initSocket } from './src/sockets/index.js';
 
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running in ${env.nodeEnv} mode on port ${PORT}`);
 });
 
