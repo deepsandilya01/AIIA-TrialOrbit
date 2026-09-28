@@ -191,4 +191,4 @@ AIIA-TrialOrbit/
 - **Phase 4:** Production deployment and security hardening.
 
 ## Team
-AIIA TrialOrbit Development Team
+Team AsyncOrbit
